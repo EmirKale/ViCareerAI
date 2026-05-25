@@ -20,6 +20,7 @@ interface JobListing {
     skills: string[];
     source: string;
     postedAt: string;
+    applyLink?: string;
 }
 
 interface AnalysisResult {
@@ -35,7 +36,9 @@ export default function JobDiscoverPage() {
     const [result, setResult] = useState<AnalysisResult | null>(null);
     const [jobs, setJobs] = useState<JobListing[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchLocation, setSearchLocation] = useState("Turkey");
     const [hasSearched, setHasSearched] = useState(false);
+    const [apiSource, setApiSource] = useState<string>("");
 
     const [form, setForm] = useState({
         company: "",
@@ -69,11 +72,21 @@ export default function JobDiscoverPage() {
             const res = await fetch("/api/jobs/search", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: searchQuery }),
+                body: JSON.stringify({ 
+                    query: searchQuery || "developer",
+                    location: searchLocation,
+                    page: 1 
+                }),
             });
             const data = await res.json();
             setJobs(data.jobs || []);
-        } catch {
+            setApiSource(data.source || "unknown");
+            
+            if (data.source === "mock" || data.source === "mock_fallback") {
+                console.log("[Jobs] Using mock data. Add RAPIDAPI_KEY to .env.local for real job listings.");
+            }
+        } catch (error) {
+            console.error("[Jobs] Search error:", error);
             setJobs([]);
         } finally {
             setIsSearching(false);
@@ -92,21 +105,49 @@ export default function JobDiscoverPage() {
 
             <Card className="shadow-sm">
                 <CardContent className="p-5">
-                    <div className="flex gap-3">
+                    <div className="flex flex-col md:flex-row gap-3">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Örn: React Developer, Next.js, Trendyol..."
+                                placeholder="Örn: React Developer, Next.js, Frontend..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
                                 className="pl-10 h-11"
                             />
                         </div>
+                        <div className="relative w-full md:w-48">
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <select
+                                value={searchLocation}
+                                onChange={(e) => setSearchLocation(e.target.value)}
+                                className="w-full h-11 pl-10 pr-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                            >
+                                <option value="Turkey">Türkiye</option>
+                                <option value="Remote">Uzaktan</option>
+                                <option value="United States">ABD</option>
+                                <option value="United Kingdom">İngiltere</option>
+                                <option value="Germany">Almanya</option>
+                                <option value="Netherlands">Hollanda</option>
+                            </select>
+                        </div>
                         <Button onClick={handleJobSearch} disabled={isSearching} className="gradient-brand text-white h-11 px-6">
                             {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ara"}
                         </Button>
                     </div>
+                    {apiSource && (
+                        <div className="mt-3 text-xs text-muted-foreground flex items-center gap-2">
+                            {apiSource === "jsearch" ? (
+                                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20">
+                                    ✓ Gerçek İlanlar (JSearch API)
+                                </Badge>
+                            ) : (
+                                <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-900/20">
+                                    ⚠ Demo Verileri (RAPIDAPI_KEY ekleyin)
+                                </Badge>
+                            )}
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 
@@ -158,8 +199,14 @@ export default function JobDiscoverPage() {
                                                         <span className="text-lg font-black text-green-700 dark:text-green-400 leading-none">{job.matchScore}%</span>
                                                         <span className="text-[9px] text-green-600/70 dark:text-green-500/70 font-medium mt-0.5">Uyum</span>
                                                     </div>
-                                                    <Button size="sm" variant="outline" className="h-8 text-xs group-hover:border-blue-400 group-hover:text-blue-600 dark:group-hover:border-blue-700 dark:group-hover:text-blue-400 transition-all">
-                                                        Analiz Et <ArrowRight className="ml-1.5 h-3 w-3" />
+                                                    <Button 
+                                                        size="sm" 
+                                                        variant="outline" 
+                                                        className="h-8 text-xs group-hover:border-blue-400 group-hover:text-blue-600 dark:group-hover:border-blue-700 dark:group-hover:text-blue-400 transition-all"
+                                                        onClick={() => job.applyLink && job.applyLink !== "#" && window.open(job.applyLink, "_blank")}
+                                                        disabled={!job.applyLink || job.applyLink === "#"}
+                                                    >
+                                                        {job.applyLink && job.applyLink !== "#" ? "Başvur" : "Analiz Et"} <ArrowRight className="ml-1.5 h-3 w-3" />
                                                     </Button>
                                                 </div>
                                             </div>
