@@ -8,9 +8,16 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
     try {
+        // Auth check
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
-        void user; // auth available but not enforced for this public endpoint
+        
+        if (!user) {
+            return NextResponse.json(
+                { error: "Unauthorized. Please login." },
+                { status: 401 }
+            );
+        }
 
         const { jobText } = await request.json();
 

@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest, response: NextResponse
 
     // Protect dashboard routes
     // i18n paths format: /tr/dashboard, /en/cv, etc.
-    const isProtected = /\/(tr|en)\/(dashboard|cv|profile|jobs)/.test(request.nextUrl.pathname);
+    const isProtected = /\/(tr|en)\/(dashboard|cv|cover-letter|profile|jobs)/.test(request.nextUrl.pathname);
 
     if (isProtected && !user) {
         const locale = request.nextUrl.pathname.startsWith('/en') ? 'en' : 'tr';
