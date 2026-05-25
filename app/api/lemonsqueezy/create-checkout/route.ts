@@ -80,7 +80,7 @@ export async function POST(req: Request) {
             productOptions: {
                 redirectUrl: `${appUrl}/tr/dashboard?success=true`,
             },
-            testMode: true,
+            testMode: false,
         });
 
         if (checkoutError) {
