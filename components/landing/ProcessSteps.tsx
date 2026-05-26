@@ -22,10 +22,10 @@ export function ProcessSteps() {
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: i * 0.2 }}
-          className={`relative group flex flex-col items-center text-center space-y-6 glass-panel p-8 md:p-10 rounded-[32px] border-t-2 ${step.border} hover:bg-white/5 transition-all duration-500 overflow-hidden`}
+          className={`relative group flex flex-col items-center text-center space-y-6 glass-panel p-8 md:p-10 rounded-[32px] border-t-2 ${step.border} hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-500 overflow-hidden`}
         >
           {/* Subtle Background Number */}
-          <div className="absolute -right-4 -bottom-4 text-9xl font-bold text-white/5 select-none pointer-events-none group-hover:text-[#2563EB]/5 group-hover:-translate-y-2 transition-all duration-700">
+          <div className="absolute -right-4 -bottom-4 text-9xl font-bold text-gray-100 dark:text-white/5 select-none pointer-events-none group-hover:text-blue-100 dark:group-hover:text-[#2563EB]/5 group-hover:-translate-y-2 transition-all duration-700">
              0{step.id}
           </div>
 
@@ -34,8 +34,8 @@ export function ProcessSteps() {
           </div>
 
           <div className="space-y-3 relative z-10">
-             <h3 className="text-2xl font-bold tracking-tight text-white">{t(`${step.id}_title`)}</h3>
-             <p className="text-sm text-zinc-400 leading-relaxed max-w-[240px] mx-auto font-medium">
+             <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{t(`${step.id}_title`)}</h3>
+             <p className="text-sm text-gray-600 dark:text-zinc-400 leading-relaxed max-w-[240px] mx-auto font-medium">
                 {t(`${step.id}_desc`)}
              </p>
           </div>

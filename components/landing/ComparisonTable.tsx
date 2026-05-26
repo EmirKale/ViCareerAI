@@ -40,7 +40,7 @@ export function ComparisonTable() {
             className="contents group/row"
           >
             {/* Feature Label */}
-            <div className="bg-[#1c1b1d] p-6 text-sm font-semibold text-white border-b border-white/[0.06] group-hover/row:bg-white/5 transition-colors">
+            <div className="bg-gray-100 dark:bg-[#1c1b1d] p-6 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/[0.06] group-hover/row:bg-gray-200 dark:group-hover/row:bg-white/5 transition-colors">
               {item.feature}
             </div>
             
