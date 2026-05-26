@@ -19,6 +19,37 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Quota check for free plan users
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('plan')
+            .eq('id', user.id)
+            .single();
+        
+        if (profile?.plan === 'free') {
+            let { data: quota } = await supabase
+                .from('usage_quotas')
+                .select('cover_letter_count')
+                .eq('user_id', user.id)
+                .single();
+            
+            if (!quota) {
+                // Create quota record if doesn't exist
+                await supabase.from('usage_quotas').insert({ user_id: user.id });
+                quota = { cover_letter_count: 0 };
+            }
+            
+            if (quota.cover_letter_count >= 3) {
+                return NextResponse.json(
+                    { 
+                        error: "Cover letter limitinize ulaştınız. Pro plana geçerek sınırsız mektup oluşturabilirsiniz.",
+                        code: "QUOTA_EXCEEDED" 
+                    },
+                    { status: 429 }
+                );
+            }
+        }
+
         const body = await request.json();
         const { position, company, industry, tone, language, userSummary } = body;
 
@@ -78,6 +109,22 @@ Sadece mektubu yaz, başlık veya açıklama ekleme.`;
                 { error: "Mektup üretilemedi." },
                 { status: 500 }
             );
+        }
+
+        // Increment quota for free users
+        if (profile?.plan === 'free') {
+            const { data: quota } = await supabase
+                .from('usage_quotas')
+                .select('cover_letter_count')
+                .eq('user_id', user.id)
+                .single();
+            
+            if (quota) {
+                await supabase
+                    .from('usage_quotas')
+                    .update({ cover_letter_count: (quota.cover_letter_count || 0) + 1 })
+                    .eq('user_id', user.id);
+            }
         }
 
         return NextResponse.json({ letter });

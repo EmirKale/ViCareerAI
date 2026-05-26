@@ -29,12 +29,32 @@ export default function NewCoverLetterPage() {
     const [generatedLetter, setGeneratedLetter] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [quota, setQuota] = useState<{ cover_letter_count: number; plan: string } | null>(null);
+    const [isLoadingQuota, setIsLoadingQuota] = useState<boolean>(true);
 
     useEffect(() => {
+        fetchQuota();
         if (editId) {
             fetchLetter(editId);
         }
     }, [editId]);
+
+    const fetchQuota = async () => {
+        try {
+            const res = await fetch("/api/quota");
+            if (res.ok) {
+                const data = await res.json();
+                setQuota({ 
+                    cover_letter_count: data.cover_letter_count || 0,
+                    plan: "free" // TODO: Get actual plan from profile
+                });
+            }
+        } catch {
+            // Silently fail
+        } finally {
+            setIsLoadingQuota(false);
+        }
+    };
 
     const fetchLetter = async (id: string) => {
         try {
@@ -80,12 +100,19 @@ export default function NewCoverLetterPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                toast.error(data.error || "Bir hata oluştu.");
+                if (res.status === 429 && data.code === "QUOTA_EXCEEDED") {
+                    toast.error(data.error || "Cover letter limitinize ulaştınız.");
+                } else {
+                    toast.error(data.error || "Bir hata oluştu.");
+                }
                 return;
             }
 
             setGeneratedLetter(data.letter);
             toast.success("Mektup başarıyla oluşturuldu!");
+            
+            // Refresh quota after successful generation
+            fetchQuota();
         } catch {
             // Error logged if needed
         } finally {
@@ -162,11 +189,43 @@ export default function NewCoverLetterPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Motivasyon Mektubu</h1>
-                <p className="text-muted-foreground mt-1">
-                    GPT-4o yapay zekası ile dakikalar içinde kişiselleştirilmiş ve ATS uyumlu mektup oluşturun.
-                </p>
+            <div className="flex items-start justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Motivasyon Mektubu</h1>
+                    <p className="text-muted-foreground mt-1">
+                        GPT-4o yapay zekası ile dakikalar içinde kişiselleştirilmiş ve ATS uyumlu mektup oluşturun.
+                    </p>
+                </div>
+                {!isLoadingQuota && quota && quota.plan === "free" && (
+                    <Card className="shadow-sm border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/20">
+                        <CardContent className="p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1">
+                                    <p className="text-xs font-medium text-blue-900 dark:text-blue-100">
+                                        Cover Letter Kotası
+                                    </p>
+                                    <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
+                                        {quota.cover_letter_count}/3
+                                    </p>
+                                </div>
+                                {quota.cover_letter_count >= 3 && (
+                                    <Button 
+                                        size="sm" 
+                                        className="gradient-brand text-white text-xs h-8"
+                                        onClick={() => window.location.href = "/tr/pricing"}
+                                    >
+                                        Pro'ya Geç
+                                    </Button>
+                                )}
+                            </div>
+                            {quota.cover_letter_count >= 3 && (
+                                <p className="text-xs text-amber-700 dark:text-amber-400 mt-2">
+                                    ⚠ Limitinize ulaştınız. Pro plan ile sınırsız mektup oluşturun.
+                                </p>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
@@ -255,12 +314,16 @@ export default function NewCoverLetterPage() {
                         <Button
                             className="w-full gradient-brand text-white shadow-md shadow-blue-500/20 h-12"
                             onClick={handleGenerate}
-                            disabled={isLoading}
+                            disabled={isLoading || (quota?.plan === "free" && quota.cover_letter_count >= 3)}
                         >
                             {isLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Mektup Oluşturuluyor...
+                                </>
+                            ) : quota?.plan === "free" && quota.cover_letter_count >= 3 ? (
+                                <>
+                                    Limit Doldu - Pro'ya Geçin
                                 </>
                             ) : (
                                 <>
