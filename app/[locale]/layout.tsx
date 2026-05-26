@@ -19,10 +19,92 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "CareerAI - Yapay Zeka Destekli CV Oluşturucu",
-  description: "Saniyeler içinde ATS uyumlu CV ve motivasyon mektubu oluşturun.",
-};
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const params = await props.params;
+  const { locale } = params;
+
+  const metadata = {
+    tr: {
+      title: "ViCareerAI - Yapay Zeka ile CV Oluştur",
+      description: "GPT-4o ile ATS uyumlu CV oluştur, motivasyon mektubu yaz, iş ilanlarını analiz et. Türkiye'nin en akıllı kariyer platformu.",
+      keywords: "cv oluştur, yapay zeka cv, ats cv, motivasyon mektubu, iş başvurusu, kariyer, özgeçmiş oluştur, ai cv",
+    },
+    en: {
+      title: "ViCareerAI - Build Your CV with AI",
+      description: "Create ATS-friendly CVs with GPT-4o, write cover letters, analyze job postings. The smartest AI career platform.",
+      keywords: "ai cv builder, ats resume, cover letter, job application, career platform, resume builder, ai resume",
+    },
+  };
+
+  const currentLocale = locale === "en" ? "en" : "tr";
+  const meta = metadata[currentLocale];
+  const siteUrl = "https://vi-career-ai.vercel.app";
+
+  return {
+    title: {
+      default: meta.title,
+      template: `%s | ViCareerAI`,
+    },
+    description: meta.description,
+    keywords: meta.keywords,
+    authors: [{ name: "ViCareerAI Team" }],
+    creator: "ViCareerAI",
+    publisher: "ViCareerAI",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(siteUrl),
+    alternates: {
+      canonical: `${siteUrl}/${locale}`,
+      languages: {
+        'tr': `${siteUrl}/tr`,
+        'en': `${siteUrl}/en`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      locale: locale === "en" ? "en_US" : "tr_TR",
+      url: `${siteUrl}/${locale}`,
+      title: meta.title,
+      description: meta.description,
+      siteName: "ViCareerAI",
+      images: [
+        {
+          url: `${siteUrl}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: "ViCareerAI - AI-Powered Career Platform",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.description,
+      images: [`${siteUrl}/og-image.png`],
+      creator: "@vicareerai",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    verification: {
+      google: "google-site-verification-code",
+      yandex: "yandex-verification-code",
+    },
+  };
+}
 
 export default async function RootLayout(props: Readonly<{
   children: React.ReactNode;
