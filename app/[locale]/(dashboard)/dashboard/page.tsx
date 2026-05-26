@@ -13,6 +13,7 @@ interface QuotaData {
     cv_count: number;
     letter_count: number;
     analysis_count: number;
+    cover_letter_count: number;
 }
 
 export default function DashboardPage() {
@@ -35,12 +36,12 @@ export default function DashboardPage() {
     }, []);
 
     const maxCv = plan === "pro" ? "∞" : "2";
-    const maxLetter = plan === "pro" ? "∞" : "5";
-    const maxAnalysis = plan === "pro" ? "∞" : "10";
+    const maxLetter = plan === "pro" ? "∞" : "3";
+    const maxAnalysis = plan === "pro" ? "∞" : "5";
 
     const stats = [
         { title: t("stats.cvs"), value: quota ? `${quota.cv_count}/${maxCv}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-blue-500" },
-        { title: t("stats.letters"), value: quota ? `${quota.letter_count}/${maxLetter}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-purple-500" },
+        { title: t("stats.letters"), value: quota ? `${quota.cover_letter_count || 0}/${maxLetter}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-purple-500" },
         { title: t("stats.analysis"), value: quota ? `${quota.analysis_count}/${maxAnalysis}` : "...", desc: t("stats.used"), icon: FileSearch, color: "text-teal-500" },
         { title: t("stats.plan"), value: plan === "pro" ? t("stats.pro") : t("stats.free"), desc: plan === "pro" ? "Sınırsız erişim" : "Kısıtlı erişim", icon: Briefcase, color: plan === "pro" ? "text-yellow-500" : "text-orange-500" },
     ];
