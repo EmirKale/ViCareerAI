@@ -8,7 +8,6 @@ import {
   Zap, Globe, ShieldCheck, ArrowRight, Cpu, Shield, Clock
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import { useRef } from "react";
 
 // New Components
@@ -16,13 +15,11 @@ import { ATSScore } from "@/components/landing/ATSScore";
 import LiveCVPreview from "@/components/landing/LiveCVPreview";
 import { ProcessSteps } from "@/components/landing/ProcessSteps";
 import { ComparisonTable } from "@/components/landing/ComparisonTable";
-import { TestimonialCard } from "@/components/landing/TestimonialCard";
 
 export default function Home() {
   const t = useTranslations("Index");
   const tPricing = useTranslations("Pricing");
   const tFooter = useTranslations("Footer");
-  const tTestimonial = useTranslations("Testimonials");
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -131,24 +128,6 @@ export default function Home() {
             </div>
             
             <LiveCVPreview />
-
-            <div className="mt-20 flex flex-col items-center gap-6">
-               <div className="flex -space-x-4">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="h-14 w-14 rounded-2xl border-4 border-background bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold ring-2 ring-blue-500/10 overflow-hidden shadow-2xl relative">
-                       <Image 
-                         src={`https://api.dicebear.com/7.x/avataaars/svg?seed=success${i}`} 
-                         alt="user" 
-                         fill
-                         className="object-cover"
-                       />
-                    </div>
-                  ))}
-               </div>
-               <p className="text-sm font-black text-muted-foreground uppercase tracking-widest">
-                  {t("socialProof")}
-               </p>
-            </div>
          </div>
       </section>
 
@@ -235,35 +214,22 @@ export default function Home() {
       {/* 6. TESTIMONIALS SECTION */}
       <section className="py-32 relative">
          <div className="container mx-auto max-w-7xl px-6">
-            <div className="text-center mb-24">
-               <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6">{t("testimonialsTitle")}</h2>
-               <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
-                  {t("testimonialsDesc")}
-               </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-               <TestimonialCard 
-                 name={tTestimonial("t1_name")}
-                 role={tTestimonial("t1_role")}
-                 quote={tTestimonial("t1_quote")}
-                 avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
-                 delay={0.1}
-               />
-               <TestimonialCard 
-                 name={tTestimonial("t2_name")}
-                 role={tTestimonial("t2_role")}
-                 quote={tTestimonial("t2_quote")}
-                 avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus"
-                 delay={0.2}
-               />
-               <TestimonialCard 
-                 name={tTestimonial("t3_name")}
-                 role={tTestimonial("t3_role")}
-                 quote={tTestimonial("t3_quote")}
-                 avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=Elena"
-                 delay={0.3}
-               />
+            <div className="text-center">
+               <motion.div 
+                 initial={{ y: 30, opacity: 0 }}
+                 whileInView={{ y: 0, opacity: 1 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.8 }}
+                 className="max-w-2xl mx-auto"
+               >
+                 <div className="inline-flex items-center gap-3 rounded-full border border-blue-200/50 bg-blue-50/50 px-6 py-3 text-sm font-bold text-blue-600 backdrop-blur-xl dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-400 shadow-xl shadow-blue-500/5 mb-6">
+                   <Sparkles className="h-5 w-5" />
+                   <span className="tracking-wide">{t("testimonialsTitle")}</span>
+                 </div>
+                 <p className="text-2xl md:text-4xl font-bold text-muted-foreground">
+                   {t("testimonialsDesc")}
+                 </p>
+               </motion.div>
             </div>
          </div>
       </section>
