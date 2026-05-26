@@ -100,8 +100,7 @@ export async function generateMetadata(props: {
       },
     },
     verification: {
-      google: "google-site-verification-code",
-      yandex: "yandex-verification-code",
+      google: "36TeNeDlONosD85g_k-XWeedOeVLnINzz90G7f8zIQQ",
     },
   };
 }
