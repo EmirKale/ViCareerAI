@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Loader2, Target, CheckCircle2, AlertTriangle, ArrowRight, BookOpen, Search, Building2, MapPin, Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations } from "next-intl";
 
 interface JobListing {
     id: string;
@@ -31,6 +32,7 @@ interface AnalysisResult {
 }
 
 export default function JobDiscoverPage() {
+    const t = useTranslations("JobsDiscover");
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -97,9 +99,9 @@ export default function JobDiscoverPage() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto p-4 md:p-8">
             {/* Live Job Search Section */}
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">İş İlanları Keşfet</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
                 <p className="text-muted-foreground mt-1">
-                    Pozisyon veya beceri adı girerek size uygun ilanları bulun.
+                    {t("desc")}
                 </p>
             </div>
 
@@ -109,7 +111,7 @@ export default function JobDiscoverPage() {
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Örn: React Developer, Next.js, Frontend..."
+                                placeholder={t("searchPlaceholder")}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
@@ -123,27 +125,27 @@ export default function JobDiscoverPage() {
                                 onChange={(e) => setSearchLocation(e.target.value)}
                                 className="w-full h-11 pl-10 pr-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                             >
-                                <option value="Turkey">Türkiye</option>
-                                <option value="Remote">Uzaktan</option>
-                                <option value="United States">ABD</option>
-                                <option value="United Kingdom">İngiltere</option>
-                                <option value="Germany">Almanya</option>
-                                <option value="Netherlands">Hollanda</option>
+                                <option value="Turkey">{t("locationTurkey")}</option>
+                                <option value="Remote">{t("locationRemote")}</option>
+                                <option value="United States">{t("locationUS")}</option>
+                                <option value="United Kingdom">{t("locationUK")}</option>
+                                <option value="Germany">{t("locationGermany")}</option>
+                                <option value="Netherlands">{t("locationNetherlands")}</option>
                             </select>
                         </div>
                         <Button onClick={handleJobSearch} disabled={isSearching} className="gradient-brand text-white h-11 px-6">
-                            {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Ara"}
+                            {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : t("searchButton")}
                         </Button>
                     </div>
                     {apiSource && (
                         <div className="mt-3 text-xs text-muted-foreground flex items-center gap-2">
                             {apiSource === "jsearch" ? (
                                 <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20">
-                                    ✓ Gerçek İlanlar (JSearch API)
+                                    {t("apiSourceReal")}
                                 </Badge>
                             ) : (
                                 <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-900/20">
-                                    ⚠ Demo Verileri (RAPIDAPI_KEY ekleyin)
+                                    {t("apiSourceDemo")}
                                 </Badge>
                             )}
                         </div>
@@ -157,16 +159,16 @@ export default function JobDiscoverPage() {
                     {isSearching ? (
                         <div className="py-10 text-center text-muted-foreground">
                             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3 text-blue-500" />
-                            <p>İlanlar aranıyor...</p>
+                            <p>{t("searching")}</p>
                         </div>
                     ) : jobs.length === 0 ? (
                         <Card className="py-10 text-center border-dashed bg-zinc-50/50 dark:bg-zinc-900/50">
                             <Target className="h-12 w-12 mx-auto text-muted-foreground opacity-30 mb-3" />
-                            <p className="text-muted-foreground">Arama sonucu bulunamadı.</p>
+                            <p className="text-muted-foreground">{t("noResults")}</p>
                         </Card>
                     ) : (
                         <>
-                            <p className="text-sm text-muted-foreground font-medium">{jobs.length} sonuç bulundu</p>
+                            <p className="text-sm text-muted-foreground font-medium">{t("resultsFound", { count: jobs.length })}</p>
                             <div className="grid grid-cols-1 gap-4">
                                 {jobs.map(job => (
                                     <Card key={job.id} className="shadow-sm hover:shadow-md transition-shadow group border-zinc-200 dark:border-zinc-800">
@@ -197,7 +199,7 @@ export default function JobDiscoverPage() {
                                                     <div className="flex flex-col items-center bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/50 rounded-xl px-3 py-2">
                                                         <Sparkles className="h-3.5 w-3.5 text-green-600 dark:text-green-500 mb-0.5" />
                                                         <span className="text-lg font-black text-green-700 dark:text-green-400 leading-none">{job.matchScore}%</span>
-                                                        <span className="text-[9px] text-green-600/70 dark:text-green-500/70 font-medium mt-0.5">Uyum</span>
+                                                        <span className="text-[9px] text-green-600/70 dark:text-green-500/70 font-medium mt-0.5">{t("matchScore")}</span>
                                                     </div>
                                                     <Button 
                                                         size="sm" 
@@ -206,7 +208,7 @@ export default function JobDiscoverPage() {
                                                         onClick={() => job.applyLink && job.applyLink !== "#" && window.open(job.applyLink, "_blank")}
                                                         disabled={!job.applyLink || job.applyLink === "#"}
                                                     >
-                                                        {job.applyLink && job.applyLink !== "#" ? "Başvur" : "Analiz Et"} <ArrowRight className="ml-1.5 h-3 w-3" />
+                                                        {job.applyLink && job.applyLink !== "#" ? t("applyButton") : t("analyzeButton")} <ArrowRight className="ml-1.5 h-3 w-3" />
                                                     </Button>
                                                 </div>
                                             </div>
@@ -221,31 +223,31 @@ export default function JobDiscoverPage() {
 
             {/* Manual Analysis Section */}
             <div className="border-t pt-8">
-                <h2 className="text-xl font-bold mb-1">İlan Metni ile Analiz</h2>
-                <p className="text-muted-foreground text-sm mb-6">Kopyaladığınız ilan metnini yapıştırın, AI profilinizle karşılaştırsın.</p>
+                <h2 className="text-xl font-bold mb-1">{t("manualAnalysisTitle")}</h2>
+                <p className="text-muted-foreground text-sm mb-6">{t("manualAnalysisDesc")}</p>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <Card className="shadow-sm">
                         <CardHeader>
-                            <CardTitle className="text-lg">İlan Bilgileri</CardTitle>
-                            <CardDescription>Analiz edilecek iş ilanının detaylarını girin.</CardDescription>
+                            <CardTitle className="text-lg">{t("jobInfoTitle")}</CardTitle>
+                            <CardDescription>{t("jobInfoDesc")}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label>Şirket Adı</Label>
-                                    <Input placeholder="Örn: Google" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                                    <Label>{t("companyLabel")}</Label>
+                                    <Input placeholder={t("companyPlaceholder")} value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Pozisyon</Label>
-                                    <Input placeholder="Örn: Frontend Developer" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} />
+                                    <Label>{t("positionLabel")}</Label>
+                                    <Input placeholder={t("positionPlaceholder")} value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label>İlan Açıklaması</Label>
-                                <Textarea rows={8} className="resize-none" placeholder="İlanın gereksinimlerini buraya yapıştırın..." value={form.jobDescription} onChange={(e) => setForm({ ...form, jobDescription: e.target.value })} />
+                                <Label>{t("descriptionLabel")}</Label>
+                                <Textarea rows={8} className="resize-none" placeholder={t("descriptionPlaceholder")} value={form.jobDescription} onChange={(e) => setForm({ ...form, jobDescription: e.target.value })} />
                             </div>
                             <Button className="w-full gradient-brand text-white mt-2" onClick={handleAnalyze} disabled={isLoading || !form.jobDescription}>
-                                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analiz Ediliyor...</> : <><Sparkles className="mr-2 h-4 w-4" />AI ile Analiz Et</>}
+                                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("analyzing")}</> : <><Sparkles className="mr-2 h-4 w-4" />{t("analyzeButtonAI")}</>}
                             </Button>
                         </CardContent>
                     </Card>
@@ -254,15 +256,15 @@ export default function JobDiscoverPage() {
                         {!result && !isLoading ? (
                             <Card className="flex-1 flex flex-col items-center justify-center border-dashed bg-zinc-50/50 dark:bg-zinc-900/50 shadow-none p-10">
                                 <Target className="h-12 w-12 text-muted-foreground opacity-30 mb-4" />
-                                <h3 className="text-lg font-medium text-muted-foreground">Analiz Sonucu Bekleniyor</h3>
-                                <p className="text-sm text-center text-muted-foreground/70 mt-2 max-w-sm">İlan detaylarını doldurup analizi başlattığınızda eşleşme oranınız burada görünecek.</p>
+                                <h3 className="text-lg font-medium text-muted-foreground">{t("resultWaiting")}</h3>
+                                <p className="text-sm text-center text-muted-foreground/70 mt-2 max-w-sm">{t("resultWaitingDesc")}</p>
                             </Card>
                         ) : isLoading ? (
                             <Card className="flex-1 flex flex-col items-center justify-center bg-zinc-50/50 dark:bg-zinc-900/50 shadow-none p-10">
                                 <div className="h-16 w-16 rounded-full gradient-brand flex items-center justify-center animate-pulse">
                                     <Sparkles className="h-7 w-7 text-white" />
                                 </div>
-                                <h3 className="text-lg font-medium mt-6">Yapay Zeka Çalışıyor</h3>
+                                <h3 className="text-lg font-medium mt-6">{t("aiWorking")}</h3>
                             </Card>
                         ) : (
                             <div className="space-y-4 animate-in fade-in zoom-in-95 duration-400">
@@ -270,7 +272,7 @@ export default function JobDiscoverPage() {
                                     <CardContent className="p-6">
                                         <div className="flex items-center justify-between">
                                             <div>
-                                                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Uygunluk Skoru</p>
+                                                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">{t("matchScoreTitle")}</p>
                                                 <h2 className="text-4xl font-black tracking-tight text-blue-900 dark:text-blue-100 mt-1">{result?.matchScore}<span className="text-2xl text-blue-700/50">%</span></h2>
                                             </div>
                                             <div className="h-20 w-20 flex items-center justify-center">
@@ -285,15 +287,15 @@ export default function JobDiscoverPage() {
                                 <Card>
                                     <CardContent className="p-6 space-y-6">
                                         <div>
-                                            <h4 className="text-sm font-semibold flex items-center text-green-700 dark:text-green-400 mb-3"><CheckCircle2 className="mr-2 h-4 w-4" />Karşılanan Beceriler</h4>
+                                            <h4 className="text-sm font-semibold flex items-center text-green-700 dark:text-green-400 mb-3"><CheckCircle2 className="mr-2 h-4 w-4" />{t("matchedSkills")}</h4>
                                             <div className="flex flex-wrap gap-2">{result?.matchedSkills.map((skill, i) => (<Badge key={i} className="bg-green-100 text-green-700 border-0 dark:bg-green-900/30 dark:text-green-400">{skill}</Badge>))}</div>
                                         </div>
                                         <div>
-                                            <h4 className="text-sm font-semibold flex items-center text-red-700 dark:text-red-400 mb-3"><AlertTriangle className="mr-2 h-4 w-4" />Eksik Beceriler</h4>
+                                            <h4 className="text-sm font-semibold flex items-center text-red-700 dark:text-red-400 mb-3"><AlertTriangle className="mr-2 h-4 w-4" />{t("missingSkills")}</h4>
                                             <div className="flex flex-wrap gap-2">{result?.missingSkills.map((skill, i) => (<Badge key={i} className="bg-red-100 text-red-700 border-0 dark:bg-red-900/30 dark:text-red-400">{skill}</Badge>))}</div>
                                         </div>
                                         <div className="pt-4 border-t">
-                                            <h4 className="text-sm font-semibold mb-3">AI Öğrenme Önerileri</h4>
+                                            <h4 className="text-sm font-semibold mb-3">{t("aiRecommendations")}</h4>
                                             <ul className="space-y-2">{result?.recommendations.map((rec, i) => (<li key={i} className="flex gap-3 text-sm text-muted-foreground bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border"><BookOpen className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />{rec}</li>))}</ul>
                                         </div>
                                     </CardContent>
