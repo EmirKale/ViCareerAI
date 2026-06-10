@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -95,7 +94,7 @@ export default function InterviewSummaryPage() {
                         <Quote className="w-12 h-12" />
                     </div>
                     <p className="relative z-10 text-lg md:text-xl text-white leading-relaxed font-medium pl-8 italic">
-                        "You demonstrated strong command over React hooks and state management. To elevate your performance for senior roles, focus on articulating the 'why' behind your architecture choices rather than just the 'how'. When discussing system design, slow your pacing to ensure the interviewer follows your logic."
+                        &quot;You demonstrated strong command over React hooks and state management. To elevate your performance for senior roles, focus on articulating the &apos;why&apos; behind your architecture choices rather than just the &apos;how&apos;. When discussing system design, slow your pacing to ensure the interviewer follows your logic.&quot;
                     </p>
                 </div>
 

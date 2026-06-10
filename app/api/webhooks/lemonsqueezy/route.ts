@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     switch (eventName) {
       case 'order_created': {
-        console.log('Order created:', obj);
+        console.info('Order created event received');
         // e.g. a one-time purchase
         const customerId = String(obj.customer_id);
         if (userId) {
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         break;
       }
       case 'subscription_created': {
-        console.log('Subscription created:', obj);
+        console.info('Subscription created event received');
         const customerId = String(obj.customer_id);
         if (userId) {
           await supabaseAdmin
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
         break;
       }
       case 'subscription_updated': {
-        console.log('Subscription updated:', obj);
+        console.info('Subscription updated event received. Status:', obj.status);
         const customerId = String(obj.customer_id);
         await supabaseAdmin
             .from("profiles")
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
       }
       case 'subscription_expired':
       case 'subscription_cancelled': {
-        console.log('Subscription cancelled/expired:', obj);
+        console.info('Subscription expired/cancelled event received');
         const customerId = String(obj.customer_id);
         await supabaseAdmin
             .from("profiles")
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
         break;
       }
       default:
-        console.log(`Unhandled event type: ${eventName}`);
+        console.info(`Unhandled event type: ${eventName}`);
     }
 
     return NextResponse.json({ message: 'Webhook received' }, { status: 200 });

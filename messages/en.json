@@ -101,10 +101,10 @@
         "essential": "Essential",
         "kickstart": "Kickstart your search",
         "getStarted": "Get Started",
-        "f1": "2 AI-Generated CVs per month",
-        "f2": "2 Tailored Cover Letters",
+        "f1": "2 AI CVs per month",
+        "f2": "2 Personalized Letters",
         "f3": "Standard ATS Templates",
-        "f4": "Job Match Analysis",
+        "f4": "No Job Matching Analysis",
         "pro": "Unlimited Pro",
         "proSubtitle": "Elite Professional Suite",
         "mostPopular": "MOST POPULAR",
@@ -128,7 +128,12 @@
         "f_f_3": "Standard Support",
         "f_f_4": "AI Job Analysis (None)",
         "f_f_5": "AI Cover Letter (None)",
-        "checkoutLoading": "Opening Checkout Page..."
+        "checkoutLoading": "Opening Checkout Page...",
+        "loginRequired": "Please log in first.",
+        "sessionExpired": "Your session has expired. Please log in again.",
+        "checkoutFailed": "Could not create checkout page.",
+        "checkoutLinkFailed": "Could not get checkout link. Please try again.",
+        "genericError": "An error occurred. Please try again."
     },
     "Auth": {
         "loginTitle": "Welcome Back",
@@ -146,7 +151,8 @@
         "hasAccount": "Already have an account?",
         "fullName": "Full Name",
         "successLogin": "Login successful!",
-        "successRegister": "Registration successful! You can now log in."
+        "successRegister": "Registration successful! You can now log in.",
+        "fullNamePlaceholder": "Full Name"
     },
     "Footer": {
         "desc": "The next-generation career accelerator. We empower professionals through specialized AI to land dream roles in top companies.",

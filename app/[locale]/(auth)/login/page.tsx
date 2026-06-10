@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/routing";
@@ -16,6 +16,7 @@ export default function LoginPage() {
     const supabase = createClient();
     const router = useRouter();
     const t = useTranslations("Auth");
+    const locale = useLocale();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -45,7 +46,7 @@ export default function LoginPage() {
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: `${window.location.origin}/callback`,
+                redirectTo: `${window.location.origin}/${locale}/callback`,
             },
         });
     }

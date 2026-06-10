@@ -32,15 +32,29 @@ export async function updateSession(request: NextRequest, response: NextResponse
     // This will refresh session if expired
     const { data: { user } } = await supabase.auth.getUser()
 
+    const locale = request.nextUrl.pathname.startsWith('/en') ? 'en' : 'tr';
+
     // Protect dashboard routes
     // i18n paths format: /tr/dashboard, /en/cv, etc.
     const isProtected = /\/(tr|en)\/(dashboard|cv|cover-letter|profile|jobs)/.test(request.nextUrl.pathname);
 
     if (isProtected && !user) {
-        const locale = request.nextUrl.pathname.startsWith('/en') ? 'en' : 'tr';
         const redirectUrl = new URL(`/${locale}/login`, request.url);
         
         // We return the redirect. If we modified cookies above, we need to pass them to the new response.
+        const res = NextResponse.redirect(redirectUrl);
+        // Copy cookies from original response
+        response.cookies.getAll().forEach((cookie) => {
+            res.cookies.set(cookie.name, cookie.value, cookie);
+        });
+        return res;
+    }
+
+    // Redirect logged in users away from login/register pages
+    const isAuthPage = /\/(tr|en)\/(login|register)/.test(request.nextUrl.pathname);
+
+    if (isAuthPage && user) {
+        const redirectUrl = new URL(`/${locale}/dashboard`, request.url);
         const res = NextResponse.redirect(redirectUrl);
         // Copy cookies from original response
         response.cookies.getAll().forEach((cookie) => {

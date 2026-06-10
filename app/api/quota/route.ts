@@ -26,6 +26,7 @@ export async function GET() {
         if (error) throw error;
         return NextResponse.json(data);
     } catch (error: unknown) {
-        return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
+        console.error("[QUOTA_GET_ERROR]", error);
+        return NextResponse.json({ error: "Kota bilgileri alınamadı." }, { status: 500 });
     }
 }

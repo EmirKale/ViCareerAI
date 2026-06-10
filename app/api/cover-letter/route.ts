@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { z } from "zod";
+
+const coverLetterSchema = z.object({
+    id: z.string().uuid().optional(),
+    title: z.string().trim().min(1, "Başlık boş olamaz").max(200, "Başlık çok uzun").optional(),
+    position: z.string().trim().min(1, "Pozisyon boş olamaz").max(100),
+    company: z.string().trim().min(1, "Şirket boş olamaz").max(100),
+    language: z.string().trim().min(1).max(10),
+    tone: z.string().trim().min(1).max(50),
+    content: z.string().trim().min(1, "İçerik boş olamaz"),
+});
 
 export async function POST(request: NextRequest) {
     try {
@@ -37,7 +48,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Oturum açmanız gerekiyor." }, { status: 401 });
         }
 
-        const { id, title, position, company, language, tone, content } = await request.json();
+        const body = await request.json();
+        const parseResult = coverLetterSchema.safeParse(body);
+        if (!parseResult.success) {
+            return NextResponse.json({ error: parseResult.error.issues[0].message }, { status: 400 });
+        }
+
+        const { id, title, position, company, language, tone, content } = parseResult.data;
 
         if (id) {
             const { error } = await supabase

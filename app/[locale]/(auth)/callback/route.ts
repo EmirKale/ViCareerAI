@@ -1,11 +1,21 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-export async function GET(request: Request) {
+export async function GET(
+    request: Request,
+    context: { params: Promise<{ locale: string }> }
+) {
+    const { locale } = await context.params
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
     // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get('next') ?? '/dashboard'
+    const nextParam = searchParams.get('next') ?? '/dashboard'
+
+    let next = nextParam
+    if (!next.startsWith(`/${locale}/`) && next !== `/${locale}`) {
+        const sanitizedNext = next.startsWith('/') ? next.slice(1) : next
+        next = `/${locale}/${sanitizedNext}`
+    }
 
     if (code) {
         const supabase = await createClient()
@@ -25,5 +35,5 @@ export async function GET(request: Request) {
     }
 
     // return the user to an error page with instructions
-    return NextResponse.redirect(`${origin}/login?error=auth-code-error`)
+    return NextResponse.redirect(`${origin}/${locale}/login?error=auth-code-error`)
 }

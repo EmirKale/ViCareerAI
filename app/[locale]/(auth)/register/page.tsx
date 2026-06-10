@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/routing";
@@ -16,6 +16,7 @@ export default function RegisterPage() {
     const supabase = createClient();
     const router = useRouter();
     const t = useTranslations("Auth");
+    const locale = useLocale();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -55,7 +56,7 @@ export default function RegisterPage() {
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: `${window.location.origin}/callback`,
+                redirectTo: `${window.location.origin}/${locale}/callback`,
             },
         });
     }
@@ -73,7 +74,7 @@ export default function RegisterPage() {
                             <Label htmlFor="name">{t("fullName")}</Label>
                             <Input
                                 id="name"
-                                placeholder="Ad Soyad"
+                                placeholder={t("fullNamePlaceholder")}
                                 required
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}

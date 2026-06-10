@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { z } from "zod";
+
+const cvPostSchema = z.object({
+    id: z.string().uuid().optional(),
+    title: z.string().trim().min(1, "Başlık boş olamaz").max(200, "Başlık çok uzun").optional(),
+    template: z.string().trim().min(1, "Şablon seçilmelidir").max(50).optional(),
+    data: z.record(z.string(), z.any()).optional().default({}),
+});
 
 export async function POST(request: NextRequest) {
     try {
@@ -37,7 +45,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Oturum açmanız gerekiyor." }, { status: 401 });
         }
 
-        const { id, title, template, data } = await request.json();
+        const body = await request.json();
+        const parseResult = cvPostSchema.safeParse(body);
+        if (!parseResult.success) {
+            return NextResponse.json({ error: parseResult.error.issues[0].message }, { status: 400 });
+        }
+
+        const { id, title, template, data } = parseResult.data;
 
         if (id) {
             // Update existing CV

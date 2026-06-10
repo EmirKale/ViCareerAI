@@ -101,10 +101,10 @@
         "essential": "Başlangıç",
         "kickstart": "Arayışınıza hızlı başlayın",
         "getStarted": "Hemen Başla",
-        "f1": "Aylık 2 AI Destekli CV",
+        "f1": "Aylık 2 AI CV",
         "f2": "2 Kişiselleştirilmiş Mektup",
         "f3": "Standart ATS Şablonları",
-        "f4": "İş Eşleştirme Analizi",
+        "f4": "İş Eşleştirme Analizi YOK",
         "pro": "Sınırsız Pro",
         "proSubtitle": "Elit Profesyonel Süit",
         "mostPopular": "EN POPÜLER",
@@ -128,7 +128,12 @@
         "f_f_3": "Standart Destek",
         "f_f_4": "AI İlan Analizi (Yok)",
         "f_f_5": "Yapay Zeka Mektup (Yok)",
-        "checkoutLoading": "Ödeme Sayfası Açılıyor..."
+        "checkoutLoading": "Ödeme Sayfası Açılıyor...",
+        "loginRequired": "Lütfen önce giriş yapın.",
+        "sessionExpired": "Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.",
+        "checkoutFailed": "Ödeme sayfası oluşturulamadı.",
+        "checkoutLinkFailed": "Ödeme bağlantısı alınamadı. Lütfen tekrar deneyin.",
+        "genericError": "Bir hata oluştu. Lütfen tekrar deneyin."
     },
     "Auth": {
         "loginTitle": "Tekrar Hoş Geldiniz",
@@ -146,7 +151,8 @@
         "hasAccount": "Zaten hesabınız var mı?",
         "fullName": "Ad Soyad",
         "successLogin": "Giriş başarılı!",
-        "successRegister": "Kayıt başarılı! Giriş yapabilirsiniz."
+        "successRegister": "Kayıt başarılı! Giriş yapabilirsiniz.",
+        "fullNamePlaceholder": "Ad Soyad"
     },
     "Footer": {
         "desc": "Yeni nesil kariyer hızlandırıcısı. Profesyonellerin hayallerindeki şirketlere ulaşmasını yapay zeka ile güçlendiriyoruz.",

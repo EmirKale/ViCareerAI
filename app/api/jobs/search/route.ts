@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 // Mock job postings - fallback when API key is not available
 const mockJobListings = [
@@ -123,19 +124,45 @@ function calculateMatchScore(): number {
     return Math.floor(Math.random() * 26) + 70;
 }
 
+import { z } from "zod";
+
+const jobsSearchSchema = z.object({
+    query: z.string().trim().max(100).optional().default(""),
+    location: z.string().trim().max(100).optional().default(""),
+    page: z.number().int().min(1).max(100).optional().default(1),
+});
+
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
-        void user; // auth available for future Pro plan gating
+        if (!user) {
+            return NextResponse.json({ error: "Oturum açmanız gerekiyor." }, { status: 401 });
+        }
 
-        const { query, location, page } = await req.json();
+        // Rate limit: 60 requests per hour per user
+        const limitRes = rateLimit(`jobs-search:${user.id}`, {
+            limit: 60,
+            windowMs: 60 * 60 * 1000 // 1 hour
+        });
+        if (!limitRes.success) {
+            return NextResponse.json(
+                { error: "Çok fazla istek gönderdiniz. Lütfen daha sonra tekrar deneyin." },
+                { status: 429 }
+            );
+        }
+
+        const body = await req.json();
+        const parseResult = jobsSearchSchema.safeParse(body);
+        if (!parseResult.success) {
+            return NextResponse.json({ error: "Arama parametreleri geçersiz." }, { status: 400 });
+        }
+
+        const { query, location, page } = parseResult.data;
         const rapidApiKey = process.env.RAPIDAPI_KEY;
 
         // If no API key, use mock data
         if (!rapidApiKey) {
-            console.log("[JSearch] No RAPIDAPI_KEY found, using mock data");
-            
             const filtered = query
                 ? mockJobListings.filter(job =>
                     job.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -156,8 +183,6 @@ export async function POST(req: NextRequest) {
         const searchLocation = location || "Turkey";
         const searchPage = page || 1;
 
-        console.log(`[JSearch] Searching: query="${searchQuery}", location="${searchLocation}", page=${searchPage}`);
-
         const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(searchQuery)}&page=${searchPage}&num_pages=1&country=${encodeURIComponent(searchLocation)}`;
         
         const response = await fetch(url, {
@@ -174,14 +199,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ 
                 jobs: mockJobListings,
                 source: "mock_fallback",
-                error: "API request failed, showing mock data"
+                error: "API araması başarısız oldu, örnek ilanlar gösteriliyor."
             });
         }
 
         const data = await response.json();
         const jobs: JSearchJob[] = data.data || [];
-
-        console.log(`[JSearch] Found ${jobs.length} jobs`);
 
         // Transform JSearch response to our format
         const transformedJobs = jobs.map((job: JSearchJob) => ({
@@ -213,7 +236,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ 
             jobs: mockJobListings,
             source: "mock_fallback",
-            error: error instanceof Error ? error.message : "Unknown error"
+            error: "Arama sırasında bir hata oluştu, örnek ilanlar gösteriliyor."
         });
     }
 }

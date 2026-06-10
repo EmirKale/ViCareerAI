@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import OpenAI from "openai";
+import { z } from "zod";
+import { rateLimit } from "@/lib/rate-limit";
+
+const aiSuggestSchema = z.object({
+    rawText: z.string().trim().min(1, "Geliştirilecek metin boş olamaz").max(2000, "Geliştirilecek metin çok uzun"),
+    sectionType: z.string().trim().max(100).optional(),
+    targetPosition: z.string().trim().max(100).optional(),
+});
 
 // Dışarıdan enjecte edilen OpenAI key. Eğer yoksa mock data döneceğiz veya hata vereceğiz.
 const openaiApiKey = process.env.OPENAI_API_KEY;
@@ -26,11 +34,25 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { rawText, sectionType, targetPosition } = await req.json();
-
-        if (!rawText) {
-            return NextResponse.json({ error: "Geliştirilecek metin eksik." }, { status: 400 });
+        // Rate limit: 20 requests per hour per user
+        const limitRes = rateLimit(`ai-suggest:${user.id}`, {
+            limit: 20,
+            windowMs: 60 * 60 * 1000 // 1 hour
+        });
+        if (!limitRes.success) {
+            return NextResponse.json(
+                { error: "Çok fazla istek gönderdiniz. Lütfen daha sonra tekrar deneyin." },
+                { status: 429 }
+            );
         }
+
+        const body = await req.json();
+        const parseResult = aiSuggestSchema.safeParse(body);
+        if (!parseResult.success) {
+            return NextResponse.json({ error: parseResult.error.issues[0].message }, { status: 400 });
+        }
+
+        const { rawText, sectionType, targetPosition } = parseResult.data;
 
         // Quota check
         const { data: profile } = await supabase.from('profiles').select('plan').eq('id', user.id).single();

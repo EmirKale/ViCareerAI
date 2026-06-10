@@ -5,9 +5,9 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { 
   Sparkles, Briefcase, ChevronRight, CheckCircle2, 
-  Zap, Globe, ShieldCheck, ArrowRight, Cpu, Shield, Clock
+  Globe, ShieldCheck, ArrowRight, Cpu, Shield, Clock, X
 } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type Transition } from "framer-motion";
 import { useRef } from "react";
 
 // New Components
@@ -15,6 +15,9 @@ import { ATSScore } from "@/components/landing/ATSScore";
 import LiveCVPreview from "@/components/landing/LiveCVPreview";
 import { ProcessSteps } from "@/components/landing/ProcessSteps";
 import { ComparisonTable } from "@/components/landing/ComparisonTable";
+
+const EASE_SMOOTH: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const FADE_TRANSITION: Transition = { duration: 0.8, ease: EASE_SMOOTH };
 
 export default function Home() {
   const t = useTranslations("Index");
@@ -33,10 +36,7 @@ export default function Home() {
     initial: { y: 30, opacity: 0 },
     whileInView: { y: 0, opacity: 1 },
     viewport: { once: true, margin: "-100px" },
-    transition: { 
-      duration: 0.8, 
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number] 
-    }
+    transition: FADE_TRANSITION,
   };
 
   const tATS = useTranslations("ATS");
@@ -68,7 +68,7 @@ export default function Home() {
           <motion.h1 
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.2, duration: 0.8, ease: EASE_SMOOTH }}
             className="mb-8 max-w-5xl text-5xl font-black tracking-tighter text-foreground sm:text-7xl md:text-9xl leading-[0.9] lg:leading-[0.85]"
           >
             {t.rich("title", {
@@ -260,16 +260,20 @@ export default function Home() {
               </div>
               <ul className="space-y-5 mb-14 flex-1 w-full">
                 {[
-                  tPricing("f1"),
-                  tPricing("f2"),
-                  tPricing("f3"),
-                  tPricing("f4")
+                  { text: tPricing("f1"), included: true },
+                  { text: tPricing("f2"), included: true },
+                  { text: tPricing("f3"), included: true },
+                  { text: tPricing("f4"), included: false }
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-4 text-zinc-300 font-medium pb-4 border-b border-white/5 last:border-0">
-                    <div className="h-6 w-6 rounded-full bg-white/10 flex items-center justify-center">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-blue-400" />
+                  <li key={i} className={`flex items-center gap-4 font-medium pb-4 border-b border-white/5 last:border-0 ${item.included ? 'text-zinc-300' : 'text-zinc-500'}`}>
+                    <div className={`h-6 w-6 rounded-full flex items-center justify-center ${item.included ? 'bg-white/10' : 'bg-white/5'}`}>
+                      {item.included ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                      ) : (
+                        <X className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
+                      )}
                     </div>
-                    <span>{item}</span>
+                    <span className={item.included ? "" : "line-through"}>{item.text}</span>
                   </li>
                 ))}
               </ul>

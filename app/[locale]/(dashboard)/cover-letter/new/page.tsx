@@ -214,7 +214,7 @@ export default function NewCoverLetterPage() {
                                         className="gradient-brand text-white text-xs h-8"
                                         onClick={() => window.location.href = "/tr/pricing"}
                                     >
-                                        Pro'ya Geç
+                                        Pro&apos;ya Geç
                                     </Button>
                                 )}
                             </div>
@@ -323,7 +323,7 @@ export default function NewCoverLetterPage() {
                                 </>
                             ) : quota?.plan === "free" && quota.cover_letter_count >= 3 ? (
                                 <>
-                                    Limit Doldu - Pro'ya Geçin
+                                    Limit Doldu - Pro&apos;ya Geçin
                                 </>
                             ) : (
                                 <>

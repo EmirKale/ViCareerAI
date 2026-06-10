@@ -1,4 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
+import "@/lib/env";
 import { routing } from './i18n/routing';
 import { updateSession } from './lib/supabase/middleware';
 import { NextRequest } from 'next/server';

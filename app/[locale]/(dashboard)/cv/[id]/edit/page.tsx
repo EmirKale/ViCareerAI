@@ -25,11 +25,16 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal'>('classic');
     const [isSaving, setIsSaving] = useState(false);
     
-    const [aiModalState, setAiModalState] = useState({
+    const [aiModalState, setAiModalState] = useState<{
+        isOpen: boolean;
+        initialText: string;
+        sectionType: string;
+        onApply: (text: string) => void;
+    }>({
         isOpen: false,
         initialText: "",
         sectionType: "",
-        onApply: (_text: string) => {}
+        onApply: () => {}
     });
 
     // Stub data object for the form

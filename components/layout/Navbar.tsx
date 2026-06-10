@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "@/i18n/routing";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isPro, setIsPro] = useState(false);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
@@ -54,8 +54,7 @@ export default function Navbar() {
         });
 
         return () => listener.subscription.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [supabase]);
 
     return (
         <motion.header

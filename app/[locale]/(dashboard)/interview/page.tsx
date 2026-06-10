@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Mic, Send, Pause, Sparkles, BrainCircuit, Activity, ChevronLeft, Image as ImageIcon, CheckCircle } from "lucide-react";
+import { Mic, Sparkles, Activity, ChevronLeft, Image as ImageIcon, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 
