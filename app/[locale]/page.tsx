@@ -8,7 +8,8 @@ import {
   Globe, ShieldCheck, ArrowRight, Cpu, Shield, Clock, X
 } from "lucide-react";
 import { motion, useScroll, useTransform, type Transition } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import { createBrowserClient } from "@supabase/ssr";
 
 // New Components
 import { ATSScore } from "@/components/landing/ATSScore";
@@ -24,6 +25,19 @@ export default function Home() {
   const tPricing = useTranslations("Pricing");
   const tFooter = useTranslations("Footer");
   const targetRef = useRef(null);
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end start"],
@@ -91,7 +105,7 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             className="flex flex-col gap-6 sm:flex-row w-full sm:w-auto items-center"
           >
-            <Link href="/register" className="w-full sm:w-auto">
+            <Link href={isLoggedIn ? "/dashboard" : "/register"} className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto h-16 md:h-20 rounded-[2rem] px-8 md:px-14 text-lg md:text-xl font-black gradient-brand text-white shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1.5 transition-all group active:scale-95">
                 {t("ctaPrimary")}
                 <ChevronRight className="ml-3 h-7 w-7 group-hover:translate-x-1 transition-transform" />
@@ -316,7 +330,7 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Link href="/register" className="w-full">
+              <Link href={isLoggedIn ? "/pricing" : "/register"} className="w-full">
                 <Button className="w-full h-16 rounded-[1.5rem] text-xl font-black bg-white text-blue-700 hover:bg-blue-50 border-0 shadow-2xl">
                    {tPricing("upgrade")}
                 </Button>

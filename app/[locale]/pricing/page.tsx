@@ -24,14 +24,20 @@ export default function PricingPage() {
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         );
-        supabase.auth.getUser().then(({ data }) => {
-            setIsLoggedIn(!!data.user);
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setIsLoggedIn(!!session);
         });
     }, []);
 
     const handleSubscribe = async () => {
+        const supabase = createBrowserClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+        const { data: { session } } = await supabase.auth.getSession();
+
         // If not logged in, redirect to login page
-        if (!isLoggedIn) {
+        if (!session) {
             toast.error(p("loginRequired"));
             router.push("/login");
             return;
