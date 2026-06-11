@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     FileText, Briefcase, PlusCircle, FileSearch, ArrowRight, Sparkles,
-    TrendingUp, Lightbulb, Target, Clock, ChevronRight, PenTool
+    TrendingUp, Lightbulb, Target, Clock, ChevronRight
 } from "lucide-react";
 
 interface QuotaData {
@@ -17,22 +17,56 @@ interface QuotaData {
     cover_letter_count: number;
 }
 
+interface DashboardCV {
+    id: string;
+    title: string;
+    updated_at: string;
+}
+
+interface DashboardJob {
+    id: string;
+    status: string;
+}
+
 export default function DashboardPage() {
     const t = useTranslations("Dashboard");
     const [quota, setQuota] = useState<QuotaData | null>(null);
     const [userName, setUserName] = useState("Kullanıcı");
     const [plan, setPlan] = useState("free");
+    
+    // Dynamic data states
+    const [cvs, setCvs] = useState<DashboardCV[]>([]);
+    const [jobs, setJobs] = useState<DashboardJob[]>([]);
+    const [profileStrength, setProfileStrength] = useState(25);
 
     useEffect(() => {
         Promise.all([
             fetch("/api/profile").then(r => r.ok ? r.json() : null),
             fetch("/api/quota").then(r => r.ok ? r.json() : null),
-        ]).then(([profileData, quotaData]) => {
+            fetch("/api/cv").then(r => r.ok ? r.json() : []),
+            fetch("/api/jobs/tracker").then(r => r.ok ? r.json() : []),
+        ]).then(([profileData, quotaData, cvData, jobsData]) => {
+            let strength = 25; // Base strength
+            
             if (profileData) {
                 setUserName(profileData.full_name || profileData.email?.split("@")[0] || "Kullanıcı");
                 setPlan(profileData.plan || "free");
+                if (profileData.full_name) strength += 15;
+                if (profileData.phone) strength += 10;
             }
             if (quotaData) setQuota(quotaData);
+            
+            if (Array.isArray(cvData)) {
+                setCvs(cvData);
+                if (cvData.length > 0) strength += 25;
+            }
+            
+            if (Array.isArray(jobsData)) {
+                setJobs(jobsData);
+                if (jobsData.length > 0) strength += 25;
+            }
+            
+            setProfileStrength(Math.min(100, strength));
         }).catch(() => {});
     }, []);
 
@@ -54,17 +88,21 @@ export default function DashboardPage() {
         { href: "/jobs/discover", label: t("quickAccess.find"), icon: FileSearch },
     ];
 
-    // Mock data for new features
-    const recentDocuments = [
-        { id: 1, title: "Yazılım Uzmanı CV", date: "2 saat önce", type: "cv", icon: FileText, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20" },
-        { id: 2, title: "Frontend Developer (Tech)", date: "Dün", type: "cv", icon: PenTool, color: "text-indigo-500", bg: "bg-indigo-50 dark:bg-indigo-900/20" },
-        { id: 3, title: "Google Başvuru Mektubu", date: "3 gün önce", type: "letter", icon: FileText, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-900/20" },
-    ];
+    // Dynamic data for new features
+    const recentDocuments = cvs.slice(0, 3).map((cv, idx) => ({
+        id: cv.id, 
+        title: cv.title || "İsimsiz CV", 
+        date: new Date(cv.updated_at).toLocaleDateString(), 
+        type: "cv", 
+        icon: FileText, 
+        color: idx === 0 ? "text-blue-500" : idx === 1 ? "text-indigo-500" : "text-purple-500", 
+        bg: idx === 0 ? "bg-blue-50 dark:bg-blue-900/20" : idx === 1 ? "bg-indigo-50 dark:bg-indigo-900/20" : "bg-purple-50 dark:bg-purple-900/20" 
+    }));
 
     const pipelineStats = [
-        { label: "Başvurular", value: 12, color: "bg-blue-500" },
-        { label: "Görüşmeler", value: 3, color: "bg-amber-500" },
-        { label: "Teklifler", value: 1, color: "bg-green-500" },
+        { label: "Başvurular", value: jobs.filter(j => j.status === 'Applied').length || 0, color: "bg-blue-500" },
+        { label: "Görüşmeler", value: jobs.filter(j => j.status === 'Interviewing').length || 0, color: "bg-amber-500" },
+        { label: "Teklifler", value: jobs.filter(j => j.status === 'Offer').length || 0, color: "bg-green-500" },
     ];
 
     return (
@@ -125,20 +163,29 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 sm:grid-cols-3">
-                            {recentDocuments.map(doc => (
-                                <div key={doc.id} className="group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-4 transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 cursor-pointer">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className={`p-2 rounded-lg ${doc.bg}`}>
-                                            <doc.icon className={`h-5 w-5 ${doc.color}`} />
+                            {recentDocuments.length > 0 ? recentDocuments.map(doc => (
+                                <Link key={doc.id} href={`/cv/${doc.id}/edit`}>
+                                    <div className="group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-4 transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 cursor-pointer h-full">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <div className={`p-2 rounded-lg ${doc.bg}`}>
+                                                <doc.icon className={`h-5 w-5 ${doc.color}`} />
+                                            </div>
+                                            <div className="text-xs font-medium text-muted-foreground">{doc.date}</div>
                                         </div>
-                                        <div className="text-xs font-medium text-muted-foreground">{doc.date}</div>
+                                        <h3 className="font-semibold text-zinc-900 dark:text-white truncate pr-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doc.title}</h3>
+                                        <div className="mt-4 flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
+                                            Düzenle <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                                        </div>
                                     </div>
-                                    <h3 className="font-semibold text-zinc-900 dark:text-white truncate pr-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doc.title}</h3>
-                                    <div className="mt-4 flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-                                        Düzenle <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                                    </div>
+                                </Link>
+                            )) : (
+                                <div className="col-span-3 text-center py-6 text-muted-foreground bg-zinc-50 dark:bg-zinc-900/20 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800">
+                                    <p className="text-sm">Henüz bir CV oluşturmadınız.</p>
+                                    <Link href="/cv/new">
+                                        <Button variant="link" className="text-blue-600 mt-1">Hemen Oluştur</Button>
+                                    </Link>
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -152,20 +199,24 @@ export default function DashboardPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center text-center pt-2 pb-6">
-                        {/* Circular Progress Mockup */}
+                        {/* Circular Progress Dynamic */}
                         <div className="relative flex items-center justify-center w-32 h-32 mb-4">
                             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                                 <path className="text-indigo-200 dark:text-indigo-900/50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
-                                <path className="text-indigo-600 dark:text-indigo-400 drop-shadow-md" strokeDasharray="85, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+                                <path className="text-indigo-600 dark:text-indigo-400 drop-shadow-md transition-all duration-1000 ease-out" strokeDasharray={`${profileStrength}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-3xl font-black text-indigo-950 dark:text-indigo-50">85<span className="text-lg text-indigo-700/60 dark:text-indigo-300/60">%</span></span>
+                                <span className="text-3xl font-black text-indigo-950 dark:text-indigo-50">{profileStrength}<span className="text-lg text-indigo-700/60 dark:text-indigo-300/60">%</span></span>
                             </div>
                         </div>
-                        <p className="text-sm text-indigo-800/80 dark:text-indigo-200/80 font-medium px-2">Harika gidiyorsunuz! Özgeçmişiniz işverenlerin dikkatini çekecek düzeyde.</p>
-                        <Button variant="outline" size="sm" className="mt-4 bg-white/50 dark:bg-zinc-900/50 border-indigo-200 dark:border-indigo-800 hover:bg-white dark:hover:bg-zinc-900">
-                            Eksikleri Tamamla
-                        </Button>
+                        <p className="text-sm text-indigo-800/80 dark:text-indigo-200/80 font-medium px-2">
+                            {profileStrength >= 80 ? "Harika gidiyorsunuz! Özgeçmişiniz işverenlerin dikkatini çekecek düzeyde." : "Profilinizi güçlendirmek için daha fazla detay ekleyin."}
+                        </p>
+                        <Link href="/profile">
+                            <Button variant="outline" size="sm" className="mt-4 bg-white/50 dark:bg-zinc-900/50 border-indigo-200 dark:border-indigo-800 hover:bg-white dark:hover:bg-zinc-900">
+                                Profilimi Güncelle
+                            </Button>
+                        </Link>
                     </CardContent>
                 </Card>
             </div>
