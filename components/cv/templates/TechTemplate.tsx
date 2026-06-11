@@ -152,10 +152,10 @@ export const TechTemplate = ({ data }: { data: CVData }) => (
             )}
 
             {/* Projects */}
-            {data.projects?.length > 0 && (
+            {(data.projects?.length ?? 0) > 0 && (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Projects.git</Text>
-                    {data.projects.map((proj) => (
+                    {data.projects!.map((proj) => (
                         <View key={proj.id} style={styles.projectItem}>
                             <Text style={styles.projectTitle}>{proj.name}</Text>
                             {proj.url && <Text style={styles.projectUrl}>{proj.url}</Text>}
@@ -194,10 +194,10 @@ export const TechTemplate = ({ data }: { data: CVData }) => (
             )}
 
             {/* Certificates */}
-            {data.certificates && data.certificates.length > 0 && (
+            {(data.certificates?.length ?? 0) > 0 && (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Certificates.txt</Text>
-                    {data.certificates.map((cert) => (
+                    {data.certificates!.map((cert) => (
                         <View key={cert.id} style={styles.item}>
                             <View style={styles.itemHeader}>
                                 <Text style={styles.itemName}>{cert.name}</Text>

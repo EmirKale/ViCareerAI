@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Check, Sparkles, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
