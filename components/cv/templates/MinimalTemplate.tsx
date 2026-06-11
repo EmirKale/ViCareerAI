@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     page: {
         flexDirection: 'column',
         backgroundColor: '#ffffff',
-        padding: 50,
+        padding: 40,
         fontFamily: 'Roboto',
     },
     header: {
@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
         color: '#111827',
         marginBottom: 8,
         letterSpacing: 2,
+        textAlign: 'left',
     },
     contactRow: {
         flexDirection: 'row',
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
         borderBottom: '0.5pt solid #E5E7EB',
         paddingBottom: 4,
         marginBottom: 12,
+        textAlign: 'left',
     },
     text: {
         fontSize: 10,
@@ -81,8 +83,10 @@ const styles = StyleSheet.create({
         fontSize: 9,
         color: '#4B5563',
         backgroundColor: '#F3F4F6',
-        padding: '4px 8px',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
         borderRadius: 4,
+        overflow: 'hidden',
     }
 });
 
