@@ -23,6 +23,22 @@ import AIEnhanceModal from "@/components/cv/AIEnhanceModal";
 export default function CVEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
     const router = useRouter();
+
+    const getStoredData = (key: string) => {
+        if (typeof window === 'undefined') return null;
+        try { return localStorage.getItem(key); } catch { return null; }
+    };
+    const setStoredData = (key: string, value: string) => {
+        if (typeof window !== 'undefined') {
+            try { localStorage.setItem(key, value); } catch {}
+        }
+    };
+    const removeStoredData = (key: string) => {
+        if (typeof window !== 'undefined') {
+            try { localStorage.removeItem(key); } catch {}
+        }
+    };
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const projFileRef = useRef<HTMLInputElement>(null);
     const certFileRef = useRef<HTMLInputElement>(null);
@@ -66,8 +82,8 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     useEffect(() => {
         if (id === "new") {
-            const localData = localStorage.getItem(`cvData_${id}`);
-            const localTemplate = localStorage.getItem(`selectedTemplate_${id}`);
+            const localData = getStoredData(`cvData_${id}`);
+            const localTemplate = getStoredData(`selectedTemplate_${id}`);
             if (localData) {
                 try { setCvData(JSON.parse(localData)); } catch {}
             }
@@ -91,34 +107,34 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                     
                 if (error) throw error;
                 if (data && data.data) {
-                    const localData = localStorage.getItem(`cvData_${id}`);
-                    const localTemplate = localStorage.getItem(`selectedTemplate_${id}`);
+                    const localData = getStoredData(`cvData_${id}`);
+                    const localTemplate = getStoredData(`selectedTemplate_${id}`);
                     
                     if (localData) {
                         try {
                             setCvData(JSON.parse(localData));
                         } catch {
                             // JSON parse error, fallback to db
-                            setCvData({
-                                personal: data.data.personal || cvData.personal,
+                            setCvData(prev => ({
+                                personal: data.data.personal || prev.personal,
                                 summary: data.data.summary || "",
                                 experience: data.data.experience || [],
                                 education: data.data.education || [],
                                 skills: data.data.skills || [],
                                 projects: data.data.projects || [],
                                 certificates: data.data.certificates || [],
-                            });
+                            }));
                         }
                     } else {
-                        setCvData({
-                            personal: data.data.personal || cvData.personal,
+                        setCvData(prev => ({
+                            personal: data.data.personal || prev.personal,
                             summary: data.data.summary || "",
                             experience: data.data.experience || [],
                             education: data.data.education || [],
                             skills: data.data.skills || [],
                             projects: data.data.projects || [],
                             certificates: data.data.certificates || [],
-                        });
+                        }));
                     }
 
                     if (localTemplate) {
@@ -135,12 +151,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             }
         };
         fetchCV();
-    }, [id, cvData.personal]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     useEffect(() => {
         if (!isLoadingData) {
-            localStorage.setItem(`cvData_${id}`, JSON.stringify(cvData));
-            localStorage.setItem(`selectedTemplate_${id}`, template);
+            setStoredData(`cvData_${id}`, JSON.stringify(cvData));
+            setStoredData(`selectedTemplate_${id}`, template);
         }
     }, [cvData, template, id, isLoadingData]);
 
@@ -395,8 +412,8 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 }
             } else {
                 toast.success("CV başarıyla kaydedildi!");
-                localStorage.removeItem(`cvData_${id}`);
-                localStorage.removeItem(`selectedTemplate_${id}`);
+                removeStoredData(`cvData_${id}`);
+                removeStoredData(`selectedTemplate_${id}`);
                 if (id === "new" && result.id) {
                     // router.replace(`/cv/${result.id}/edit`);
                 }
