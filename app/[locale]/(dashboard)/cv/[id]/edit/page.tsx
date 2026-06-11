@@ -1119,7 +1119,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 </div>
 
                 {/* Render actual React PDF viewer */}
-                <div className="flex-1 w-full h-full min-h-0 overflow-hidden rounded-lg shadow-sm">
+                <div className="flex-1 w-full h-full min-h-0 overflow-y-auto rounded-lg shadow-sm">
                     <CVPreview data={cvData} template={template} />
                 </div>
             </div>

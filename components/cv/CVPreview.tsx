@@ -52,14 +52,14 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                             ClassicTemplate;
 
     return (
-        <div className="h-full w-full rounded-lg overflow-hidden border shadow-sm bg-zinc-50 relative">
+        <div className="w-full rounded-lg overflow-hidden border shadow-sm bg-zinc-50 relative">
             {/* Show a subtle loading indicator when data is out of sync */}
             {data !== debouncedData && (
                 <div className="absolute top-2 right-2 z-10 bg-white/80 p-1.5 rounded-full shadow-sm">
                     <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
                 </div>
             )}
-            <PDFViewer key={pdfKey} style={{ width: '100%', height: '100%', border: 'none' }} showToolbar={false}>
+            <PDFViewer key={pdfKey} style={{ width: '100%', height: 'auto', aspectRatio: '210 / 297', border: 'none' }} showToolbar={false}>
                 <TemplateComponent data={debouncedData} />
             </PDFViewer>
         </div>
