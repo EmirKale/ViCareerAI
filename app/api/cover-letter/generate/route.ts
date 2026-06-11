@@ -93,7 +93,7 @@ Mektup ${selectedLanguage} dilinde ve ${selectedTone} bir üslupla yazılmalı.
 Sadece mektubu yaz, başlık veya açıklama ekleme.`;
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userPrompt },
