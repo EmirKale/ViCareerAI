@@ -93,6 +93,41 @@ export const ModernTemplate = ({ data }: { data: CVData }) => (
                         ))}
                     </View>
                 )}
+
+                {data.projects && data.projects.length > 0 && (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>PROJELER</Text>
+                        {data.projects.map(proj => (
+                            <View key={proj.id} style={styles.itemBlock}>
+                                <View style={styles.itemHeader}>
+                                    <View>
+                                        <Text style={styles.itemTitle}>{proj.name}</Text>
+                                        {proj.technologies && <Text style={styles.itemSubtitle}>{proj.technologies}</Text>}
+                                    </View>
+                                    {proj.url && <Text style={styles.itemDate}>{proj.url}</Text>}
+                                </View>
+                                {proj.description && <Text style={styles.itemDesc}>{proj.description}</Text>}
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                {data.certificates && data.certificates.length > 0 && (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>SERTİFİKALAR</Text>
+                        {data.certificates.map(cert => (
+                            <View key={cert.id} style={styles.itemBlock}>
+                                <View style={styles.itemHeader}>
+                                    <View>
+                                        <Text style={styles.itemTitle}>{cert.name}</Text>
+                                        <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                                    </View>
+                                    <Text style={styles.itemDate}>{cert.date}</Text>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                )}
             </View>
         </Page>
     </Document>

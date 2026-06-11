@@ -38,6 +38,14 @@ export interface ProjectItem {
     technologies?: string;
 }
 
+export interface CertificateItem {
+    id: string;
+    name: string;
+    issuer: string;
+    date: string;
+    url?: string;
+}
+
 export interface CVData {
     personal: {
         fullName: string;
@@ -53,7 +61,8 @@ export interface CVData {
     experience: ExperienceItem[];
     education: EducationItem[];
     skills: SkillItem[];
-    projects: ProjectItem[];
+    projects?: ProjectItem[];
+    certificates?: CertificateItem[];
 }
 
 // --------------------------------
@@ -166,6 +175,43 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         borderRadius: 4,
     },
+    projItem: {
+        marginBottom: 8,
+    },
+    projTitle: {
+        fontSize: 10,
+        fontFamily: 'Helvetica-Bold',
+        color: '#111827',
+    },
+    projUrl: {
+        fontSize: 8.5,
+        color: '#2563EB',
+        marginTop: 1,
+    },
+    projDesc: {
+        fontSize: 9,
+        color: '#4B5563',
+        lineHeight: 1.5,
+        marginTop: 2,
+    },
+    certItem: {
+        marginBottom: 6,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    certName: {
+        fontSize: 9.5,
+        fontFamily: 'Helvetica-Bold',
+        color: '#111827',
+    },
+    certIssuer: {
+        fontSize: 9.5,
+        color: '#4B5563',
+    },
+    certDate: {
+        fontSize: 8.5,
+        color: '#9CA3AF',
+    },
 });
 
 // --------------------------------
@@ -244,6 +290,37 @@ export const ClassicTemplate = ({ data }: { data: CVData }) => (
                             <Text key={skill.id} style={styles.skillBadge}>{skill.name}</Text>
                         ))}
                     </View>
+                </View>
+            )}
+
+            {/* Projects */}
+            {data.projects && data.projects.length > 0 && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Projeler</Text>
+                    {data.projects.map((proj) => (
+                        <View key={proj.id} style={styles.projItem}>
+                            <Text style={styles.projTitle}>
+                                {proj.name} {proj.technologies ? ` | ${proj.technologies}` : ''}
+                            </Text>
+                            {proj.url && <Text style={styles.projUrl}>{proj.url}</Text>}
+                            {proj.description && <Text style={styles.projDesc}>{proj.description}</Text>}
+                        </View>
+                    ))}
+                </View>
+            )}
+
+            {/* Certificates */}
+            {data.certificates && data.certificates.length > 0 && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Sertifikalar</Text>
+                    {data.certificates.map((cert) => (
+                        <View key={cert.id} style={styles.certItem}>
+                            <Text style={styles.certName}>
+                                {cert.name} — <Text style={styles.certIssuer}>{cert.issuer}</Text>
+                            </Text>
+                            <Text style={styles.certDate}>{cert.date}</Text>
+                        </View>
+                    ))}
                 </View>
             )}
 

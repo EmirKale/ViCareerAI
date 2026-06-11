@@ -64,7 +64,8 @@ export default function ProfilePage() {
             if (res.ok) {
                 toast.success(t("resetEmailSent"));
             } else {
-                toast.error(t("resetEmailFailed"));
+                const data = await res.json().catch(() => ({}));
+                toast.error(data.error || t("resetEmailFailed"));
             }
         } catch {
             toast.error(t("errorOccurred"));

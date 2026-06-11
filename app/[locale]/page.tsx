@@ -304,11 +304,11 @@ export default function Home() {
               </div>
               <ul className="space-y-5 mb-14 flex-1 w-full">
                 {[
-                  tPricing("p1"),
-                  tPricing("p2"),
-                  tPricing("p3"),
-                  tPricing("p4"),
-                  tPricing("p5")
+                  tPricing("f_p_1"),
+                  tPricing("f_p_2"),
+                  tPricing("f_p_3"),
+                  tPricing("f_p_4"),
+                  tPricing("f_p_5")
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-4 text-white font-semibold pb-4 border-b border-white/10 last:border-0 border-dashed">
                     <CheckCircle2 className="h-6 w-6 text-white shrink-0" />

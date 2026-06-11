@@ -4,8 +4,13 @@ import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Plus, Building2, Calendar, GripVertical } from "lucide-react";
+import { Sparkles, Plus, Building2, Calendar, GripVertical, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 import { useTranslations } from "next-intl";
 
@@ -35,6 +40,25 @@ export default function JobTrackerPage() {
     const t = useTranslations("Tracker");
     const [isMounted, setIsMounted] = useState(false);
     const [jobs, setJobs] = useState<JobApplication[]>([]);
+    
+    // Modal states
+    const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+    const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+    
+    // Loading states
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Form states
+    const [manualForm, setManualForm] = useState({
+        company: "",
+        position: "",
+        location: "",
+        appliedDate: new Date().toISOString().split("T")[0],
+        notes: "",
+    });
+    const [aiForm, setAiForm] = useState({
+        urlOrText: "",
+    });
 
     useEffect(() => {
         setIsMounted(true);
@@ -48,6 +72,80 @@ export default function JobTrackerPage() {
             if (Array.isArray(data)) setJobs(data);
         } catch {
             // Error handling
+        }
+    };
+
+    const handleManualSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!manualForm.position || !manualForm.company) {
+            toast.error("Şirket adı ve Pozisyon alanları zorunludur.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const res = await fetch("/api/jobs/tracker", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    type: "manual",
+                    ...manualForm
+                })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || "İlan kaydedilemedi.");
+            }
+
+            toast.success("İş ilanı başarıyla kaydedildi!");
+            setIsManualModalOpen(false);
+            setManualForm({
+                company: "",
+                position: "",
+                location: "",
+                appliedDate: new Date().toISOString().split("T")[0],
+                notes: "",
+            });
+            fetchJobs();
+        } catch (error: any) {
+            toast.error(error.message || "Bir hata oluştu.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleAiSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!aiForm.urlOrText || aiForm.urlOrText.trim().length < 5) {
+            toast.error("Lütfen geçerli bir iş ilanı metni veya URL girin.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const res = await fetch("/api/jobs/tracker", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    type: "ai",
+                    urlOrText: aiForm.urlOrText
+                })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || "AI analizi başarısız oldu.");
+            }
+
+            toast.success("İlan AI tarafından başarıyla analiz edildi ve kaydedildi!");
+            setIsAiModalOpen(false);
+            setAiForm({ urlOrText: "" });
+            fetchJobs();
+        } catch (error: any) {
+            toast.error(error.message || "Bir hata oluştu.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -89,14 +187,132 @@ export default function JobTrackerPage() {
                     <p className="text-muted-foreground mt-1">{t("desc")}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-900 dark:text-purple-400">
+                    <Button 
+                        onClick={() => setIsAiModalOpen(true)}
+                        variant="outline" 
+                        className="border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-900 dark:text-purple-400"
+                    >
                         <Sparkles className="mr-2 h-4 w-4" /> {t("aiAdd")}
                     </Button>
-                    <Button className="gradient-brand text-white shadow-md shadow-blue-500/20">
+                    <Button 
+                        onClick={() => setIsManualModalOpen(true)}
+                        className="gradient-brand text-white shadow-md shadow-blue-500/20"
+                    >
                         <Plus className="mr-2 h-4 w-4" /> {t("manualAdd")}
                     </Button>
                 </div>
             </div>
+
+            {/* AI Add Modal */}
+            <Dialog open={isAiModalOpen} onOpenChange={setIsAiModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+                            <Sparkles className="h-5 w-5 animate-pulse" />
+                            AI ile İlan Ekle
+                        </DialogTitle>
+                        <DialogDescription>
+                            İş ilanının URL bağlantısını veya ilan detay metnini yapıştırın. Yapay zeka şirket, pozisyon ve konum bilgilerini otomatik çıkarıp panonuza ekleyecektir.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleAiSubmit} className="space-y-4 py-2">
+                        <div className="space-y-2">
+                            <Label htmlFor="urlOrText">İlan URL veya Detay Metni</Label>
+                            <Textarea
+                                id="urlOrText"
+                                value={aiForm.urlOrText}
+                                onChange={(e) => setAiForm({ ...aiForm, urlOrText: e.target.value })}
+                                placeholder="Örn: linkedin.com/jobs/view/... veya ilan açıklaması..."
+                                rows={6}
+                                required
+                            />
+                        </div>
+                        <DialogFooter className="pt-2">
+                            <Button type="button" variant="ghost" onClick={() => setIsAiModalOpen(false)}>İptal</Button>
+                            <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white">
+                                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                                AI ile Analiz Et & Ekle
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Manual Add Modal */}
+            <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Plus className="h-5 w-5 text-blue-600" />
+                            Manuel İlan Ekle
+                        </DialogTitle>
+                        <DialogDescription>
+                            Başvurmak istediğiniz veya takip ettiğiniz iş ilanının detaylarını girin.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleManualSubmit} className="space-y-4 py-2">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="company">Şirket Adı *</Label>
+                                <Input
+                                    id="company"
+                                    value={manualForm.company}
+                                    onChange={(e) => setManualForm({ ...manualForm, company: e.target.value })}
+                                    placeholder="Örn: Google"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="position">Pozisyon / Rol *</Label>
+                                <Input
+                                    id="position"
+                                    value={manualForm.position}
+                                    onChange={(e) => setManualForm({ ...manualForm, position: e.target.value })}
+                                    placeholder="Örn: Frontend Developer"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="location">Lokasyon</Label>
+                                <Input
+                                    id="location"
+                                    value={manualForm.location}
+                                    onChange={(e) => setManualForm({ ...manualForm, location: e.target.value })}
+                                    placeholder="Örn: İstanbul / Uzaktan"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="appliedDate">Uygulama Tarihi</Label>
+                                <Input
+                                    id="appliedDate"
+                                    type="date"
+                                    value={manualForm.appliedDate}
+                                    onChange={(e) => setManualForm({ ...manualForm, appliedDate: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="notes">Notlar</Label>
+                            <Textarea
+                                id="notes"
+                                value={manualForm.notes}
+                                onChange={(e) => setManualForm({ ...manualForm, notes: e.target.value })}
+                                placeholder="İlan detayları, mülakat notları veya önemli detaylar..."
+                                rows={3}
+                            />
+                        </div>
+                        <DialogFooter className="pt-2">
+                            <Button type="button" variant="ghost" onClick={() => setIsManualModalOpen(false)}>İptal</Button>
+                            <Button type="submit" disabled={isSubmitting} className="gradient-brand text-white border-0">
+                                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                                İlanı Kaydet
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
             <div className="flex-1 overflow-x-auto pb-4 mt-6">
                 <DragDropContext onDragEnd={onDragEnd}>

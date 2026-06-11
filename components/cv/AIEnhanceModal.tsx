@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,6 +20,15 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
     const [isLoading, setIsLoading] = useState(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [hasRequested, setHasRequested] = useState(false);
+    const [editableText, setEditableText] = useState("");
+
+    const isSummary = sectionType === "Profesyonel Özet" || sectionType === "summary";
+
+    useEffect(() => {
+        if (suggestions.length > 0 && isSummary) {
+            setEditableText(suggestions[0]);
+        }
+    }, [suggestions, isSummary]);
 
     const handleGenerate = async () => {
         if (!initialText || initialText.trim().length < 5) {
@@ -60,6 +70,7 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
         setTimeout(() => {
             setSuggestions([]);
             setHasRequested(false);
+            setEditableText("");
         }, 300);
     };
 
@@ -67,7 +78,6 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
         <Dialog open={isOpen} onOpenChange={(open) => {
             if (!open) {
                 onClose();
-                // We keep state optionally or reset
             }
         }}>
             <DialogContent className="sm:max-w-[600px]">
@@ -78,14 +88,14 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                     </DialogTitle>
                     <DialogDescription>
                         Yazdığınız ham metni yapay zeka ile daha kurumsal ve dikkat çekici hale getirin.
-                        {targetPosition && ` Hedef Pozisyon: &quot;${targetPosition}&quot;`}
+                        {targetPosition && ` Hedef Pozisyon: "${targetPosition}"`}
                     </DialogDescription>
                 </DialogHeader>
 
                 {!hasRequested ? (
                     <div className="py-6 flex flex-col items-center justify-center space-y-4">
                         <div className="bg-muted p-4 rounded-lg w-full text-sm italic border text-muted-foreground whitespace-pre-wrap">
-                            &quot;{initialText || 'Metin girilmemiş.'}&quot;
+                            "{initialText || 'Metin girilmemiş.'}"
                         </div>
                         <Button
                             onClick={handleGenerate}
@@ -99,6 +109,26 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                     <div className="py-12 flex flex-col items-center justify-center space-y-4">
                         <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
                         <p className="text-sm text-muted-foreground">En iyi ifadeler aranıyor...</p>
+                    </div>
+                ) : isSummary ? (
+                    <div className="py-4 space-y-4">
+                        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                            Önerilen Metin (Düzenleyebilirsiniz):
+                        </label>
+                        <Textarea
+                            value={editableText}
+                            onChange={(e) => setEditableText(e.target.value)}
+                            rows={8}
+                            className="resize-none w-full"
+                        />
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                className="bg-purple-600 hover:bg-purple-700 text-white"
+                                onClick={() => handleApply(editableText)}
+                            >
+                                <Check className="mr-2 h-4 w-4" /> Seç ve Uygula
+                            </Button>
+                        </div>
                     </div>
                 ) : (
                     <div className="h-[400px] w-full rounded-md border p-4 mt-4 overflow-y-auto">

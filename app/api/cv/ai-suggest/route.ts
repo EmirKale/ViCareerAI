@@ -67,6 +67,8 @@ export async function POST(req: Request) {
             }
         }
 
+        const isSummary = sectionType === "Profesyonel Özet" || sectionType === "summary";
+
         if (!openaiApiKey) {
             // Mock response if OPENAI_API_KEY is not set (for developmental testing)
             console.warn("OPENAI_API_KEY is not set. Returning mock data.");
@@ -80,6 +82,14 @@ export async function POST(req: Request) {
                 }
             }
 
+            if (isSummary) {
+                return NextResponse.json({
+                    suggestions: [
+                        `Yapay zeka tarafından optimize edilmiş, profesyonel tek paragraf özet metni. Adayın ${targetPosition || 'sektör'} alanındaki yetkinliklerini vurgular.`
+                    ]
+                });
+            }
+
             return NextResponse.json({
                 suggestions: [
                     `${targetPosition || 'Uzman'} rolüne uygun şekilde yeniden yazıldı: ${rawText} (Versiyon 1)`,
@@ -91,7 +101,9 @@ export async function POST(req: Request) {
 
         const openai = new OpenAI({ apiKey: openaiApiKey });
 
-        const systemPrompt = "Sen profesyonel bir CV danışmanısın. Kullanıcının girdiği ham metni daha profesyonel, IK tarafında dikkat çekici ve etkili bir dille yeniden yazacaksın. Çıktı olarak SADECE 3 farklı alternatif içeren bir JSON dizisi vereceksin. Her bir dizi elemanı string olacak. Örnek: [\"alternatif 1\", \"alternatif 2\", \"alternatif 3\"]";
+        const systemPrompt = isSummary 
+            ? "Sen profesyonel bir CV danışmanısın. Kullanıcının girdiği ham metni daha profesyonel, IK tarafında dikkat çekici ve etkili bir tek paragraf olarak yeniden yazacaksın. Çıktı olarak SADECE tek bir alternatif içeren bir JSON dizisi vereceksin. Dizi elemanı string olacak. Örnek: [\"tek bir paragraf\"]"
+            : "Sen profesyonel bir CV danışmanısın. Kullanıcının girdiği ham metni daha profesyonel, IK tarafında dikkat çekici ve etkili bir dille yeniden yazacaksın. Çıktı olarak SADECE 3 farklı alternatif içeren bir JSON dizisi vereceksin. Her bir dizi elemanı string olacak. Örnek: [\"alternatif 1\", \"alternatif 2\", \"alternatif 3\"]";
 
         let userPrompt = `Lütfen şu metni profesyonelleştir: "${rawText}"\nBölüm: ${sectionType || 'Bilinmiyor'}\n`;
         if (targetPosition) {
@@ -135,7 +147,7 @@ export async function POST(req: Request) {
             }
         }
 
-        return NextResponse.json({ suggestions: suggestions.slice(0, 3) });
+        return NextResponse.json({ suggestions: isSummary ? suggestions.slice(0, 1) : suggestions.slice(0, 3) });
 
     } catch (error) {
         console.error("AI Suggest API Error:", error);

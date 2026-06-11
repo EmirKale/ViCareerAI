@@ -88,6 +88,37 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 </View>
             )}
+
+            {data.projects && data.projects.length > 0 && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>PROJELER</Text>
+                    {data.projects.map(proj => (
+                        <View key={proj.id} style={styles.itemBlock}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemTitle}>
+                                    {proj.name} {proj.technologies ? `— ${proj.technologies}` : ''}
+                                </Text>
+                                {proj.url && <Text style={styles.itemDate}>{proj.url}</Text>}
+                            </View>
+                            {proj.description && <Text style={styles.itemDesc}>{proj.description}</Text>}
+                        </View>
+                    ))}
+                </View>
+            )}
+
+            {data.certificates && data.certificates.length > 0 && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>SERTİFİKALAR</Text>
+                    {data.certificates.map(cert => (
+                        <View key={cert.id} style={styles.itemBlock}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemTitle}>{cert.name} — <Text style={styles.itemCompany}>{cert.issuer}</Text></Text>
+                                <Text style={styles.itemDate}>{cert.date}</Text>
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
         </Page>
     </Document>
 );

@@ -192,6 +192,22 @@ export const TechTemplate = ({ data }: { data: CVData }) => (
                     ))}
                 </View>
             )}
+
+            {/* Certificates */}
+            {data.certificates && data.certificates.length > 0 && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Certificates.txt</Text>
+                    {data.certificates.map((cert) => (
+                        <View key={cert.id} style={styles.item}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemName}>{cert.name}</Text>
+                                <Text style={styles.itemDate}>{cert.date}</Text>
+                            </View>
+                            <Text style={styles.itemSub}>{cert.issuer}</Text>
+                        </View>
+                    ))}
+                </View>
+            )}
         </Page>
     </Document>
 );

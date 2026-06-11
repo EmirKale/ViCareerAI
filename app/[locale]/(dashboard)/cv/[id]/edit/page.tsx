@@ -52,6 +52,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
         education: [],
         skills: [],
         projects: [],
+        certificates: [],
     });
 
     const handlePersonalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +134,56 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
         setCvData({
             ...cvData,
             skills: cvData.skills.filter(s => s.id !== id)
+        });
+    };
+
+    // --- PROJECT HANDLERS ---
+    const handleAddProject = () => {
+        setCvData({
+            ...cvData,
+            projects: [
+                ...(cvData.projects || []),
+                { id: Date.now().toString(), name: "", description: "", url: "", technologies: "" }
+            ]
+        });
+    };
+
+    const handleUpdateProject = (id: string, field: string, value: string) => {
+        setCvData({
+            ...cvData,
+            projects: (cvData.projects || []).map(p => p.id === id ? { ...p, [field]: value } : p)
+        });
+    };
+
+    const handleDeleteProject = (id: string) => {
+        setCvData({
+            ...cvData,
+            projects: (cvData.projects || []).filter(p => p.id !== id)
+        });
+    };
+
+    // --- CERTIFICATE HANDLERS ---
+    const handleAddCertificate = () => {
+        setCvData({
+            ...cvData,
+            certificates: [
+                ...(cvData.certificates || []),
+                { id: Date.now().toString(), name: "", issuer: "", date: "", url: "" }
+            ]
+        });
+    };
+
+    const handleUpdateCertificate = (id: string, field: string, value: string) => {
+        setCvData({
+            ...cvData,
+            certificates: (cvData.certificates || []).map(c => c.id === id ? { ...c, [field]: value } : c)
+        });
+    };
+
+    const handleDeleteCertificate = (id: string) => {
+        setCvData({
+            ...cvData,
+            certificates: (cvData.certificates || []).filter(c => c.id !== id)
         });
     };
 
@@ -546,12 +597,116 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                         </div>
                     )}
 
-                    {/* Temp Placeholder for others */}
-                    {["projects", "certificates"].includes(activeTab) && (
+                    {/* Projects Tab */}
+                    {activeTab === "projects" && (
                         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="text-center py-20 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
-                                <LayoutDashboard className="mx-auto h-12 w-12 text-muted-foreground opacity-50 mb-4" />
-                                <h3 className="text-lg font-medium text-muted-foreground">Bu bölüm (Sürükle-Bırak) yakında eklenecek...</h3>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h1 className="text-2xl font-bold">Projeler</h1>
+                                    <p className="text-muted-foreground mt-1">Geliştirdiğiniz projeleri ve kullandığınız teknolojileri ekleyin.</p>
+                                </div>
+                                <Button onClick={handleAddProject} size="sm" className="gradient-brand text-white">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Proje Ekle
+                                </Button>
+                            </div>
+
+                            <div className="space-y-4">
+                                {!cvData.projects || cvData.projects.length === 0 ? (
+                                    <div className="text-center py-10 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
+                                        <p className="text-muted-foreground">Henüz proje eklenmedi.</p>
+                                    </div>
+                                ) : (
+                                    cvData.projects.map((proj) => (
+                                        <Card key={proj.id} className="relative mt-2">
+                                            <Button
+                                                variant="ghost" size="icon"
+                                                className="absolute right-2 top-2 text-red-500 opacity-60 hover:opacity-100"
+                                                onClick={() => handleDeleteProject(proj.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                            <CardContent className="p-6 space-y-4 pt-10">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label>Proje Adı</Label>
+                                                        <Input value={proj.name} onChange={(e) => handleUpdateProject(proj.id, 'name', e.target.value)} placeholder="Örn: E-Ticaret Uygulaması" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Kullanılan Teknolojiler</Label>
+                                                        <Input value={proj.technologies || ""} onChange={(e) => handleUpdateProject(proj.id, 'technologies', e.target.value)} placeholder="Örn: React, Node.js, MongoDB" />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Proje URL</Label>
+                                                    <Input value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} placeholder="Örn: github.com/kullanici/proje" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Açıklama</Label>
+                                                    <Textarea rows={3} value={proj.description} onChange={(e) => handleUpdateProject(proj.id, 'description', e.target.value)} placeholder="Projede neler yaptınız?" />
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Certificates Tab */}
+                    {activeTab === "certificates" && (
+                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h1 className="text-2xl font-bold">Sertifikalar</h1>
+                                    <p className="text-muted-foreground mt-1">Kazandığınız sertifikaları ve lisansları ekleyin.</p>
+                                </div>
+                                <Button onClick={handleAddCertificate} size="sm" className="gradient-brand text-white">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Sertifika Ekle
+                                </Button>
+                            </div>
+
+                            <div className="space-y-4">
+                                {!cvData.certificates || cvData.certificates.length === 0 ? (
+                                    <div className="text-center py-10 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
+                                        <p className="text-muted-foreground">Henüz sertifika eklenmedi.</p>
+                                    </div>
+                                ) : (
+                                    cvData.certificates.map((cert) => (
+                                        <Card key={cert.id} className="relative mt-2">
+                                            <Button
+                                                variant="ghost" size="icon"
+                                                className="absolute right-2 top-2 text-red-500 opacity-60 hover:opacity-100"
+                                                onClick={() => handleDeleteCertificate(cert.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                            <CardContent className="p-6 space-y-4 pt-10">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label>Sertifika Adı</Label>
+                                                        <Input value={cert.name} onChange={(e) => handleUpdateCertificate(cert.id, 'name', e.target.value)} placeholder="Örn: AWS Certified Solutions Architect" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Veren Kurum</Label>
+                                                        <Input value={cert.issuer} onChange={(e) => handleUpdateCertificate(cert.id, 'issuer', e.target.value)} placeholder="Örn: Amazon Web Services" />
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label>Tarih</Label>
+                                                        <Input value={cert.date} onChange={(e) => handleUpdateCertificate(cert.id, 'date', e.target.value)} placeholder="Örn: 2023 veya Aralık 2022" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Sertifika URL</Label>
+                                                        <Input value={cert.url || ""} onChange={(e) => handleUpdateCertificate(cert.id, 'url', e.target.value)} placeholder="Örn: credly.com/..." />
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))
+                                )}
                             </div>
                         </div>
                     )}

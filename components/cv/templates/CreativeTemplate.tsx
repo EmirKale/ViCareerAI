@@ -178,6 +178,37 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                         ))}
                     </View>
                 )}
+
+                {data.projects && data.projects.length > 0 && (
+                    <View style={styles.mainSection}>
+                        <Text style={styles.mainTitle}>Projects</Text>
+                        {data.projects.map((proj) => (
+                            <View key={proj.id} style={styles.item}>
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemName}>{proj.name}</Text>
+                                    {proj.url && <Text style={styles.itemDate}>{proj.url}</Text>}
+                                </View>
+                                {proj.technologies && <Text style={styles.itemSub}>{proj.technologies}</Text>}
+                                {proj.description && <Text style={styles.description}>{proj.description}</Text>}
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                {data.certificates && data.certificates.length > 0 && (
+                    <View style={styles.mainSection}>
+                        <Text style={styles.mainTitle}>Certificates</Text>
+                        {data.certificates.map((cert) => (
+                            <View key={cert.id} style={styles.item}>
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemName}>{cert.name}</Text>
+                                    <Text style={styles.itemDate}>{cert.date}</Text>
+                                </View>
+                                <Text style={styles.itemSub}>{cert.issuer}</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
             </View>
         </Page>
     </Document>
