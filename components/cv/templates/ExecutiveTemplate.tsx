@@ -1,207 +1,216 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVData, getSummaryText } from './ClassicTemplate';
 
-// --------------------------------
-// Executive Template Styles
-// --------------------------------
 const styles = StyleSheet.create({
     page: {
         flexDirection: 'column',
         backgroundColor: '#ffffff',
-        padding: 45,
         fontFamily: 'Roboto',
     },
     header: {
-        textAlign: 'center',
-        marginBottom: 25,
-        borderBottom: '2pt solid #0f172a',
-        paddingBottom: 15,
+        backgroundColor: '#111827',
+        padding: 30,
+        alignItems: 'center',
+        color: '#ffffff',
     },
     name: {
-        fontSize: 28,
-        color: '#0f172a',
-        marginBottom: 5,
+        fontSize: 26,
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
+        marginBottom: 8,
+        letterSpacing: 1,
         textTransform: 'uppercase',
-        letterSpacing: 2,
     },
     title: {
-        fontSize: 14,
-        color: '#64748b',
-        fontFamily: 'Roboto',
-        fontStyle: 'italic',
+        fontSize: 12,
+        color: '#9CA3AF',
+        marginBottom: 16,
+        letterSpacing: 2,
+        textTransform: 'uppercase',
     },
     contactRow: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 15,
-        marginTop: 10,
+        gap: 12,
     },
     contactItem: {
         fontSize: 9,
-        color: '#1e293b',
-        fontFamily: 'Roboto',
+        color: '#D1D5DB',
+    },
+    body: {
+        padding: 40,
     },
     section: {
-        marginTop: 20,
+        marginBottom: 20,
     },
     sectionTitle: {
         fontSize: 12,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#0f172a',
+        color: '#111827',
         textTransform: 'uppercase',
-        borderBottom: '1pt solid #cbd5e1',
-        paddingBottom: 3,
+        letterSpacing: 1.5,
+        textAlign: 'center',
         marginBottom: 12,
     },
-    item: {
-        marginBottom: 15,
+    separator: {
+        borderBottom: '0.5pt solid #D1D5DB',
+        width: 50,
+        alignSelf: 'center',
+        marginBottom: 16,
+    },
+    text: {
+        fontSize: 10,
+        color: '#374151',
+        lineHeight: 1.5,
+        textAlign: 'center',
+    },
+    itemBlock: {
+        marginBottom: 16,
     },
     itemHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 3,
+        alignItems: 'flex-start',
+        marginBottom: 4,
     },
-    itemName: {
+    itemTitle: {
         fontSize: 11,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#0f172a',
-    },
-    itemSub: {
-        fontSize: 10,
-        fontFamily: 'Roboto',
-        fontStyle: 'italic',
-        color: '#334155',
+        color: '#111827',
     },
     itemDate: {
         fontSize: 9,
-        fontFamily: 'Roboto',
-        color: '#64748b',
+        color: '#6B7280',
     },
-    description: {
+    itemSub: {
         fontSize: 10,
-        fontFamily: 'Roboto',
-        color: '#334155',
-        lineHeight: 1.5,
-        textAlign: 'justify',
+        color: '#111827',
+        fontStyle: 'italic',
+        marginBottom: 6,
     },
-    skillsContainer: {
+    itemDesc: {
+        fontSize: 10,
+        color: '#374151',
+        lineHeight: 1.4,
+    },
+    skillsRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 20,
+        justifyContent: 'center',
+        gap: 8,
     },
     skillItem: {
         fontSize: 10,
-        fontFamily: 'Roboto',
-        color: '#0f172a',
-        width: '30%',
+        color: '#111827',
     }
 });
 
 export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
     <Document title={`${data.personal?.fullName || 'CV'} - Executive CV`}>
         <Page size="A4" style={styles.page}>
-            {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.name}>{data.personal?.fullName || 'Ad Soyad'}</Text>
                 {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
                 <View style={styles.contactRow}>
                     {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
-                    {data.personal?.phone ? <Text style={styles.contactItem}>{data.personal.phone}</Text> : null}
-                    {data.personal?.location ? <Text style={styles.contactItem}>{data.personal.location}</Text> : null}
-                </View>
-                <View style={styles.contactRow}>
-                    {data.personal?.linkedin ? <Text style={styles.contactItem}>LinkedIn: {data.personal.linkedin}</Text> : null}
-                    {data.personal?.website ? <Text style={styles.contactItem}>{data.personal.website}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.contactItem}>| {data.personal.phone}</Text> : null}
+                    {data.personal?.location ? <Text style={styles.contactItem}>| {data.personal.location}</Text> : null}
+                    {data.personal?.linkedin ? <Text style={styles.contactItem}>| {data.personal.linkedin}</Text> : null}
                 </View>
             </View>
 
-            {/* Summary */}
-            {getSummaryText(data.summary) ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Executive Profile</Text>
-                    <Text style={styles.description}>{getSummaryText(data.summary)}</Text>
-                </View>
-            ) : null}
+            <View style={styles.body}>
+                {getSummaryText(data.summary) ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>YÖNETİCİ ÖZETİ</Text>
+                        <View style={styles.separator} />
+                        <Text style={styles.text}>{getSummaryText(data.summary)}</Text>
+                    </View>
+                ) : null}
 
-            {/* Experience */}
-            {(data.experience?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Professional Experience</Text>
-                    {(data.experience || []).map((exp) => (
-                        <View key={exp.id} style={styles.item}>
-                            <View style={styles.itemHeader}>
-                                <Text style={styles.itemName}>{exp.title || ''}</Text>
-                                <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? 'Present' : (exp.endDate || '')}</Text>
+                {(data.experience?.length ?? 0) > 0 ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>KARİYER GEÇMİŞİ</Text>
+                        <View style={styles.separator} />
+                        {(data.experience || []).map((exp) => (
+                            <View key={exp.id} style={styles.itemBlock}>
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemTitle}>{exp.title || ''}</Text>
+                                    <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Devam" : (exp.endDate || '')}</Text>
+                                </View>
+                                <Text style={styles.itemSub}>{exp.company || ''}{exp.location ? `, ${exp.location}` : ''}</Text>
+                                {exp.description ? <Text style={styles.itemDesc}>{exp.description}</Text> : null}
                             </View>
-                            <Text style={styles.itemSub}>{exp.company || ''}{exp.location ? `, ${exp.location}` : ''}</Text>
-                            {exp.description ? <Text style={styles.description}>{exp.description}</Text> : null}
-                        </View>
-                    ))}
-                </View>
-            ) : null}
-
-            {/* Education */}
-            {(data.education?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Education</Text>
-                    {(data.education || []).map((edu) => (
-                        <View key={edu.id} style={styles.item}>
-                            <View style={styles.itemHeader}>
-                                <Text style={styles.itemName}>{edu.degree || ''}</Text>
-                                <Text style={styles.itemDate}>{edu.startDate || ''} — {edu.endDate || ''}</Text>
-                            </View>
-                            <Text style={styles.itemSub}>{edu.school || ''}{edu.location ? `, ${edu.location}` : ''}</Text>
-                        </View>
-                    ))}
-                </View>
-            ) : null}
-
-            {/* Skills */}
-            {(data.skills?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Core Competencies</Text>
-                    <View style={styles.skillsContainer}>
-                        {(data.skills || []).map((skill) => (
-                            <Text key={skill.id} style={styles.skillItem}>{'•'} {skill.name || ''}</Text>
                         ))}
                     </View>
-                </View>
-            ) : null}
+                ) : null}
 
-            {/* Projects */}
-            {(data.projects?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Projects</Text>
-                    {(data.projects || []).map((proj) => (
-                        <View key={proj.id} style={styles.item}>
-                            <View style={styles.itemHeader}>
-                                <Text style={styles.itemName}>{proj.name || ''}</Text>
-                                {proj.url ? <Text style={styles.itemDate}>{proj.url}</Text> : null}
+                {(data.education?.length ?? 0) > 0 ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>EĞİTİM BİLGİLERİ</Text>
+                        <View style={styles.separator} />
+                        {(data.education || []).map((edu) => (
+                            <View key={edu.id} style={styles.itemBlock}>
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemTitle}>{edu.school || ''}</Text>
+                                    <Text style={styles.itemDate}>{edu.startDate || ''} — {edu.endDate || ''}</Text>
+                                </View>
+                                <Text style={styles.itemSub}>{edu.degree || ''}</Text>
                             </View>
-                            {proj.technologies ? <Text style={styles.itemSub}>{proj.technologies}</Text> : null}
-                            {proj.description ? <Text style={styles.description}>{proj.description}</Text> : null}
-                        </View>
-                    ))}
-                </View>
-            ) : null}
+                        ))}
+                    </View>
+                ) : null}
 
-            {/* Certificates */}
-            {(data.certificates?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Certificates</Text>
-                    {(data.certificates || []).map((cert) => (
-                        <View key={cert.id} style={styles.item}>
-                            <View style={styles.itemHeader}>
-                                <Text style={styles.itemName}>{cert.name || ''}</Text>
-                                <Text style={styles.itemDate}>{cert.date || ''}</Text>
+                {(data.projects?.length ?? 0) > 0 ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>ÖNEMLİ PROJELER</Text>
+                        <View style={styles.separator} />
+                        {(data.projects || []).map((proj) => (
+                            <View key={proj.id} style={styles.itemBlock}>
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemTitle}>{proj.name || ''}</Text>
+                                    {proj.url ? <Text style={styles.itemDate}>{proj.url}</Text> : null}
+                                </View>
+                                {proj.technologies ? <Text style={styles.itemSub}>{proj.technologies}</Text> : null}
+                                {proj.description ? <Text style={styles.itemDesc}>{proj.description}</Text> : null}
                             </View>
-                            <Text style={styles.itemSub}>{cert.issuer || ''}</Text>
+                        ))}
+                    </View>
+                ) : null}
+
+                {(data.certificates?.length ?? 0) > 0 ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>LİSANS & SERTİFİKALAR</Text>
+                        <View style={styles.separator} />
+                        {(data.certificates || []).map((cert) => (
+                            <View key={cert.id} style={styles.itemBlock}>
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemTitle}>{cert.name || ''}</Text>
+                                    <Text style={styles.itemDate}>{cert.date || ''}</Text>
+                                </View>
+                                <Text style={styles.itemSub}>{cert.issuer || ''}</Text>
+                            </View>
+                        ))}
+                    </View>
+                ) : null}
+
+                {(data.skills?.length ?? 0) > 0 ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>UZMANLIK ALANLARI</Text>
+                        <View style={styles.separator} />
+                        <View style={styles.skillsRow}>
+                            {(data.skills || []).map((skill, index) => (
+                                <Text key={skill.id} style={styles.skillItem}>
+                                    {skill.name || ''}{index < data.skills.length - 1 ? '  •  ' : ''}
+                                </Text>
+                            ))}
                         </View>
-                    ))}
-                </View>
-            ) : null}
+                    </View>
+                ) : null}
+            </View>
         </Page>
     </Document>
 );

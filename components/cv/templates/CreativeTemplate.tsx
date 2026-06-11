@@ -1,9 +1,6 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVData, getSummaryText } from './ClassicTemplate';
 
-// --------------------------------
-// Creative Template Styles
-// --------------------------------
 const styles = StyleSheet.create({
     page: {
         flexDirection: 'row',
@@ -12,157 +9,145 @@ const styles = StyleSheet.create({
     },
     sidebar: {
         width: '35%',
-        backgroundColor: '#1e293b',
-        color: '#f8fafc',
-        padding: 30,
+        backgroundColor: '#6B21A8',
+        padding: 25,
+        color: '#ffffff',
         height: '100%',
     },
     main: {
         width: '65%',
-        padding: 35,
+        padding: 30,
         backgroundColor: '#ffffff',
     },
     name: {
         fontSize: 24,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        marginBottom: 5,
-        color: '#f8fafc',
+        marginBottom: 6,
+        color: '#ffffff',
+        lineHeight: 1.2,
     },
     title: {
         fontSize: 12,
-        color: '#94a3b8',
-        marginBottom: 30,
+        color: '#D8B4FE',
+        marginBottom: 20,
     },
     sidebarSection: {
-        marginBottom: 25,
+        marginBottom: 20,
     },
     sidebarTitle: {
-        fontSize: 10,
+        fontSize: 12,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
+        color: '#ffffff',
         textTransform: 'uppercase',
-        letterSpacing: 1.2,
+        borderBottom: '1pt solid #9333EA',
+        paddingBottom: 4,
         marginBottom: 10,
-        color: '#38bdf8',
+        letterSpacing: 1,
     },
-    sidebarText: {
-        fontSize: 9,
-        marginBottom: 5,
-        color: '#cbd5e1',
+    contactItem: {
+        fontSize: 10,
+        color: '#E9D5FF',
+        marginBottom: 6,
     },
     skillItem: {
-        marginBottom: 8,
-    },
-    skillName: {
-        fontSize: 8.5,
-        marginBottom: 2,
-    },
-    skillLevel: {
-        height: 2,
-        backgroundColor: '#334155',
-        width: '100%',
-    },
-    skillLevelFill: {
-        height: 2,
-        backgroundColor: '#38bdf8',
-        width: '80%',
+        fontSize: 10,
+        color: '#E9D5FF',
+        marginBottom: 4,
     },
     mainSection: {
-        marginBottom: 25,
+        marginBottom: 20,
     },
     mainTitle: {
-        fontSize: 13,
+        fontSize: 14,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#0f172a',
-        marginBottom: 12,
+        color: '#6B21A8',
         textTransform: 'uppercase',
-        letterSpacing: 1.5,
+        borderBottom: '2pt solid #D8B4FE',
+        paddingBottom: 4,
+        marginBottom: 12,
     },
-    item: {
-        marginBottom: 15,
-        position: 'relative',
+    text: {
+        fontSize: 10,
+        color: '#374151',
+        lineHeight: 1.5,
+    },
+    itemBlock: {
+        marginBottom: 14,
     },
     itemHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'baseline',
+        alignItems: 'flex-start',
+        marginBottom: 4,
     },
-    itemName: {
-        fontSize: 11,
+    itemTitle: {
+        fontSize: 12,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#1e293b',
+        color: '#111827',
     },
     itemDate: {
-        fontSize: 8,
-        color: '#64748b',
+        fontSize: 9,
+        color: '#6B21A8',
+        fontWeight: 'bold',
     },
     itemSub: {
-        fontSize: 9,
-        color: '#3b82f6',
-        marginTop: 2,
-        marginBottom: 5,
-    },
-    description: {
-        fontSize: 9,
-        color: '#475569',
-        lineHeight: 1.5,
+        fontSize: 10,
+        color: '#4B5563',
+        marginBottom: 6,
+        fontStyle: 'italic',
     }
 });
 
 export const CreativeTemplate = ({ data }: { data: CVData }) => (
-    <Document title={`${data.personal?.fullName || 'CV'} - Creative Portfolio CV`}>
+    <Document title={`${data.personal?.fullName || 'CV'} - Creative CV`}>
         <Page size="A4" style={styles.page}>
-            {/* Sidebar */}
+            {/* LEFT SIDEBAR */}
             <View style={styles.sidebar}>
                 <Text style={styles.name}>{data.personal?.fullName || 'Ad Soyad'}</Text>
-                <Text style={styles.title}>{data.personal?.jobTitle || ''}</Text>
+                {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
 
                 <View style={styles.sidebarSection}>
-                    <Text style={styles.sidebarTitle}>Contact</Text>
-                    {data.personal?.email ? <Text style={styles.sidebarText}>{data.personal.email}</Text> : null}
-                    {data.personal?.phone ? <Text style={styles.sidebarText}>{data.personal.phone}</Text> : null}
-                    {data.personal?.location ? <Text style={styles.sidebarText}>{data.personal.location}</Text> : null}
-                    {data.personal?.website ? <Text style={styles.sidebarText}>{data.personal.website}</Text> : null}
+                    <Text style={styles.sidebarTitle}>İLETİŞİM</Text>
+                    {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.contactItem}>{data.personal.phone}</Text> : null}
+                    {data.personal?.location ? <Text style={styles.contactItem}>{data.personal.location}</Text> : null}
+                    {data.personal?.linkedin ? <Text style={styles.contactItem}>{data.personal.linkedin}</Text> : null}
                 </View>
 
                 {(data.skills?.length ?? 0) > 0 ? (
                     <View style={styles.sidebarSection}>
-                        <Text style={styles.sidebarTitle}>Top Skills</Text>
+                        <Text style={styles.sidebarTitle}>BECERİLER</Text>
                         {(data.skills || []).map((skill) => (
-                            <View key={skill.id} style={styles.skillItem}>
-                                <Text style={styles.skillName}>{skill.name || ''}</Text>
-                                <View style={styles.skillLevel}>
-                                    <View style={styles.skillLevelFill}></View>
-                                </View>
-                            </View>
+                            <Text key={skill.id} style={styles.skillItem}>• {skill.name || ''}</Text>
                         ))}
                     </View>
                 ) : null}
             </View>
 
-            {/* Main Content */}
+            {/* RIGHT MAIN CONTENT */}
             <View style={styles.main}>
                 {getSummaryText(data.summary) ? (
                     <View style={styles.mainSection}>
-                        <Text style={styles.mainTitle}>About Me</Text>
-                        <Text style={styles.description}>{getSummaryText(data.summary)}</Text>
+                        <Text style={styles.mainTitle}>Hakkımda</Text>
+                        <Text style={styles.text}>{getSummaryText(data.summary)}</Text>
                     </View>
                 ) : null}
 
                 {(data.experience?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
-                        <Text style={styles.mainTitle}>Work Experience</Text>
+                        <Text style={styles.mainTitle}>Deneyim</Text>
                         {(data.experience || []).map((exp) => (
-                            <View key={exp.id} style={styles.item}>
+                            <View key={exp.id} style={styles.itemBlock}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{exp.title || ''}</Text>
-                                    <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Now" : (exp.endDate || '')}</Text>
+                                    <Text style={styles.itemTitle}>{exp.title || ''}</Text>
+                                    <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Devam" : (exp.endDate || '')}</Text>
                                 </View>
-                                <Text style={styles.itemSub}>{exp.company || ''}</Text>
-                                {exp.description ? <Text style={styles.description}>{exp.description}</Text> : null}
+                                <Text style={styles.itemSub}>{exp.company || ''}{exp.location ? `, ${exp.location}` : ''}</Text>
+                                {exp.description ? <Text style={styles.text}>{exp.description}</Text> : null}
                             </View>
                         ))}
                     </View>
@@ -170,14 +155,14 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
 
                 {(data.education?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
-                        <Text style={styles.mainTitle}>Education</Text>
+                        <Text style={styles.mainTitle}>Eğitim</Text>
                         {(data.education || []).map((edu) => (
-                            <View key={edu.id} style={styles.item}>
+                            <View key={edu.id} style={styles.itemBlock}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{edu.degree || ''}</Text>
+                                    <Text style={styles.itemTitle}>{edu.school || ''}</Text>
                                     <Text style={styles.itemDate}>{edu.startDate || ''} — {edu.endDate || ''}</Text>
                                 </View>
-                                <Text style={styles.itemSub}>{edu.school || ''}</Text>
+                                <Text style={styles.itemSub}>{edu.degree || ''}</Text>
                             </View>
                         ))}
                     </View>
@@ -185,15 +170,14 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
 
                 {(data.projects?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
-                        <Text style={styles.mainTitle}>Projects</Text>
+                        <Text style={styles.mainTitle}>Projeler</Text>
                         {(data.projects || []).map((proj) => (
-                            <View key={proj.id} style={styles.item}>
+                            <View key={proj.id} style={styles.itemBlock}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{proj.name || ''}</Text>
-                                    {proj.url ? <Text style={styles.itemDate}>{proj.url}</Text> : null}
+                                    <Text style={styles.itemTitle}>{proj.name || ''}</Text>
                                 </View>
                                 {proj.technologies ? <Text style={styles.itemSub}>{proj.technologies}</Text> : null}
-                                {proj.description ? <Text style={styles.description}>{proj.description}</Text> : null}
+                                {proj.description ? <Text style={styles.text}>{proj.description}</Text> : null}
                             </View>
                         ))}
                     </View>
@@ -201,11 +185,11 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
 
                 {(data.certificates?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
-                        <Text style={styles.mainTitle}>Certificates</Text>
+                        <Text style={styles.mainTitle}>Sertifikalar</Text>
                         {(data.certificates || []).map((cert) => (
-                            <View key={cert.id} style={styles.item}>
+                            <View key={cert.id} style={styles.itemBlock}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{cert.name || ''}</Text>
+                                    <Text style={styles.itemTitle}>{cert.name || ''}</Text>
                                     <Text style={styles.itemDate}>{cert.date || ''}</Text>
                                 </View>
                                 <Text style={styles.itemSub}>{cert.issuer || ''}</Text>

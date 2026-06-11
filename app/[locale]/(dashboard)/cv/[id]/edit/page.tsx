@@ -113,13 +113,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     // --- EXPERIENCE HANDLERS ---
     const handleAddExperience = () => {
-        setCvData({
-            ...cvData,
+        setCvData(prev => ({
+            ...prev,
             experience: [
-                ...cvData.experience,
-                { id: Date.now().toString(), title: "", company: "", startDate: "", endDate: "", isCurrent: false, description: "" }
+                ...prev.experience,
+                { id: crypto.randomUUID(), title: "", company: "", startDate: "", endDate: "", isCurrent: false, description: "" }
             ]
-        });
+        }));
     };
 
     const handleUpdateExperience = (id: string, field: string, value: string | boolean) => {
@@ -138,13 +138,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     // --- EDUCATION HANDLERS ---
     const handleAddEducation = () => {
-        setCvData({
-            ...cvData,
+        setCvData(prev => ({
+            ...prev,
             education: [
-                ...cvData.education,
-                { id: Date.now().toString(), degree: "", school: "", startDate: "", endDate: "" }
+                ...prev.education,
+                { id: crypto.randomUUID(), degree: "", school: "", startDate: "", endDate: "" }
             ]
-        });
+        }));
     };
 
     const handleUpdateEducation = (id: string, field: string, value: string) => {
@@ -163,13 +163,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     // --- SKILL HANDLERS ---
     const handleAddSkill = () => {
-        setCvData({
-            ...cvData,
+        setCvData(prev => ({
+            ...prev,
             skills: [
-                ...cvData.skills,
-                { id: Date.now().toString(), name: "" }
+                ...prev.skills,
+                { id: crypto.randomUUID(), name: "" }
             ]
-        });
+        }));
     };
 
     const handleUpdateSkill = (id: string, value: string) => {
@@ -189,13 +189,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     // --- PROJECT HANDLERS ---
     const handleAddProject = () => {
-        setCvData({
-            ...cvData,
+        setCvData(prev => ({
+            ...prev,
             projects: [
-                ...(cvData.projects || []),
-                { id: Date.now().toString(), name: "", description: "", url: "", technologies: "" }
+                ...(prev.projects || []),
+                { id: crypto.randomUUID(), name: "", description: "", url: "", technologies: "" }
             ]
-        });
+        }));
     };
 
     const handleUpdateProject = (id: string, field: string, value: string) => {
@@ -214,13 +214,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     // --- CERTIFICATE HANDLERS ---
     const handleAddCertificate = () => {
-        setCvData({
-            ...cvData,
+        setCvData(prev => ({
+            ...prev,
             certificates: [
-                ...(cvData.certificates || []),
-                { id: Date.now().toString(), name: "", issuer: "", date: "", url: "" }
+                ...(prev.certificates || []),
+                { id: crypto.randomUUID(), name: "", issuer: "", date: "", url: "" }
             ]
-        });
+        }));
     };
 
     const handleUpdateCertificate = (id: string, field: string, value: string) => {
@@ -524,7 +524,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                 <Button 
                                     onClick={() => setAiModalState({
                                         isOpen: true,
-                                        initialText: cvData.summary,
+                                        initialText: typeof cvData.summary === 'string' ? cvData.summary : String((cvData.summary as Record<string, unknown>)?.['Profesyonel Özet'] || (cvData.summary as Record<string, unknown>)?.profesyonel_ozet || (cvData.summary as Record<string, unknown>)?.summary || ''),
                                         sectionType: "Profesyonel Özet",
                                         onApply: (text) => setCvData({ ...cvData, summary: text })
                                     })}
@@ -542,7 +542,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                             id="summary"
                                             rows={8}
                                             className="resize-none"
-                                            value={cvData.summary}
+                                            value={typeof cvData.summary === 'string' ? cvData.summary : String((cvData.summary as Record<string, unknown>)?.['Profesyonel Özet'] || (cvData.summary as Record<string, unknown>)?.profesyonel_ozet || (cvData.summary as Record<string, unknown>)?.summary || '')}
                                             onChange={(e) => setCvData({ ...cvData, summary: e.target.value })}
                                             placeholder="Şu anki yazdıklarınız yapay zeka tarafından iyileştirilecektir..."
                                         />

@@ -25,74 +25,52 @@ export const getSummaryText = (summary: string | Record<string, unknown> | undef
     return obj?.['Profesyonel Özet'] || obj?.profesyonel_ozet || obj?.summary || String(summary);
 };
 
-// --------------------------------
-// Shared Data Types
-// --------------------------------
-export interface ExperienceItem {
-    id: string;
-    title: string;
-    company: string;
-    location?: string;
-    startDate: string;
-    endDate: string;
-    isCurrent: boolean;
-    description: string;
-}
-
-export interface EducationItem {
-    id: string;
-    degree: string;
-    school: string;
-    location?: string;
-    startDate: string;
-    endDate: string;
-    description?: string;
-}
-
-export interface SkillItem {
-    id: string;
-    name: string;
-    level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-}
-
-export interface ProjectItem {
-    id: string;
-    name: string;
-    description: string;
-    url?: string;
-    technologies?: string;
-}
-
-export interface CertificateItem {
-    id: string;
-    name: string;
-    issuer: string;
-    date: string;
-    url?: string;
-}
-
 export interface CVData {
     personal: {
         fullName: string;
         jobTitle: string;
         email: string;
         phone: string;
-        linkedin: string;
         website: string;
+        linkedin: string;
         location?: string;
-        summary?: string;
     };
-    summary: string;
-    experience: ExperienceItem[];
-    education: EducationItem[];
-    skills: SkillItem[];
-    projects?: ProjectItem[];
-    certificates?: CertificateItem[];
+    summary: string | Record<string, unknown>;
+    experience: Array<{
+        id: string;
+        title: string;
+        company: string;
+        startDate: string;
+        endDate: string;
+        isCurrent: boolean;
+        description: string;
+        location?: string;
+    }>;
+    education: Array<{
+        id: string;
+        degree: string;
+        school: string;
+        startDate: string;
+        endDate: string;
+        location?: string;
+    }>;
+    skills: Array<{ id: string; name: string }>;
+    projects?: Array<{
+        id: string;
+        name: string;
+        description: string;
+        url?: string;
+        technologies?: string;
+    }>;
+    certificates?: Array<{
+        id: string;
+        name: string;
+        issuer: string;
+        date: string;
+        url?: string;
+    }>;
 }
 
-// --------------------------------
-// Classic Template Styles
-// --------------------------------
 const styles = StyleSheet.create({
     page: {
         flexDirection: 'column',
@@ -101,260 +79,178 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto',
     },
     header: {
-        marginBottom: 20,
-        borderBottom: '1.5pt solid #2563EB',
-        paddingBottom: 14,
+        marginBottom: 16,
+        textAlign: 'center',
     },
     name: {
-        fontSize: 24,
+        fontSize: 22,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#111827',
+        color: '#000000',
+        marginBottom: 4,
+        textTransform: 'uppercase',
     },
-    title: {
-        fontSize: 13,
-        color: '#2563EB',
-        marginTop: 3,
-    },
-    contactInfo: {
+    contactRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginTop: 8,
-        gap: 12,
+        justifyContent: 'center',
+        gap: 10,
+        marginTop: 4,
     },
     contactItem: {
-        fontSize: 9,
-        color: '#6b7280',
+        fontSize: 10,
+        color: '#000000',
     },
     section: {
-        marginTop: 14,
+        marginTop: 16,
+        marginBottom: 8,
     },
     sectionTitle: {
-        fontSize: 11,
+        fontSize: 12,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#1E3A5F',
+        color: '#000000',
         textTransform: 'uppercase',
-        letterSpacing: 0.8,
-        borderBottom: '0.5pt solid #DBEAFE',
-        paddingBottom: 4,
+        borderBottom: '1pt solid #000000',
+        paddingBottom: 2,
+        marginBottom: 8,
+    },
+    text: {
+        fontSize: 10,
+        color: '#000000',
+        lineHeight: 1.4,
+        textAlign: 'justify',
+    },
+    itemBlock: {
         marginBottom: 10,
     },
-    summaryText: {
-        fontSize: 9.5,
-        color: '#374151',
-        lineHeight: 1.6,
-    },
-    // Experience
-    expItem: {
-        marginBottom: 10,
-    },
-    expHeader: {
+    itemHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
+        marginBottom: 2,
     },
-    expTitle: {
-        fontSize: 10,
+    itemTitle: {
+        fontSize: 11,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: '#111827',
+        color: '#000000',
     },
-    expCompany: {
-        fontSize: 9.5,
-        color: '#2563EB',
-        marginTop: 1,
-    },
-    expDate: {
-        fontSize: 8.5,
-        color: '#9CA3AF',
-    },
-    expDesc: {
-        fontSize: 9,
-        color: '#4B5563',
-        lineHeight: 1.5,
-        marginTop: 4,
-    },
-    // Education
-    eduItem: {
-        marginBottom: 8,
-    },
-    eduDegree: {
+    itemDate: {
         fontSize: 10,
-        fontFamily: 'Roboto',
-        fontWeight: 'bold',
-        color: '#111827',
+        color: '#000000',
     },
-    eduSchool: {
-        fontSize: 9.5,
-        color: '#6B7280',
-        marginTop: 1,
+    itemSub: {
+        fontSize: 10,
+        color: '#000000',
+        fontStyle: 'italic',
+        marginBottom: 4,
     },
-    // Skills
-    skillsGrid: {
+    skillsRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 6,
     },
-    skillBadge: {
-        fontSize: 8.5,
-        color: '#1D4ED8',
-        backgroundColor: '#EFF6FF',
-        paddingVertical: 3,
-        paddingHorizontal: 8,
-        borderRadius: 4,
-    },
-    projItem: {
-        marginBottom: 8,
-    },
-    projTitle: {
+    skillText: {
         fontSize: 10,
-        fontFamily: 'Roboto',
-        fontWeight: 'bold',
-        color: '#111827',
-    },
-    projUrl: {
-        fontSize: 8.5,
-        color: '#2563EB',
-        marginTop: 1,
-    },
-    projDesc: {
-        fontSize: 9,
-        color: '#4B5563',
-        lineHeight: 1.5,
-        marginTop: 2,
-    },
-    certItem: {
-        marginBottom: 6,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    certName: {
-        fontSize: 9.5,
-        fontFamily: 'Roboto',
-        fontWeight: 'bold',
-        color: '#111827',
-    },
-    certIssuer: {
-        fontSize: 9.5,
-        color: '#4B5563',
-    },
-    certDate: {
-        fontSize: 8.5,
-        color: '#9CA3AF',
-    },
+        color: '#000000',
+    }
 });
 
-// --------------------------------
-// Classic Template Component
-// --------------------------------
 export const ClassicTemplate = ({ data }: { data: CVData }) => (
-    <Document>
+    <Document title={`${data.personal?.fullName || 'CV'} - Classic CV`}>
         <Page size="A4" style={styles.page}>
-
-            {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.name}>{data.personal?.fullName || 'Ad Soyad'}</Text>
-                {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
-                <View style={styles.contactInfo}>
+                <View style={styles.contactRow}>
                     {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
-                    {data.personal?.phone ? <Text style={styles.contactItem}>{'•'} {data.personal.phone}</Text> : null}
-                    {data.personal?.location ? <Text style={styles.contactItem}>{'•'} {data.personal.location}</Text> : null}
-                    {data.personal?.linkedin ? <Text style={styles.contactItem}>{'•'} {data.personal.linkedin}</Text> : null}
-                    {data.personal?.website ? <Text style={styles.contactItem}>{'•'} {data.personal.website}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.contactItem}>• {data.personal.phone}</Text> : null}
+                    {data.personal?.location ? <Text style={styles.contactItem}>• {data.personal.location}</Text> : null}
+                    {data.personal?.linkedin ? <Text style={styles.contactItem}>• {data.personal.linkedin}</Text> : null}
                 </View>
             </View>
 
-            {/* Summary */}
             {getSummaryText(data.summary) ? (
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Profesyonel Ozet</Text>
-                    <Text style={styles.summaryText}>{getSummaryText(data.summary)}</Text>
+                    <Text style={styles.sectionTitle}>PROFESYONEL ÖZET</Text>
+                    <Text style={styles.text}>{getSummaryText(data.summary)}</Text>
                 </View>
             ) : null}
 
-            {/* Experience */}
             {(data.experience?.length ?? 0) > 0 ? (
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Is Deneyimi</Text>
+                    <Text style={styles.sectionTitle}>İŞ DENEYİMİ</Text>
                     {(data.experience || []).map((exp) => (
-                        <View key={exp.id} style={styles.expItem}>
-                            <View style={styles.expHeader}>
-                                <View>
-                                    <Text style={styles.expTitle}>{exp.title || ''}</Text>
-                                    <Text style={styles.expCompany}>{exp.company || ''}{exp.location ? ` · ${exp.location}` : ''}</Text>
-                                </View>
-                                <Text style={styles.expDate}>
-                                    {exp.startDate || ''} — {exp.isCurrent ? 'Devam Ediyor' : (exp.endDate || '')}
-                                </Text>
+                        <View key={exp.id} style={styles.itemBlock}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemTitle}>{exp.title || ''}</Text>
+                                <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Devam Ediyor" : (exp.endDate || '')}</Text>
                             </View>
-                            {exp.description ? <Text style={styles.expDesc}>{exp.description}</Text> : null}
+                            <Text style={styles.itemSub}>{exp.company || ''}{exp.location ? `, ${exp.location}` : ''}</Text>
+                            {exp.description ? <Text style={styles.text}>{exp.description}</Text> : null}
                         </View>
                     ))}
                 </View>
             ) : null}
 
-            {/* Education */}
             {(data.education?.length ?? 0) > 0 ? (
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Egitim</Text>
+                    <Text style={styles.sectionTitle}>EĞİTİM</Text>
                     {(data.education || []).map((edu) => (
-                        <View key={edu.id} style={styles.eduItem}>
-                            <View style={styles.expHeader}>
-                                <View>
-                                    <Text style={styles.eduDegree}>{edu.degree || ''}</Text>
-                                    <Text style={styles.eduSchool}>{edu.school || ''}{edu.location ? ` · ${edu.location}` : ''}</Text>
-                                </View>
-                                <Text style={styles.expDate}>{edu.startDate || ''} — {edu.endDate || ''}</Text>
+                        <View key={edu.id} style={styles.itemBlock}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemTitle}>{edu.school || ''}</Text>
+                                <Text style={styles.itemDate}>{edu.startDate || ''} — {edu.endDate || ''}</Text>
                             </View>
+                            <Text style={styles.itemSub}>{edu.degree || ''}</Text>
                         </View>
                     ))}
                 </View>
             ) : null}
 
-            {/* Skills */}
+            {(data.projects?.length ?? 0) > 0 ? (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>PROJELER</Text>
+                    {(data.projects || []).map((proj) => (
+                        <View key={proj.id} style={styles.itemBlock}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemTitle}>{proj.name || ''}</Text>
+                                {proj.url ? <Text style={styles.itemDate}>{proj.url}</Text> : null}
+                            </View>
+                            {proj.technologies ? <Text style={styles.itemSub}>{proj.technologies}</Text> : null}
+                            {proj.description ? <Text style={styles.text}>{proj.description}</Text> : null}
+                        </View>
+                    ))}
+                </View>
+            ) : null}
+
+            {(data.certificates?.length ?? 0) > 0 ? (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>SERTİFİKALAR</Text>
+                    {(data.certificates || []).map((cert) => (
+                        <View key={cert.id} style={styles.itemBlock}>
+                            <View style={styles.itemHeader}>
+                                <Text style={styles.itemTitle}>{cert.name || ''}</Text>
+                                <Text style={styles.itemDate}>{cert.date || ''}</Text>
+                            </View>
+                            <Text style={styles.itemSub}>{cert.issuer || ''}</Text>
+                        </View>
+                    ))}
+                </View>
+            ) : null}
+
             {(data.skills?.length ?? 0) > 0 ? (
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Beceriler</Text>
-                    <View style={styles.skillsGrid}>
-                        {(data.skills || []).map((skill) => (
-                            <Text key={skill.id} style={styles.skillBadge}>{skill.name || ''}</Text>
+                    <Text style={styles.sectionTitle}>YETENEKLER</Text>
+                    <View style={styles.skillsRow}>
+                        {(data.skills || []).map((skill, index) => (
+                            <Text key={skill.id} style={styles.skillText}>
+                                {skill.name || ''}{index < data.skills.length - 1 ? ' • ' : ''}
+                            </Text>
                         ))}
                     </View>
                 </View>
             ) : null}
-
-            {/* Projects */}
-            {(data.projects?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Projeler</Text>
-                    {(data.projects || []).map((proj) => (
-                        <View key={proj.id} style={styles.projItem}>
-                            <Text style={styles.projTitle}>
-                                {proj.name || ''} {proj.technologies ? ` | ${proj.technologies}` : ''}
-                            </Text>
-                            {proj.url ? <Text style={styles.projUrl}>{proj.url}</Text> : null}
-                            {proj.description ? <Text style={styles.projDesc}>{proj.description}</Text> : null}
-                        </View>
-                    ))}
-                </View>
-            ) : null}
-
-            {/* Certificates */}
-            {(data.certificates?.length ?? 0) > 0 ? (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Sertifikalar</Text>
-                    {(data.certificates || []).map((cert) => (
-                        <View key={cert.id} style={styles.certItem}>
-                            <Text style={styles.certName}>
-                                {cert.name || ''} — <Text style={styles.certIssuer}>{cert.issuer || ''}</Text>
-                            </Text>
-                            <Text style={styles.certDate}>{cert.date || ''}</Text>
-                        </View>
-                    ))}
-                </View>
-            ) : null}
-
         </Page>
     </Document>
 );

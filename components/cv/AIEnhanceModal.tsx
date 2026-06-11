@@ -18,17 +18,15 @@ interface AIEnhanceModalProps {
 
 export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionType, targetPosition, onApply }: AIEnhanceModalProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestion, setSuggestion] = useState<string>("");
     const [hasRequested, setHasRequested] = useState(false);
     const [editableText, setEditableText] = useState("");
 
-    const isSummary = sectionType === "Profesyonel Özet" || sectionType === "summary";
-
     useEffect(() => {
-        if (suggestions.length > 0 && isSummary) {
-            setEditableText(suggestions[0]);
+        if (suggestion) {
+            setEditableText(suggestion);
         }
-    }, [suggestions, isSummary]);
+    }, [suggestion]);
 
     const handleGenerate = async () => {
         if (!initialText || initialText.trim().length < 5) {
@@ -55,7 +53,7 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                 return;
             }
 
-            setSuggestions(data.suggestions || []);
+            setSuggestion(data.suggestion || "");
         } catch {
             toast.error("Bir ağ hatası oluştu.");
         } finally {
@@ -68,7 +66,7 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
         onClose();
         // Reset state for next open
         setTimeout(() => {
-            setSuggestions([]);
+            setSuggestion("");
             setHasRequested(false);
             setEditableText("");
         }, 300);
@@ -110,7 +108,7 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                         <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
                         <p className="text-sm text-muted-foreground">En iyi ifadeler aranıyor...</p>
                     </div>
-                ) : isSummary ? (
+                ) : (
                     <div className="py-4 space-y-4">
                         <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                             Önerilen Metin (Düzenleyebilirsiniz):
@@ -128,40 +126,6 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                             >
                                 <Check className="mr-2 h-4 w-4" /> Seç ve Uygula
                             </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="h-[400px] w-full rounded-md border p-4 mt-4 overflow-y-auto">
-                        {suggestions.length === 0 && (
-                            <p className="text-center text-muted-foreground pt-10">Sonuç bulunamadı.</p>
-                        )}
-                        <div className="space-y-4">
-                            {suggestions.map((suggestion, idx) => (
-                                <div key={idx} className="relative group p-4 border rounded-xl hover:border-purple-300 transition-colors bg-white dark:bg-zinc-900">
-                                    <p className="text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap pr-24">
-                                        {suggestion}
-                                    </p>
-                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Button
-                                            size="sm"
-                                            variant="secondary"
-                                            className="bg-purple-50 text-purple-700 hover:bg-purple-100"
-                                            onClick={() => handleApply(suggestion)}
-                                        >
-                                            <Check className="mr-2 h-4 w-4" /> Seç
-                                        </Button>
-                                    </div>
-                                    <div className="md:hidden absolute bottom-2 right-2 mt-2">
-                                        <Button
-                                            size="sm"
-                                            variant="secondary"
-                                            onClick={() => handleApply(suggestion)}
-                                        >
-                                            Seç
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </div>
                 )}

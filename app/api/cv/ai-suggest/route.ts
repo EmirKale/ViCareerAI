@@ -84,28 +84,20 @@ export async function POST(req: Request) {
 
             if (isSummary) {
                 return NextResponse.json({
-                    suggestions: [
-                        `Yapay zeka tarafından optimize edilmiş, profesyonel tek paragraf özet metni. Adayın ${targetPosition || 'sektör'} alanındaki yetkinliklerini vurgular.`
-                    ]
+                    suggestion: `Yapay zeka tarafından optimize edilmiş, profesyonel tek paragraf özet metni. Adayın ${targetPosition || 'sektör'} alanındaki yetkinliklerini vurgular.`
                 });
             }
 
             return NextResponse.json({
-                suggestions: [
-                    `${targetPosition || 'Uzman'} rolüne uygun şekilde yeniden yazıldı: ${rawText} (Versiyon 1)`,
-                    `Profesyonel ve etkili bir dille: ${rawText} (Versiyon 2)`,
-                    `Kısa ve öz anlatım: ${rawText} (Versiyon 3)`
-                ]
+                suggestion: `${targetPosition || 'Uzman'} rolüne uygun şekilde yeniden yazıldı: ${rawText}`
             });
         }
 
         const openai = new OpenAI({ apiKey: openaiApiKey });
 
-        const systemPrompt = isSummary 
-            ? "Sen profesyonel bir CV danışmanısın. Kullanıcının girdiği ham metni daha profesyonel, IK tarafında dikkat çekici ve etkili bir tek paragraf olarak yeniden yazacaksın. Çıktı olarak SADECE tek bir alternatif içeren bir JSON dizisi vereceksin. Dizi elemanı string olacak. Örnek: [\"tek bir paragraf\"]"
-            : "Sen profesyonel bir CV danışmanısın. Kullanıcının girdiği ham metni daha profesyonel, IK tarafında dikkat çekici ve etkili bir dille yeniden yazacaksın. Çıktı olarak SADECE 3 farklı alternatif içeren bir JSON dizisi vereceksin. Her bir dizi elemanı string olacak. Örnek: [\"alternatif 1\", \"alternatif 2\", \"alternatif 3\"]";
+        const systemPrompt = "Sen profesyonel bir CV danışmanısın. Kullanıcının girdiği ham metni daha profesyonel, IK tarafında dikkat çekici ve etkili bir dille yeniden yazacaksın. Çıktı olarak SADECE ve DOĞRUDAN iyileştirilmiş metni ver. Herhangi bir JSON, dizi, açıklama, ek metin veya markdown biçimlendirmesi kullanma.";
 
-        let userPrompt = `Lütfen şu metni profesyonelleştir: "${rawText}"\nBölüm: ${sectionType || 'Bilinmiyor'}\n`;
+        let userPrompt = `Lütfen şu metni profesyonelleştir:\n\n"${rawText}"\n\nBölüm: ${sectionType || 'Bilinmiyor'}\n`;
         if (targetPosition) {
             userPrompt += `Hedef başvuru pozisyonu: ${targetPosition}. Lütfen bu metni bu pozisyona özel olarak vurgularla iyileştir.`;
         }
@@ -116,27 +108,14 @@ export async function POST(req: Request) {
                 { role: "user", content: userPrompt }
             ],
             model: "gpt-4o-mini", // Faster and cheaper
-            response_format: { type: "json_object" } // Tell OpenAI to ensure JSON
+            temperature: 0.7
         });
 
-        const resultText = completion.choices[0].message.content || '{"suggestions": []}';
+        let resultText = completion.choices[0].message.content?.trim() || rawText;
         
-        let suggestions: string[] = [];
-        try {
-            // Because we asked for json_object, it often comes wrapped in an object like {"suggestions": [...]}
-            // or we might need to parse an array if the prompt forced it.
-            const parsed = JSON.parse(resultText);
-            if (Array.isArray(parsed)) {
-                suggestions = parsed;
-            } else if (parsed.suggestions && Array.isArray(parsed.suggestions)) {
-                suggestions = parsed.suggestions;
-            } else {
-                // fallback
-                suggestions = [resultText];
-            }
-        } catch {
-            console.error("Failed to parse JSON", resultText);
-            return NextResponse.json({ error: "AI yanıtı işlenemedi." }, { status: 500 });
+        // Temizleme: Eğer AI hala tırnak içinde verdiyse baştaki sondaki tırnakları al
+        if (resultText.startsWith('"') && resultText.endsWith('"')) {
+            resultText = resultText.slice(1, -1);
         }
 
         // Increment quota
@@ -147,7 +126,7 @@ export async function POST(req: Request) {
             }
         }
 
-        return NextResponse.json({ suggestions: isSummary ? suggestions.slice(0, 1) : suggestions.slice(0, 3) });
+        return NextResponse.json({ suggestion: resultText });
 
     } catch (error) {
         console.error("AI Suggest API Error:", error);
