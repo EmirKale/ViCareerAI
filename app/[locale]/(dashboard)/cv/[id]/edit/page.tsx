@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save, Sparkles, LayoutDashboard, Plus, Trash2, Download } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Plus, Trash2, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { pdf } from '@react-pdf/renderer';
 import CVPreview from "@/components/cv/CVPreview";

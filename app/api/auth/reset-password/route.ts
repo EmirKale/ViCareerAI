@@ -34,8 +34,8 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json({ success: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Password reset error:", error);
-        return NextResponse.json({ error: error?.message || "E-posta gönderilirken hata oluştu." }, { status: 500 });
+        return NextResponse.json({ error: error instanceof Error ? error.message : "E-posta gönderilirken hata oluştu." }, { status: 500 });
     }
 }

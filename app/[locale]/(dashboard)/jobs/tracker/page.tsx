@@ -108,8 +108,8 @@ export default function JobTrackerPage() {
                 notes: "",
             });
             fetchJobs();
-        } catch (error: any) {
-            toast.error(error.message || "Bir hata oluştu.");
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : "Bir hata oluştu.");
         } finally {
             setIsSubmitting(false);
         }
@@ -142,8 +142,8 @@ export default function JobTrackerPage() {
             setIsAiModalOpen(false);
             setAiForm({ urlOrText: "" });
             fetchJobs();
-        } catch (error: any) {
-            toast.error(error.message || "Bir hata oluştu.");
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : "Bir hata oluştu.");
         } finally {
             setIsSubmitting(false);
         }

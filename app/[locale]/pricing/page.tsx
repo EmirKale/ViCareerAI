@@ -15,19 +15,8 @@ export default function PricingPage() {
     const router = useRouter();
     const locale = useLocale();
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     // LemonSqueezy Variant ID mapping
     const PRO_VARIANT_ID = process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRO_MONTHLY_VARIANT_ID || "1479578";
-
-    useEffect(() => {
-        const supabase = createBrowserClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        );
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setIsLoggedIn(!!session);
-        });
-    }, []);
 
     const handleSubscribe = async () => {
         const supabase = createBrowserClient(
