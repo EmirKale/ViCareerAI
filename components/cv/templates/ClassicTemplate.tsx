@@ -1,4 +1,32 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+
+// Register Turkish-friendly fonts
+Font.register({
+  family: 'Roboto',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Regular.ttf'
+});
+Font.register({
+  family: 'Roboto-Bold',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Bold.ttf'
+});
+
+export const getSummaryText = (summary: string | Record<string, unknown>): string => {
+    if (!summary) return "";
+    if (typeof summary === 'string') {
+        const trimmed = summary.trim();
+        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+            try {
+                const parsed = JSON.parse(trimmed) as Record<string, string>;
+                return parsed.profesyonel_ozet || parsed.summary || summary;
+            } catch {
+                return summary;
+            }
+        }
+        return summary;
+    }
+    const obj = summary as Record<string, string>;
+    return obj?.profesyonel_ozet || obj?.summary || String(summary);
+};
 
 // --------------------------------
 // Shared Data Types
@@ -73,7 +101,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#ffffff',
         padding: 40,
-        fontFamily: 'Helvetica',
+        fontFamily: 'Roboto',
     },
     header: {
         marginBottom: 20,
@@ -82,7 +110,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         color: '#111827',
     },
     title: {
@@ -105,7 +133,7 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 11,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         color: '#1E3A5F',
         textTransform: 'uppercase',
         letterSpacing: 0.8,
@@ -129,7 +157,7 @@ const styles = StyleSheet.create({
     },
     expTitle: {
         fontSize: 10,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         color: '#111827',
     },
     expCompany: {
@@ -153,7 +181,7 @@ const styles = StyleSheet.create({
     },
     eduDegree: {
         fontSize: 10,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         color: '#111827',
     },
     eduSchool: {
@@ -238,7 +266,7 @@ export const ClassicTemplate = ({ data }: { data: CVData }) => (
             {data.summary && (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Profesyonel Özet</Text>
-                    <Text style={styles.summaryText}>{data.summary}</Text>
+                    <Text style={styles.summaryText}>{getSummaryText(data.summary)}</Text>
                 </View>
             )}
 

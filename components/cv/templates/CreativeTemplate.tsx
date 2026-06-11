@@ -1,5 +1,15 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { CVData } from './ClassicTemplate';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { CVData, getSummaryText } from './ClassicTemplate';
+
+// Register Turkish-friendly fonts
+Font.register({
+  family: 'Roboto',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Regular.ttf'
+});
+Font.register({
+  family: 'Roboto-Bold',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Bold.ttf'
+});
 
 // --------------------------------
 // Creative Template Styles
@@ -8,7 +18,7 @@ const styles = StyleSheet.create({
     page: {
         flexDirection: 'row',
         backgroundColor: '#ffffff',
-        fontFamily: 'Helvetica',
+        fontFamily: 'Roboto',
     },
     sidebar: {
         width: '35%',
@@ -24,7 +34,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         marginBottom: 5,
         color: '#f8fafc',
     },
@@ -38,7 +48,7 @@ const styles = StyleSheet.create({
     },
     sidebarTitle: {
         fontSize: 10,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         textTransform: 'uppercase',
         letterSpacing: 1.2,
         marginBottom: 10,
@@ -71,7 +81,7 @@ const styles = StyleSheet.create({
     },
     mainTitle: {
         fontSize: 13,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         color: '#0f172a',
         marginBottom: 12,
         textTransform: 'uppercase',
@@ -88,7 +98,7 @@ const styles = StyleSheet.create({
     },
     itemName: {
         fontSize: 11,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto-Bold',
         color: '#1e293b',
     },
     itemDate: {
@@ -144,7 +154,7 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                 {data.summary && (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>About Me</Text>
-                        <Text style={styles.description}>{data.summary}</Text>
+                        <Text style={styles.description}>{getSummaryText(data.summary)}</Text>
                     </View>
                 )}
 

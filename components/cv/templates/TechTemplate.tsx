@@ -1,5 +1,15 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { CVData } from './ClassicTemplate';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { CVData, getSummaryText } from './ClassicTemplate';
+
+// Register Turkish-friendly fonts
+Font.register({
+  family: 'Roboto',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Regular.ttf'
+});
+Font.register({
+  family: 'Roboto-Bold',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Bold.ttf'
+});
 
 // --------------------------------
 // Tech Template Styles
@@ -130,7 +140,7 @@ export const TechTemplate = ({ data }: { data: CVData }) => (
             {data.summary && (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Summary.log</Text>
-                    <Text style={styles.description}>{data.summary}</Text>
+                    <Text style={styles.description}>{getSummaryText(data.summary)}</Text>
                 </View>
             )}
 
