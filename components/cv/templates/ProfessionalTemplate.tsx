@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: '#475569',
         marginBottom: 6,
-        fontStyle: 'italic',
     }
 });
 

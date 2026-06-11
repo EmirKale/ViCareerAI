@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     itemSub: {
         fontSize: 10,
         color: '#111827',
-        fontStyle: 'italic',
         marginBottom: 6,
     },
     itemDesc: {

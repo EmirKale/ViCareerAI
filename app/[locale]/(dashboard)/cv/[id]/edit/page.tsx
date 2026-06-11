@@ -20,14 +20,97 @@ import { CreativeTemplate } from "@/components/cv/templates/CreativeTemplate";
 import { ProfessionalTemplate } from "@/components/cv/templates/ProfessionalTemplate";
 import AIEnhanceModal from "@/components/cv/AIEnhanceModal";
 
-const TECH_LIST = ["ASP.NET", "ASP.NET Core", "ASP.NET MVC", "React", "Next.js", "Vue.js", "Angular", "Node.js", "Express.js", "TypeScript", "JavaScript", "Python", "Django", "FastAPI", "C#", "Java", "Spring Boot", "PHP", "Laravel", "SQL Server", "PostgreSQL", "MySQL", "MongoDB", "Redis", "Docker", "Kubernetes", "AWS", "Azure", "Vercel", "Supabase", "Firebase", "GraphQL", "REST API", "Tailwind CSS", "Bootstrap", "React Native", "Flutter", "Swift", "Kotlin", "Git", "GitHub", "CI/CD", "Linux", "Figma"];
+const ENHANCED_TECH_LIST = [
+    { name: "JavaScript", aliases: ["js", "es6", "vanilla js"] },
+    { name: "TypeScript", aliases: ["ts"] },
+    { name: "React", aliases: ["reactjs", "react.js"] },
+    { name: "Next.js", aliases: ["next", "nextjs"] },
+    { name: "Vue.js", aliases: ["vue", "vuejs"] },
+    { name: "Nuxt.js", aliases: ["nuxt", "nuxtjs"] },
+    { name: "Angular", aliases: ["angularjs"] },
+    { name: "Svelte", aliases: ["sveltejs"] },
+    { name: "HTML", aliases: ["html5"] },
+    { name: "CSS", aliases: ["css3"] },
+    { name: "Tailwind CSS", aliases: ["tailwind", "tw", "tailwindcss"] },
+    { name: "Bootstrap", aliases: ["bs"] },
+    { name: "Material UI", aliases: ["mui", "material"] },
+    { name: "Chakra UI", aliases: ["chakra"] },
+    { name: "Node.js", aliases: ["node", "nodejs"] },
+    { name: "Express.js", aliases: ["express", "expressjs"] },
+    { name: "NestJS", aliases: ["nest"] },
+    { name: "Python", aliases: ["py"] },
+    { name: "Django", aliases: ["dj"] },
+    { name: "Flask", aliases: [] },
+    { name: "FastAPI", aliases: [] },
+    { name: "Java", aliases: ["java 8", "java 11", "java 17"] },
+    { name: "Spring Boot", aliases: ["spring"] },
+    { name: "C#", aliases: ["csharp", "c sharp"] },
+    { name: "ASP.NET Core", aliases: ["aspnet core", ".net core"] },
+    { name: "ASP.NET MVC", aliases: ["aspnet mvc", ".net mvc"] },
+    { name: "Entity Framework", aliases: ["ef", "ef core", "entity framework core"] },
+    { name: "PHP", aliases: [] },
+    { name: "Laravel", aliases: [] },
+    { name: "Go", aliases: ["golang"] },
+    { name: "Rust", aliases: ["rs"] },
+    { name: "Ruby on Rails", aliases: ["ror", "rails", "ruby"] },
+    { name: "C++", aliases: ["cpp"] },
+    { name: "C", aliases: [] },
+    { name: "Swift", aliases: [] },
+    { name: "Kotlin", aliases: [] },
+    { name: "Dart", aliases: [] },
+    { name: "Flutter", aliases: [] },
+    { name: "React Native", aliases: ["rn"] },
+    { name: "SQL", aliases: [] },
+    { name: "MySQL", aliases: [] },
+    { name: "PostgreSQL", aliases: ["postgres", "psql"] },
+    { name: "SQL Server", aliases: ["mssql", "microsoft sql server"] },
+    { name: "Oracle", aliases: [] },
+    { name: "MongoDB", aliases: ["mongo", "mongodb"] },
+    { name: "Redis", aliases: [] },
+    { name: "Elasticsearch", aliases: ["es", "elastic"] },
+    { name: "Docker", aliases: [] },
+    { name: "Kubernetes", aliases: ["k8s"] },
+    { name: "AWS", aliases: ["amazon web services"] },
+    { name: "Azure", aliases: ["microsoft azure"] },
+    { name: "Google Cloud", aliases: ["gcp", "google cloud platform"] },
+    { name: "Vercel", aliases: [] },
+    { name: "Heroku", aliases: [] },
+    { name: "DigitalOcean", aliases: ["do"] },
+    { name: "Git", aliases: [] },
+    { name: "GitHub", aliases: [] },
+    { name: "GitLab", aliases: [] },
+    { name: "Bitbucket", aliases: [] },
+    { name: "CI/CD", aliases: ["continuous integration", "continuous deployment"] },
+    { name: "Jenkins", aliases: [] },
+    { name: "GitHub Actions", aliases: ["actions"] },
+    { name: "Linux", aliases: ["ubuntu", "debian", "centos"] },
+    { name: "Bash", aliases: ["shell", "sh"] },
+    { name: "PowerShell", aliases: ["ps"] },
+    { name: "GraphQL", aliases: ["gql"] },
+    { name: "REST API", aliases: ["restful", "rest"] },
+    { name: "Firebase", aliases: [] },
+    { name: "Supabase", aliases: [] },
+    { name: "Prisma", aliases: [] },
+    { name: "Figma", aliases: [] },
+    { name: "Adobe XD", aliases: ["xd"] },
+    { name: "Photoshop", aliases: ["ps"] },
+    { name: "Illustrator", aliases: ["ai"] },
+    { name: "Jira", aliases: [] },
+    { name: "Trello", aliases: [] },
+    { name: "Scrum", aliases: ["agile"] },
+    { name: "Kanban", aliases: [] }
+];
 
 function ProjectTechInput({ value, onChange }: { value: string, onChange: (val: string) => void }) {
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     
     const selectedTechs = value ? value.split(',').map(t => t.trim()).filter(Boolean) : [];
-    const filteredTechs = TECH_LIST.filter(t => t.toLowerCase().includes(inputValue.toLowerCase()) && !selectedTechs.includes(t));
+    const filteredTechs = ENHANCED_TECH_LIST.filter(t => {
+        const query = inputValue.toLowerCase();
+        if (selectedTechs.includes(t.name)) return false;
+        return t.name.toLowerCase().includes(query) || t.aliases.some(a => a.includes(query));
+    }).map(t => t.name);
     
     const handleAdd = (tech: string) => {
         const newTechs = [...selectedTechs, tech];
@@ -57,7 +140,17 @@ function ProjectTechInput({ value, onChange }: { value: string, onChange: (val: 
                     onChange={e => { setInputValue(e.target.value); setIsOpen(true); }}
                     onFocus={() => setIsOpen(true)}
                     onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                    placeholder="Teknoloji ara ve seç..."
+                    placeholder="Teknoloji ara ve seç (Örn: React, Node, EF...)"
+                    onKeyDown={(e) => { 
+                        if (e.key === 'Enter' && inputValue) { 
+                            e.preventDefault(); 
+                            if (filteredTechs.length > 0) {
+                                handleAdd(filteredTechs[0]);
+                            } else {
+                                handleAdd(inputValue);
+                            }
+                        } 
+                    }}
                 />
                 {isOpen && inputValue && filteredTechs.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-40 overflow-y-auto dark:bg-zinc-900 dark:border-zinc-800">
@@ -68,6 +161,73 @@ function ProjectTechInput({ value, onChange }: { value: string, onChange: (val: 
                         ))}
                     </div>
                 )}
+            </div>
+        </div>
+    );
+}
+
+function SkillsTechInput({ skills, onChange }: { skills: Array<{id: string, name: string}>, onChange: (skills: Array<{id: string, name: string}>) => void }) {
+    const [inputValue, setInputValue] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    
+    const selectedNames = skills.map(s => s.name);
+    
+    const filteredTechs = ENHANCED_TECH_LIST.filter(t => {
+        const query = inputValue.toLowerCase();
+        if (selectedNames.includes(t.name)) return false;
+        return t.name.toLowerCase().includes(query) || t.aliases.some(a => a.includes(query));
+    }).map(t => t.name);
+    
+    const handleAdd = (tech: string) => {
+        const newSkills = [...skills, { id: crypto.randomUUID(), name: tech }];
+        onChange(newSkills);
+        setInputValue("");
+        setIsOpen(false);
+    };
+    
+    const handleRemove = (id: string) => {
+        const newSkills = skills.filter(s => s.id !== id);
+        onChange(newSkills);
+    };
+    
+    return (
+        <div className="space-y-4">
+            <div className="relative">
+                <Input 
+                    value={inputValue} 
+                    onChange={e => { setInputValue(e.target.value); setIsOpen(true); }}
+                    onFocus={() => setIsOpen(true)}
+                    onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+                    placeholder="Beceri ara ve seç (Örn: React, EF, TS, Node...)"
+                    onKeyDown={(e) => { 
+                        if (e.key === 'Enter' && inputValue) { 
+                            e.preventDefault(); 
+                            if (filteredTechs.length > 0) {
+                                handleAdd(filteredTechs[0]);
+                            } else {
+                                handleAdd(inputValue);
+                            }
+                        } 
+                    }}
+                />
+                {isOpen && inputValue && filteredTechs.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-48 overflow-y-auto dark:bg-zinc-900 dark:border-zinc-800">
+                        {filteredTechs.map(tech => (
+                            <div key={tech} onMouseDown={(e) => { e.preventDefault(); handleAdd(tech); }} className="px-3 py-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm">
+                                {tech}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+                {skills.map(skill => (
+                    <div key={skill.id} className="bg-blue-50 border border-blue-200 text-blue-800 text-sm px-3 py-1.5 rounded-full flex items-center gap-2 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300">
+                        {skill.name}
+                        <button onClick={(e) => { e.preventDefault(); handleRemove(skill.id); }} className="hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full w-5 h-5 flex items-center justify-center transition-colors">&times;</button>
+                    </div>
+                ))}
             </div>
         </div>
     );
@@ -268,32 +428,6 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
         setCvData({
             ...cvData,
             education: cvData.education.filter(e => e.id !== id)
-        });
-    };
-
-    // --- SKILL HANDLERS ---
-    const handleAddSkill = () => {
-        setCvData(prev => ({
-            ...prev,
-            skills: [
-                ...prev.skills,
-                { id: crypto.randomUUID(), name: "" }
-            ]
-        }));
-    };
-
-    const handleUpdateSkill = (id: string, value: string) => {
-        const cleanValue = value.replace(/<[^>]*>/g, '').trim();
-        setCvData({
-            ...cvData,
-            skills: cvData.skills.map(s => s.id === id ? { ...s, name: cleanValue } : s)
-        });
-    };
-
-    const handleDeleteSkill = (id: string) => {
-        setCvData({
-            ...cvData,
-            skills: cvData.skills.filter(s => s.id !== id)
         });
     };
 
@@ -813,35 +947,16 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h1 className="text-2xl font-bold">Beceriler</h1>
-                                    <p className="text-muted-foreground mt-1">Her beceriyi ayrı ayrı ekleyin. + butonuna tıklayarak yeni alan açın, yazdıktan sonra bir sonraki beceriye geçin.</p>
+                                    <p className="text-muted-foreground mt-1">Sahip olduğunuz teknik becerileri, araçları ve teknolojileri ekleyin.</p>
                                 </div>
-                                <Button onClick={handleAddSkill} size="sm" className="gradient-brand text-white">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Beceri Ekle
-                                </Button>
                             </div>
 
                             <Card>
                                 <CardContent className="p-6 space-y-4">
-                                    {cvData.skills.length === 0 && (
-                                        <p className="text-sm text-muted-foreground">Beceri eklemek için yukarıdaki butona tıklayın.</p>
-                                    )}
-                                    <div className="flex flex-wrap gap-3 w-full">
-                                        {cvData.skills.map(skill => (
-                                            <div key={skill.id} className="flex flex-row items-center gap-1 group min-w-[200px] w-full md:w-auto flex-1">
-                                                <Input 
-                                                    className="w-full min-w-[200px] px-4 py-2 text-[14px]"
-                                                    value={skill.name} 
-                                                    onChange={(e) => handleUpdateSkill(skill.id, e.target.value)} 
-                                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); } }} 
-                                                    placeholder="Örn: React, Python, Figma..." 
-                                                />
-                                                <Button size="icon" variant="ghost" onClick={() => handleDeleteSkill(skill.id)} className="h-9 w-9 text-red-500 opacity-60 group-hover:opacity-100 shrink-0 border border-transparent group-hover:border-red-200">
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <SkillsTechInput 
+                                        skills={cvData.skills} 
+                                        onChange={(newSkills) => setCvData({ ...cvData, skills: newSkills })} 
+                                    />
                                 </CardContent>
                             </Card>
                         </div>

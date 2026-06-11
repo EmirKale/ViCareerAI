@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     itemSub: {
         fontSize: 10,
         color: '#000000',
-        fontStyle: 'italic',
         marginBottom: 4,
     },
     skillsRow: {
