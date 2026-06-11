@@ -659,7 +659,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             {/* Sidebar / Wizard Tabs */}
             <div className="w-64 border-r bg-white dark:bg-zinc-900 flex flex-col h-full shrink-0">
                 <div className="p-4 border-b space-y-3">
-                    <Button variant="ghost" size="sm" onClick={() => router.back()} className="text-muted-foreground w-full justify-start -ml-2">
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/templates')} className="text-muted-foreground w-full justify-start -ml-2">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Şablonlara Dön
                     </Button>
