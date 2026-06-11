@@ -14,6 +14,9 @@ import CVPreview from "@/components/cv/CVPreview";
 import { ClassicTemplate, CVData } from "@/components/cv/templates/ClassicTemplate";
 import { ModernTemplate } from "@/components/cv/templates/ModernTemplate";
 import { MinimalTemplate } from "@/components/cv/templates/MinimalTemplate";
+import { ExecutiveTemplate } from "@/components/cv/templates/ExecutiveTemplate";
+import { CreativeTemplate } from "@/components/cv/templates/CreativeTemplate";
+import { TechTemplate } from "@/components/cv/templates/TechTemplate";
 import AIEnhanceModal from "@/components/cv/AIEnhanceModal";
 
 export default function CVEditorPage({ params }: { params: Promise<{ id: string }> }) {
@@ -22,7 +25,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isImporting, setIsImporting] = useState(false);
     const [activeTab, setActiveTab] = useState("personal");
-    const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal'>('classic');
+    const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'tech'>('classic');
     const [isSaving, setIsSaving] = useState(false);
     
     const [aiModalState, setAiModalState] = useState<{
@@ -261,7 +264,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const handleDownloadPDF = async () => {
         try {
             toast.info("PDF hazırlanıyor, lütfen bekleyin...");
-            const TemplateComponent = template === 'modern' ? ModernTemplate : template === 'minimal' ? MinimalTemplate : ClassicTemplate;
+            const TemplateComponent = 
+                template === 'modern' ? ModernTemplate : 
+                template === 'minimal' ? MinimalTemplate :
+                template === 'executive' ? ExecutiveTemplate :
+                template === 'creative' ? CreativeTemplate :
+                template === 'tech' ? TechTemplate :
+                ClassicTemplate;
             const blob = await pdf(<TemplateComponent data={cvData} />).toBlob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -718,14 +727,17 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             <div className="hidden lg:flex flex-col w-[500px] border-l bg-zinc-100/50 dark:bg-zinc-950 p-4">
                 <div className="flex items-center justify-between mb-4 gap-2">
                     <div className="flex items-center gap-2">
-                        <Select value={template} onValueChange={(v: 'classic' | 'modern' | 'minimal') => setTemplate(v)}>
-                            <SelectTrigger className="h-8 w-[110px] text-xs">
+                        <Select value={template} onValueChange={(v: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'tech') => setTemplate(v)}>
+                            <SelectTrigger className="h-8 w-[130px] text-xs">
                                 <SelectValue placeholder="Şablon" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="classic">Classic</SelectItem>
                                 <SelectItem value="modern">Modern</SelectItem>
                                 <SelectItem value="minimal">Minimal</SelectItem>
+                                <SelectItem value="executive">Executive</SelectItem>
+                                <SelectItem value="creative">Creative</SelectItem>
+                                <SelectItem value="tech">Tech</SelectItem>
                             </SelectContent>
                         </Select>
                         <Button size="sm" variant="outline" className="h-8 px-2 text-xs" onClick={handleDownloadPDF}>

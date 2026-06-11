@@ -12,6 +12,9 @@ import { pdf } from "@react-pdf/renderer";
 import { ClassicTemplate, CVData } from "@/components/cv/templates/ClassicTemplate";
 import { ModernTemplate } from "@/components/cv/templates/ModernTemplate";
 import { MinimalTemplate } from "@/components/cv/templates/MinimalTemplate";
+import { ExecutiveTemplate } from "@/components/cv/templates/ExecutiveTemplate";
+import { CreativeTemplate } from "@/components/cv/templates/CreativeTemplate";
+import { TechTemplate } from "@/components/cv/templates/TechTemplate";
 
 interface CVItem {
     id: string;
@@ -25,12 +28,18 @@ const templateLabel: Record<string, string> = {
     classic: "Klasik",
     modern: "Modern",
     minimal: "Minimal",
+    executive: "Executive",
+    creative: "Creative",
+    tech: "Tech",
 };
 
 const templateBadgeClass: Record<string, string> = {
     classic: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
     modern: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
     minimal: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400",
+    executive: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    creative: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+    tech: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
 };
 
 function relativeTime(dateStr: string): string {
@@ -68,7 +77,13 @@ export default function CVHistoryPage() {
         setDownloadingId(cv.id);
         try {
             toast.info("PDF hazırlanıyor...");
-            const TemplateComponent = cv.template === "modern" ? ModernTemplate : cv.template === "minimal" ? MinimalTemplate : ClassicTemplate;
+            const TemplateComponent = 
+                cv.template === "modern" ? ModernTemplate : 
+                cv.template === "minimal" ? MinimalTemplate : 
+                cv.template === "executive" ? ExecutiveTemplate : 
+                cv.template === "creative" ? CreativeTemplate : 
+                cv.template === "tech" ? TechTemplate : 
+                ClassicTemplate;
             const blob = await pdf(<TemplateComponent data={cv.data} />).toBlob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");

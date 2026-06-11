@@ -1,15 +1,5 @@
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVData, getSummaryText } from './ClassicTemplate';
-
-// Register Turkish-friendly fonts
-Font.register({
-  family: 'Roboto',
-  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Regular.ttf'
-});
-Font.register({
-  family: 'Roboto-Bold',
-  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/Roboto-Bold.ttf'
-});
 
 // --------------------------------
 // Creative Template Styles
@@ -18,7 +8,7 @@ const styles = StyleSheet.create({
     page: {
         flexDirection: 'row',
         backgroundColor: '#ffffff',
-        fontFamily: 'Roboto',
+        fontFamily: 'Helvetica',
     },
     sidebar: {
         width: '35%',
@@ -34,7 +24,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontFamily: 'Roboto-Bold',
+        fontFamily: 'Helvetica-Bold',
         marginBottom: 5,
         color: '#f8fafc',
     },
@@ -48,7 +38,7 @@ const styles = StyleSheet.create({
     },
     sidebarTitle: {
         fontSize: 10,
-        fontFamily: 'Roboto-Bold',
+        fontFamily: 'Helvetica-Bold',
         textTransform: 'uppercase',
         letterSpacing: 1.2,
         marginBottom: 10,
@@ -74,14 +64,14 @@ const styles = StyleSheet.create({
     skillLevelFill: {
         height: 2,
         backgroundColor: '#38bdf8',
-        width: '80%', // Placeholder
+        width: '80%',
     },
     mainSection: {
         marginBottom: 25,
     },
     mainTitle: {
         fontSize: 13,
-        fontFamily: 'Roboto-Bold',
+        fontFamily: 'Helvetica-Bold',
         color: '#0f172a',
         marginBottom: 12,
         textTransform: 'uppercase',
@@ -98,7 +88,7 @@ const styles = StyleSheet.create({
     },
     itemName: {
         fontSize: 11,
-        fontFamily: 'Roboto-Bold',
+        fontFamily: 'Helvetica-Bold',
         color: '#1e293b',
     },
     itemDate: {
@@ -119,106 +109,106 @@ const styles = StyleSheet.create({
 });
 
 export const CreativeTemplate = ({ data }: { data: CVData }) => (
-    <Document title={`${data.personal.fullName} - Creative Portfolio CV`}>
+    <Document title={`${data.personal?.fullName || 'CV'} - Creative Portfolio CV`}>
         <Page size="A4" style={styles.page}>
             {/* Sidebar */}
             <View style={styles.sidebar}>
-                <Text style={styles.name}>{data.personal.fullName}</Text>
-                <Text style={styles.title}>{data.personal.jobTitle}</Text>
+                <Text style={styles.name}>{data.personal?.fullName || 'Ad Soyad'}</Text>
+                <Text style={styles.title}>{data.personal?.jobTitle || ''}</Text>
 
                 <View style={styles.sidebarSection}>
                     <Text style={styles.sidebarTitle}>Contact</Text>
-                    {data.personal.email && <Text style={styles.sidebarText}>{data.personal.email}</Text>}
-                    {data.personal.phone && <Text style={styles.sidebarText}>{data.personal.phone}</Text>}
-                    {data.personal.location && <Text style={styles.sidebarText}>{data.personal.location}</Text>}
-                    {data.personal.website && <Text style={styles.sidebarText}>{data.personal.website}</Text>}
+                    {data.personal?.email ? <Text style={styles.sidebarText}>{data.personal.email}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.sidebarText}>{data.personal.phone}</Text> : null}
+                    {data.personal?.location ? <Text style={styles.sidebarText}>{data.personal.location}</Text> : null}
+                    {data.personal?.website ? <Text style={styles.sidebarText}>{data.personal.website}</Text> : null}
                 </View>
 
-                {data.skills?.length > 0 && (
+                {(data.skills?.length ?? 0) > 0 ? (
                     <View style={styles.sidebarSection}>
                         <Text style={styles.sidebarTitle}>Top Skills</Text>
-                        {data.skills.map((skill) => (
+                        {(data.skills || []).map((skill) => (
                             <View key={skill.id} style={styles.skillItem}>
-                                <Text style={styles.skillName}>{skill.name}</Text>
+                                <Text style={styles.skillName}>{skill.name || ''}</Text>
                                 <View style={styles.skillLevel}>
                                     <View style={styles.skillLevelFill}></View>
                                 </View>
                             </View>
                         ))}
                     </View>
-                )}
+                ) : null}
             </View>
 
             {/* Main Content */}
             <View style={styles.main}>
-                {data.summary && (
+                {getSummaryText(data.summary) ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>About Me</Text>
                         <Text style={styles.description}>{getSummaryText(data.summary)}</Text>
                     </View>
-                )}
+                ) : null}
 
-                {data.experience?.length > 0 && (
+                {(data.experience?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Work Experience</Text>
-                        {data.experience.map((exp) => (
+                        {(data.experience || []).map((exp) => (
                             <View key={exp.id} style={styles.item}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{exp.title}</Text>
-                                    <Text style={styles.itemDate}>{exp.startDate} — {exp.isCurrent ? "Now" : exp.endDate}</Text>
+                                    <Text style={styles.itemName}>{exp.title || ''}</Text>
+                                    <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Now" : (exp.endDate || '')}</Text>
                                 </View>
-                                <Text style={styles.itemSub}>{exp.company}</Text>
-                                {exp.description && <Text style={styles.description}>{exp.description}</Text>}
+                                <Text style={styles.itemSub}>{exp.company || ''}</Text>
+                                {exp.description ? <Text style={styles.description}>{exp.description}</Text> : null}
                             </View>
                         ))}
                     </View>
-                )}
+                ) : null}
 
-                {data.education?.length > 0 && (
+                {(data.education?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Education</Text>
-                        {data.education.map((edu) => (
+                        {(data.education || []).map((edu) => (
                             <View key={edu.id} style={styles.item}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{edu.degree}</Text>
-                                    <Text style={styles.itemDate}>{edu.startDate} — {edu.endDate}</Text>
+                                    <Text style={styles.itemName}>{edu.degree || ''}</Text>
+                                    <Text style={styles.itemDate}>{edu.startDate || ''} — {edu.endDate || ''}</Text>
                                 </View>
-                                <Text style={styles.itemSub}>{edu.school}</Text>
+                                <Text style={styles.itemSub}>{edu.school || ''}</Text>
                             </View>
                         ))}
                     </View>
-                )}
+                ) : null}
 
-                {data.projects && data.projects.length > 0 && (
+                {(data.projects?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Projects</Text>
-                        {data.projects.map((proj) => (
+                        {(data.projects || []).map((proj) => (
                             <View key={proj.id} style={styles.item}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{proj.name}</Text>
-                                    {proj.url && <Text style={styles.itemDate}>{proj.url}</Text>}
+                                    <Text style={styles.itemName}>{proj.name || ''}</Text>
+                                    {proj.url ? <Text style={styles.itemDate}>{proj.url}</Text> : null}
                                 </View>
-                                {proj.technologies && <Text style={styles.itemSub}>{proj.technologies}</Text>}
-                                {proj.description && <Text style={styles.description}>{proj.description}</Text>}
+                                {proj.technologies ? <Text style={styles.itemSub}>{proj.technologies}</Text> : null}
+                                {proj.description ? <Text style={styles.description}>{proj.description}</Text> : null}
                             </View>
                         ))}
                     </View>
-                )}
+                ) : null}
 
-                {data.certificates && data.certificates.length > 0 && (
+                {(data.certificates?.length ?? 0) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Certificates</Text>
-                        {data.certificates.map((cert) => (
+                        {(data.certificates || []).map((cert) => (
                             <View key={cert.id} style={styles.item}>
                                 <View style={styles.itemHeader}>
-                                    <Text style={styles.itemName}>{cert.name}</Text>
-                                    <Text style={styles.itemDate}>{cert.date}</Text>
+                                    <Text style={styles.itemName}>{cert.name || ''}</Text>
+                                    <Text style={styles.itemDate}>{cert.date || ''}</Text>
                                 </View>
-                                <Text style={styles.itemSub}>{cert.issuer}</Text>
+                                <Text style={styles.itemSub}>{cert.issuer || ''}</Text>
                             </View>
                         ))}
                     </View>
-                )}
+                ) : null}
             </View>
         </Page>
     </Document>
