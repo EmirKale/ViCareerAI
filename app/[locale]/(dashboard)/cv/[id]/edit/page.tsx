@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,16 +17,19 @@ import { ModernTemplate } from "@/components/cv/templates/ModernTemplate";
 import { MinimalTemplate } from "@/components/cv/templates/MinimalTemplate";
 import { ExecutiveTemplate } from "@/components/cv/templates/ExecutiveTemplate";
 import { CreativeTemplate } from "@/components/cv/templates/CreativeTemplate";
-import { TechTemplate } from "@/components/cv/templates/TechTemplate";
+import { ProfessionalTemplate } from "@/components/cv/templates/ProfessionalTemplate";
 import AIEnhanceModal from "@/components/cv/AIEnhanceModal";
 
 export default function CVEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const projFileRef = useRef<HTMLInputElement>(null);
+    const certFileRef = useRef<HTMLInputElement>(null);
     const [isImporting, setIsImporting] = useState(false);
+    const [isParsing, setIsParsing] = useState<{type: string, active: boolean}>({type: "", active: false});
     const [activeTab, setActiveTab] = useState("personal");
-    const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'tech'>('classic');
+    const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional'>('classic');
     const [isSaving, setIsSaving] = useState(false);
     
     const [aiModalState, setAiModalState] = useState<{
@@ -57,6 +61,48 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
         projects: [],
         certificates: [],
     });
+    
+    const [isLoadingData, setIsLoadingData] = useState(id !== "new");
+
+    useEffect(() => {
+        if (id === "new") return;
+        const fetchCV = async () => {
+            try {
+                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+                const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+                const supabase = createBrowserClient(supabaseUrl, supabaseKey);
+                
+                const { data, error } = await supabase
+                    .from('cvs')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                    
+                if (error) throw error;
+                if (data && data.data) {
+                    setCvData({
+                        personal: data.data.personal || cvData.personal,
+                        summary: data.data.summary || "",
+                        experience: data.data.experience || [],
+                        education: data.data.education || [],
+                        skills: data.data.skills || [],
+                        projects: data.data.projects || [],
+                        certificates: data.data.certificates || [],
+                    });
+                    if (data.template) {
+                        setTemplate(data.template as 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional');
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching CV:", err);
+                toast.error("CV verisi yüklenirken bir hata oluştu.");
+            } finally {
+                setIsLoadingData(false);
+            }
+        };
+        fetchCV();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     const handlePersonalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCvData({
@@ -127,9 +173,10 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     };
 
     const handleUpdateSkill = (id: string, value: string) => {
+        const cleanValue = value.replace(/<[^>]*>/g, '').trim();
         setCvData({
             ...cvData,
-            skills: cvData.skills.map(s => s.id === id ? { ...s, name: value } : s)
+            skills: cvData.skills.map(s => s.id === id ? { ...s, name: cleanValue } : s)
         });
     };
 
@@ -188,6 +235,64 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             ...cvData,
             certificates: (cvData.certificates || []).filter(c => c.id !== id)
         });
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'certificate' | 'project') => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsParsing({ type, active: true });
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", type);
+
+        try {
+            const res = await fetch("/api/cv/parse-file", {
+                method: "POST",
+                body: formData,
+            });
+            const result = await res.json();
+            
+            if (res.ok && result.data) {
+                if (type === 'certificate') {
+                    setCvData(prev => ({
+                        ...prev,
+                        certificates: [
+                            ...(prev.certificates || []),
+                            {
+                                id: Date.now().toString(),
+                                name: result.data.name || "",
+                                issuer: result.data.issuer || "",
+                                date: result.data.date || "",
+                                url: ""
+                            }
+                        ]
+                    }));
+                } else if (type === 'project') {
+                    setCvData(prev => ({
+                        ...prev,
+                        projects: [
+                            ...(prev.projects || []),
+                            {
+                                id: Date.now().toString(),
+                                name: result.data.name || "",
+                                technologies: result.data.technologies || "",
+                                description: result.data.description || "",
+                                url: ""
+                            }
+                        ]
+                    }));
+                }
+                toast.success("Dosyadan bilgiler başarıyla çıkarıldı!");
+            } else {
+                toast.error(result.error || "Dosya okunamadı.");
+            }
+        } catch {
+            toast.error("Dosya yükleme hatası.");
+        } finally {
+            setIsParsing({ type: "", active: false });
+            if (e.target) e.target.value = '';
+        }
     };
 
     const handleLinkedInImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -269,7 +374,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 template === 'minimal' ? MinimalTemplate :
                 template === 'executive' ? ExecutiveTemplate :
                 template === 'creative' ? CreativeTemplate :
-                template === 'tech' ? TechTemplate :
+                template === 'professional' ? ProfessionalTemplate :
                 ClassicTemplate;
             const blob = await pdf(<TemplateComponent data={cvData} />).toBlob();
             const url = URL.createObjectURL(blob);
@@ -283,6 +388,17 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             toast.error("PDF oluşturulurken hata oluştu.");
         }
     };
+
+    if (isLoadingData) {
+        return (
+            <div className="flex h-[calc(100vh-80px)] items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+                <div className="flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                    <p className="text-sm text-muted-foreground">CV yükleniyor...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-zinc-50 dark:bg-zinc-950">
@@ -614,10 +730,17 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                     <h1 className="text-2xl font-bold">Projeler</h1>
                                     <p className="text-muted-foreground mt-1">Geliştirdiğiniz projeleri ve kullandığınız teknolojileri ekleyin.</p>
                                 </div>
-                                <Button onClick={handleAddProject} size="sm" className="gradient-brand text-white">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Proje Ekle
-                                </Button>
+                                <div className="flex gap-2">
+                                    <input type="file" accept=".pdf,.txt" ref={projFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'project')} />
+                                    <Button onClick={() => projFileRef.current?.click()} size="sm" variant="outline" disabled={isParsing.active && isParsing.type === 'project'}>
+                                        {isParsing.active && isParsing.type === 'project' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mr-2" /> : <Download className="mr-2 h-4 w-4" />}
+                                        Dosyadan Ekle
+                                    </Button>
+                                    <Button onClick={handleAddProject} size="sm" className="gradient-brand text-white">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Proje Ekle
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className="space-y-4">
@@ -670,10 +793,17 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                     <h1 className="text-2xl font-bold">Sertifikalar</h1>
                                     <p className="text-muted-foreground mt-1">Kazandığınız sertifikaları ve lisansları ekleyin.</p>
                                 </div>
-                                <Button onClick={handleAddCertificate} size="sm" className="gradient-brand text-white">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Sertifika Ekle
-                                </Button>
+                                <div className="flex gap-2">
+                                    <input type="file" accept=".pdf,.txt" ref={certFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'certificate')} />
+                                    <Button onClick={() => certFileRef.current?.click()} size="sm" variant="outline" disabled={isParsing.active && isParsing.type === 'certificate'}>
+                                        {isParsing.active && isParsing.type === 'certificate' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mr-2" /> : <Download className="mr-2 h-4 w-4" />}
+                                        Dosyadan Ekle
+                                    </Button>
+                                    <Button onClick={handleAddCertificate} size="sm" className="gradient-brand text-white">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Sertifika Ekle
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className="space-y-4">
@@ -727,8 +857,8 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             <div className="hidden lg:flex flex-col w-[500px] border-l bg-zinc-100/50 dark:bg-zinc-950 p-4">
                 <div className="flex items-center justify-between mb-4 gap-2">
                     <div className="flex items-center gap-2">
-                        <Select value={template} onValueChange={(v: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'tech') => setTemplate(v)}>
-                            <SelectTrigger className="h-8 w-[130px] text-xs">
+                        <Select value={template} onValueChange={(v: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional') => setTemplate(v)}>
+                            <SelectTrigger className="h-8 w-[140px] text-xs">
                                 <SelectValue placeholder="Şablon" />
                             </SelectTrigger>
                             <SelectContent>
@@ -737,7 +867,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                 <SelectItem value="minimal">Minimal</SelectItem>
                                 <SelectItem value="executive">Executive</SelectItem>
                                 <SelectItem value="creative">Creative</SelectItem>
-                                <SelectItem value="tech">Tech</SelectItem>
+                                <SelectItem value="professional">Professional</SelectItem>
                             </SelectContent>
                         </Select>
                         <Button size="sm" variant="outline" className="h-8 px-2 text-xs" onClick={handleDownloadPDF}>

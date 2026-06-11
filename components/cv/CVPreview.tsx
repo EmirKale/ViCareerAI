@@ -6,13 +6,13 @@ import { ModernTemplate } from './templates/ModernTemplate';
 import { MinimalTemplate } from './templates/MinimalTemplate';
 import { ExecutiveTemplate } from './templates/ExecutiveTemplate';
 import { CreativeTemplate } from './templates/CreativeTemplate';
-import { TechTemplate } from './templates/TechTemplate';
+import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface CVPreviewProps {
     data: CVData;
-    template?: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'tech';
+    template?: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional';
 }
 
 export default function CVPreview({ data, template = 'classic' }: CVPreviewProps) {
@@ -43,7 +43,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
             template === 'minimal' ? MinimalTemplate :
                 template === 'executive' ? ExecutiveTemplate :
                     template === 'creative' ? CreativeTemplate :
-                        template === 'tech' ? TechTemplate :
+                        template === 'professional' ? ProfessionalTemplate :
                             ClassicTemplate;
 
     return (

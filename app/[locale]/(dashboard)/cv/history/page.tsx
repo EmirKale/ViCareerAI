@@ -14,7 +14,7 @@ import { ModernTemplate } from "@/components/cv/templates/ModernTemplate";
 import { MinimalTemplate } from "@/components/cv/templates/MinimalTemplate";
 import { ExecutiveTemplate } from "@/components/cv/templates/ExecutiveTemplate";
 import { CreativeTemplate } from "@/components/cv/templates/CreativeTemplate";
-import { TechTemplate } from "@/components/cv/templates/TechTemplate";
+import { ProfessionalTemplate } from "@/components/cv/templates/ProfessionalTemplate";
 
 interface CVItem {
     id: string;
@@ -30,7 +30,7 @@ const templateLabel: Record<string, string> = {
     minimal: "Minimal",
     executive: "Executive",
     creative: "Creative",
-    tech: "Tech",
+    professional: "Professional",
 };
 
 const templateBadgeClass: Record<string, string> = {
@@ -39,7 +39,7 @@ const templateBadgeClass: Record<string, string> = {
     minimal: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400",
     executive: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
     creative: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-    tech: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    professional: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
 };
 
 function relativeTime(dateStr: string): string {
@@ -82,7 +82,7 @@ export default function CVHistoryPage() {
                 cv.template === "minimal" ? MinimalTemplate : 
                 cv.template === "executive" ? ExecutiveTemplate : 
                 cv.template === "creative" ? CreativeTemplate : 
-                cv.template === "tech" ? TechTemplate : 
+                cv.template === "professional" ? ProfessionalTemplate : 
                 ClassicTemplate;
             const blob = await pdf(<TemplateComponent data={cv.data} />).toBlob();
             const url = URL.createObjectURL(blob);

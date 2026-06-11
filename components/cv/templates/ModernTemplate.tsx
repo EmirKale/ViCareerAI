@@ -2,24 +2,24 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVData, getSummaryText } from './ClassicTemplate';
 
 const styles = StyleSheet.create({
-    page: { flexDirection: 'row', backgroundColor: '#ffffff', fontFamily: 'Helvetica' },
+    page: { flexDirection: 'row', backgroundColor: '#ffffff', fontFamily: 'Roboto' },
     sidebar: { width: '35%', backgroundColor: '#1E3A8A', padding: 25, color: 'white' },
     main: { width: '65%', padding: 25 },
-    name: { fontSize: 24, fontFamily: 'Helvetica-Bold', marginBottom: 5, color: '#ffffff' },
+    name: { fontSize: 24, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 5, color: '#ffffff' },
     jobTitle: { fontSize: 12, color: '#93C5FD', marginBottom: 20 },
     sidebarSection: { marginBottom: 20 },
-    sidebarTitle: { fontSize: 11, fontFamily: 'Helvetica-Bold', marginBottom: 8, textTransform: 'uppercase', borderBottom: '1pt solid #3B82F6', paddingBottom: 4, color: '#ffffff' },
+    sidebarTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 8, textTransform: 'uppercase', borderBottom: '1pt solid #3B82F6', paddingBottom: 4, color: '#ffffff' },
     contactItem: { fontSize: 9, marginBottom: 5, color: '#DBEAFE' },
     skillItem: { fontSize: 9, marginBottom: 4, backgroundColor: '#2563EB', padding: '3 6', borderRadius: 4, color: '#ffffff' },
     
     // Main Content
     section: { marginBottom: 15 },
-    sectionTitle: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: '#1E3A8A', marginBottom: 8, textTransform: 'uppercase' },
+    sectionTitle: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', color: '#1E3A8A', marginBottom: 8, textTransform: 'uppercase' },
     summary: { fontSize: 10, lineHeight: 1.5, color: '#374151' },
     
     itemBlock: { marginBottom: 12 },
     itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 },
-    itemTitle: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: '#111827' },
+    itemTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: '#111827' },
     itemSubtitle: { fontSize: 10, color: '#2563EB' },
     itemDate: { fontSize: 9, color: '#6B7280' },
     itemDesc: { fontSize: 9.5, lineHeight: 1.5, color: '#4B5563', marginTop: 4 },

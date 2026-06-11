@@ -2,21 +2,21 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVData, getSummaryText } from './ClassicTemplate';
 
 const styles = StyleSheet.create({
-    page: { padding: 40, fontFamily: 'Helvetica', backgroundColor: '#FFFFFF' },
+    page: { padding: 40, fontFamily: 'Roboto', backgroundColor: '#FFFFFF' },
     header: { alignItems: 'center', marginBottom: 25 },
-    name: { fontSize: 28, fontFamily: 'Helvetica-Bold', letterSpacing: 1, marginBottom: 5 },
+    name: { fontSize: 28, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1, marginBottom: 5 },
     jobTitle: { fontSize: 12, color: '#6B7280', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10 },
     contactRow: { flexDirection: 'row', gap: 15, justifyContent: 'center', flexWrap: 'wrap' },
     contactItem: { fontSize: 9, color: '#4B5563' },
     
     section: { marginBottom: 20 },
-    sectionTitle: { fontSize: 11, fontFamily: 'Helvetica-Bold', borderBottom: '1pt solid #E5E7EB', paddingBottom: 5, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 1, color: '#374151' },
+    sectionTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', borderBottom: '1pt solid #E5E7EB', paddingBottom: 5, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 1, color: '#374151' },
     
     summary: { fontSize: 9.5, lineHeight: 1.6, color: '#4B5563', textAlign: 'justify' },
     
     itemBlock: { marginBottom: 12 },
     itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-    itemTitle: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#111827' },
+    itemTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: '#111827' },
     itemCompany: { fontSize: 9.5, color: '#4B5563', fontStyle: 'italic' },
     itemDate: { fontSize: 9, color: '#9CA3AF' },
     itemDesc: { fontSize: 9.5, lineHeight: 1.5, color: '#4B5563', marginTop: 4 },

@@ -1,21 +1,28 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
-export const getSummaryText = (summary: string | Record<string, unknown>): string => {
-    if (!summary) return "";
+Font.register({
+    family: 'Roboto',
+    fonts: [
+        { src: '/fonts/Roboto-Regular.ttf' },
+        { src: '/fonts/Roboto-Bold.ttf', fontWeight: 'bold' }
+    ]
+});
+
+export const getSummaryText = (summary: string | Record<string, unknown> | undefined): string => {
+    if (!summary) return '';
     if (typeof summary === 'string') {
-        const trimmed = summary.trim();
-        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
-            try {
-                const parsed = JSON.parse(trimmed) as Record<string, string>;
-                return parsed.profesyonel_ozet || parsed.summary || summary;
-            } catch {
-                return summary;
-            }
+        try {
+            const parsed = JSON.parse(summary);
+            return parsed['Profesyonel Özet'] 
+                || parsed['profesyonel_ozet'] 
+                || parsed.summary 
+                || summary;
+        } catch {
+            return summary;
         }
-        return summary;
     }
     const obj = summary as Record<string, string>;
-    return obj?.profesyonel_ozet || obj?.summary || String(summary);
+    return obj?.['Profesyonel Özet'] || obj?.profesyonel_ozet || obj?.summary || String(summary);
 };
 
 // --------------------------------
@@ -91,7 +98,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#ffffff',
         padding: 40,
-        fontFamily: 'Helvetica',
+        fontFamily: 'Roboto',
     },
     header: {
         marginBottom: 20,
@@ -100,7 +107,8 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 24,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#111827',
     },
     title: {
@@ -123,7 +131,8 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 11,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#1E3A5F',
         textTransform: 'uppercase',
         letterSpacing: 0.8,
@@ -147,7 +156,8 @@ const styles = StyleSheet.create({
     },
     expTitle: {
         fontSize: 10,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#111827',
     },
     expCompany: {
@@ -171,7 +181,8 @@ const styles = StyleSheet.create({
     },
     eduDegree: {
         fontSize: 10,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#111827',
     },
     eduSchool: {
@@ -198,7 +209,8 @@ const styles = StyleSheet.create({
     },
     projTitle: {
         fontSize: 10,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#111827',
     },
     projUrl: {
@@ -219,7 +231,8 @@ const styles = StyleSheet.create({
     },
     certName: {
         fontSize: 9.5,
-        fontFamily: 'Helvetica-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#111827',
     },
     certIssuer: {

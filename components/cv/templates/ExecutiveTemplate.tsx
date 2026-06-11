@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#ffffff',
         padding: 45,
-        fontFamily: 'Times-Bold',
+        fontFamily: 'Roboto',
     },
     header: {
         textAlign: 'center',
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 14,
         color: '#64748b',
-        fontFamily: 'Times-Roman',
+        fontFamily: 'Roboto',
         fontStyle: 'italic',
     },
     contactRow: {
@@ -39,14 +39,15 @@ const styles = StyleSheet.create({
     contactItem: {
         fontSize: 9,
         color: '#1e293b',
-        fontFamily: 'Times-Roman',
+        fontFamily: 'Roboto',
     },
     section: {
         marginTop: 20,
     },
     sectionTitle: {
         fontSize: 12,
-        fontFamily: 'Times-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#0f172a',
         textTransform: 'uppercase',
         borderBottom: '1pt solid #cbd5e1',
@@ -63,23 +64,24 @@ const styles = StyleSheet.create({
     },
     itemName: {
         fontSize: 11,
-        fontFamily: 'Times-Bold',
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
         color: '#0f172a',
     },
     itemSub: {
         fontSize: 10,
-        fontFamily: 'Times-Roman',
+        fontFamily: 'Roboto',
         fontStyle: 'italic',
         color: '#334155',
     },
     itemDate: {
         fontSize: 9,
-        fontFamily: 'Times-Roman',
+        fontFamily: 'Roboto',
         color: '#64748b',
     },
     description: {
         fontSize: 10,
-        fontFamily: 'Times-Roman',
+        fontFamily: 'Roboto',
         color: '#334155',
         lineHeight: 1.5,
         textAlign: 'justify',
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     },
     skillItem: {
         fontSize: 10,
-        fontFamily: 'Times-Roman',
+        fontFamily: 'Roboto',
         color: '#0f172a',
         width: '30%',
     }
