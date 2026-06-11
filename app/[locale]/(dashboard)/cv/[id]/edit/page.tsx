@@ -65,7 +65,18 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const [isLoadingData, setIsLoadingData] = useState(id !== "new");
 
     useEffect(() => {
-        if (id === "new") return;
+        if (id === "new") {
+            const localData = localStorage.getItem(`cvData_${id}`);
+            const localTemplate = localStorage.getItem(`selectedTemplate_${id}`);
+            if (localData) {
+                try { setCvData(JSON.parse(localData)); } catch {}
+            }
+            if (localTemplate) {
+                setTemplate(localTemplate as 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional');
+            }
+            return;
+        }
+
         const fetchCV = async () => {
             try {
                 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -80,16 +91,39 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                     
                 if (error) throw error;
                 if (data && data.data) {
-                    setCvData({
-                        personal: data.data.personal || cvData.personal,
-                        summary: data.data.summary || "",
-                        experience: data.data.experience || [],
-                        education: data.data.education || [],
-                        skills: data.data.skills || [],
-                        projects: data.data.projects || [],
-                        certificates: data.data.certificates || [],
-                    });
-                    if (data.template) {
+                    const localData = localStorage.getItem(`cvData_${id}`);
+                    const localTemplate = localStorage.getItem(`selectedTemplate_${id}`);
+                    
+                    if (localData) {
+                        try {
+                            setCvData(JSON.parse(localData));
+                        } catch {
+                            // JSON parse error, fallback to db
+                            setCvData({
+                                personal: data.data.personal || cvData.personal,
+                                summary: data.data.summary || "",
+                                experience: data.data.experience || [],
+                                education: data.data.education || [],
+                                skills: data.data.skills || [],
+                                projects: data.data.projects || [],
+                                certificates: data.data.certificates || [],
+                            });
+                        }
+                    } else {
+                        setCvData({
+                            personal: data.data.personal || cvData.personal,
+                            summary: data.data.summary || "",
+                            experience: data.data.experience || [],
+                            education: data.data.education || [],
+                            skills: data.data.skills || [],
+                            projects: data.data.projects || [],
+                            certificates: data.data.certificates || [],
+                        });
+                    }
+
+                    if (localTemplate) {
+                        setTemplate(localTemplate as 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional');
+                    } else if (data.template) {
                         setTemplate(data.template as 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional');
                     }
                 }
@@ -101,8 +135,14 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             }
         };
         fetchCV();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, [id, cvData.personal]);
+
+    useEffect(() => {
+        if (!isLoadingData) {
+            localStorage.setItem(`cvData_${id}`, JSON.stringify(cvData));
+            localStorage.setItem(`selectedTemplate_${id}`, template);
+        }
+    }, [cvData, template, id, isLoadingData]);
 
     const handlePersonalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCvData({
@@ -355,6 +395,8 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 }
             } else {
                 toast.success("CV başarıyla kaydedildi!");
+                localStorage.removeItem(`cvData_${id}`);
+                localStorage.removeItem(`selectedTemplate_${id}`);
                 if (id === "new" && result.id) {
                     // router.replace(`/cv/${result.id}/edit`);
                 }
@@ -707,10 +749,16 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                     {cvData.skills.length === 0 && (
                                         <p className="text-sm text-muted-foreground">Beceri eklemek için yukarıdaki butona tıklayın.</p>
                                     )}
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    <div className="flex flex-wrap gap-3 w-full">
                                         {cvData.skills.map(skill => (
-                                            <div key={skill.id} className="flex flex-row items-center gap-2 group">
-                                                <Input value={skill.name} onChange={(e) => handleUpdateSkill(skill.id, e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); } }} placeholder="Örn: React, Python, Figma..." />
+                                            <div key={skill.id} className="flex flex-row items-center gap-1 group min-w-[200px] w-full md:w-auto flex-1">
+                                                <Input 
+                                                    className="w-full min-w-[200px] px-4 py-2 text-[14px]"
+                                                    value={skill.name} 
+                                                    onChange={(e) => handleUpdateSkill(skill.id, e.target.value)} 
+                                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); } }} 
+                                                    placeholder="Örn: React, Python, Figma..." 
+                                                />
                                                 <Button size="icon" variant="ghost" onClick={() => handleDeleteSkill(skill.id)} className="h-9 w-9 text-red-500 opacity-60 group-hover:opacity-100 shrink-0 border border-transparent group-hover:border-red-200">
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
