@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus, Clock, Pencil, Download } from "lucide-react";
+import { FileText, Plus, Clock, Pencil, Download, Trash2, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { pdf } from "@react-pdf/renderer";
@@ -68,6 +68,22 @@ export default function CVHistoryPage() {
             .catch(() => {})
             .finally(() => setIsLoading(false));
     }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Bu CV'yi silmek istediğinize emin misiniz?")) return;
+
+        try {
+            const res = await fetch(`/api/cv/${id}`, { method: "DELETE" });
+            if (res.ok) {
+                setCvs(prev => prev.filter(c => c.id !== id));
+                toast.success("CV silindi");
+            } else {
+                throw new Error();
+            }
+        } catch {
+            toast.error("Silme işlemi başarısız");
+        }
+    };
 
     const handleDownloadPDF = async (cv: CVItem) => {
         if (!cv.data) {
@@ -149,11 +165,19 @@ export default function CVHistoryPage() {
                                         <Button
                                             size="icon"
                                             variant="ghost"
+                                            className="h-8 w-8 text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
+                                            onClick={() => handleDelete(cv.id)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
                                             className="h-8 w-8 text-muted-foreground hover:text-blue-600 dark:hover:text-blue-400"
                                             disabled={downloadingId === cv.id}
                                             onClick={() => handleDownloadPDF(cv)}
                                         >
-                                            <Download className="h-4 w-4" />
+                                            {downloadingId === cv.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                                         </Button>
                                         <Link href={`/cv/${cv.id}/edit`}>
                                             <Button size="icon" variant="outline" className="h-8 w-8 group-hover:border-blue-300">

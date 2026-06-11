@@ -106,7 +106,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                 </View>
             ) : null}
 
-            {(data.experience?.length ?? 0) > 0 ? (
+            {((data.experience || []).filter(x => x.title?.trim() || x.company?.trim()).length) > 0 ? (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Deneyim</Text>
                     {(data.experience || []).map((exp) => (
@@ -122,7 +122,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                 </View>
             ) : null}
 
-            {(data.education?.length ?? 0) > 0 ? (
+            {((data.education || []).filter(x => x.school?.trim() || x.degree?.trim()).length) > 0 ? (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Eğitim</Text>
                     {(data.education || []).map((edu) => (
@@ -137,7 +137,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                 </View>
             ) : null}
 
-            {(data.projects?.length ?? 0) > 0 ? (
+            {((data.projects || []).filter(x => x.name?.trim()).length) > 0 ? (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Projeler</Text>
                     {(data.projects || []).map((proj) => (
@@ -153,7 +153,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                 </View>
             ) : null}
 
-            {(data.certificates?.length ?? 0) > 0 ? (
+            {((data.certificates || []).filter(x => x.name?.trim()).length) > 0 ? (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Sertifikalar</Text>
                     {(data.certificates || []).map((cert) => (
@@ -168,7 +168,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                 </View>
             ) : null}
 
-            {(data.skills?.length ?? 0) > 0 ? (
+            {((data.skills || []).filter(x => x.name?.trim()).length) > 0 ? (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Beceriler</Text>
                     <View style={styles.skillsRow}>
@@ -183,3 +183,4 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
         </Page>
     </Document>
 );
+

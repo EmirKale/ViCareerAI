@@ -694,7 +694,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h1 className="text-2xl font-bold">Beceriler</h1>
-                                    <p className="text-muted-foreground mt-1">Öne çıkan yeteneklerinizi kelime bazlı ekleyin.</p>
+                                    <p className="text-muted-foreground mt-1">Her beceriyi ayrı ayrı ekleyin. + butonuna tıklayarak yeni alan açın, yazdıktan sonra bir sonraki beceriye geçin.</p>
                                 </div>
                                 <Button onClick={handleAddSkill} size="sm" className="gradient-brand text-white">
                                     <Plus className="mr-2 h-4 w-4" />
@@ -710,7 +710,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                         {cvData.skills.map(skill => (
                                             <div key={skill.id} className="flex flex-row items-center gap-2 group">
-                                                <Input value={skill.name} onChange={(e) => handleUpdateSkill(skill.id, e.target.value)} placeholder="Örn: React" />
+                                                <Input value={skill.name} onChange={(e) => handleUpdateSkill(skill.id, e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); } }} placeholder="Örn: React, Python, Figma..." />
                                                 <Button size="icon" variant="ghost" onClick={() => handleDeleteSkill(skill.id)} className="h-9 w-9 text-red-500 opacity-60 group-hover:opacity-100 shrink-0 border border-transparent group-hover:border-red-200">
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
@@ -881,7 +881,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 </div>
 
                 {/* Render actual React PDF viewer */}
-                <div className="flex-1 overflow-hidden rounded-lg shadow-sm">
+                <div className="flex-1 w-full h-full min-h-0 overflow-hidden rounded-lg shadow-sm">
                     <CVPreview data={cvData} template={template} />
                 </div>
             </div>

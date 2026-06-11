@@ -118,7 +118,7 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     {data.personal?.linkedin ? <Text style={styles.contactItem}>{data.personal.linkedin}</Text> : null}
                 </View>
 
-                {(data.skills?.length ?? 0) > 0 ? (
+                {((data.skills || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.sidebarSection}>
                         <Text style={styles.sidebarTitle}>BECERİLER</Text>
                         {(data.skills || []).map((skill) => (
@@ -137,7 +137,7 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.experience?.length ?? 0) > 0 ? (
+                {((data.experience || []).filter(x => x.title?.trim() || x.company?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Deneyim</Text>
                         {(data.experience || []).map((exp) => (
@@ -153,7 +153,7 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.education?.length ?? 0) > 0 ? (
+                {((data.education || []).filter(x => x.school?.trim() || x.degree?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Eğitim</Text>
                         {(data.education || []).map((edu) => (
@@ -168,7 +168,7 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.projects?.length ?? 0) > 0 ? (
+                {((data.projects || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Projeler</Text>
                         {(data.projects || []).map((proj) => (
@@ -183,7 +183,7 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.certificates?.length ?? 0) > 0 ? (
+                {((data.certificates || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>Sertifikalar</Text>
                         {(data.certificates || []).map((cert) => (
@@ -201,3 +201,4 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
         </Page>
     </Document>
 );
+

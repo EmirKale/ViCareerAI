@@ -131,7 +131,7 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.experience?.length ?? 0) > 0 ? (
+                {((data.experience || []).filter(x => x.title?.trim() || x.company?.trim()).length) > 0 ? (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>KARİYER GEÇMİŞİ</Text>
                         <View style={styles.separator} />
@@ -148,7 +148,7 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.education?.length ?? 0) > 0 ? (
+                {((data.education || []).filter(x => x.school?.trim() || x.degree?.trim()).length) > 0 ? (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>EĞİTİM BİLGİLERİ</Text>
                         <View style={styles.separator} />
@@ -164,7 +164,7 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.projects?.length ?? 0) > 0 ? (
+                {((data.projects || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>ÖNEMLİ PROJELER</Text>
                         <View style={styles.separator} />
@@ -181,7 +181,7 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.certificates?.length ?? 0) > 0 ? (
+                {((data.certificates || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>LİSANS & SERTİFİKALAR</Text>
                         <View style={styles.separator} />
@@ -197,7 +197,7 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.skills?.length ?? 0) > 0 ? (
+                {((data.skills || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>UZMANLIK ALANLARI</Text>
                         <View style={styles.separator} />
@@ -214,3 +214,4 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
         </Page>
     </Document>
 );
+

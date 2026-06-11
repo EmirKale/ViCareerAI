@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "@/i18n/routing";
 
 interface AIEnhanceModalProps {
     isOpen: boolean;
@@ -21,6 +22,7 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
     const [suggestion, setSuggestion] = useState<string>("");
     const [hasRequested, setHasRequested] = useState(false);
     const [editableText, setEditableText] = useState("");
+    const router = useRouter();
 
     useEffect(() => {
         if (suggestion) {
@@ -49,7 +51,16 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
 
             const data = await res.json();
             if (!res.ok) {
-                toast.error(data.error || "Öneriler alınamadı.");
+                if (data.error && data.error.includes("5 defa")) {
+                    toast.warning(data.error, {
+                        action: {
+                            label: "Pro'ya Yükselt →",
+                            onClick: () => router.push('/pricing')
+                        }
+                    });
+                } else {
+                    toast.error(data.error || "Öneriler alınamadı.");
+                }
                 return;
             }
 

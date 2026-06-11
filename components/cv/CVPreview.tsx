@@ -54,7 +54,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                     <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
                 </div>
             )}
-            <PDFViewer style={{ width: '100%', height: '100%', border: 'none' }} showToolbar={false}>
+            <PDFViewer key={template} style={{ width: '100%', height: '100%', border: 'none' }} showToolbar={false}>
                 <TemplateComponent data={debouncedData} />
             </PDFViewer>
         </div>

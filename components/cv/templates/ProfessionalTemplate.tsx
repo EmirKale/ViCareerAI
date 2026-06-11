@@ -119,7 +119,7 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
                     {data.personal?.linkedin ? <Text style={styles.contactItem}>{data.personal.linkedin}</Text> : null}
                 </View>
 
-                {(data.skills?.length ?? 0) > 0 ? (
+                {((data.skills || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.sidebarSection}>
                         <Text style={styles.sidebarTitle}>UZMANLIK ALANLARI</Text>
                         {(data.skills || []).map((skill) => (
@@ -138,7 +138,7 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.experience?.length ?? 0) > 0 ? (
+                {((data.experience || []).filter(x => x.title?.trim() || x.company?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>İŞ DENEYİMİ</Text>
                         {(data.experience || []).map((exp) => (
@@ -154,7 +154,7 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.education?.length ?? 0) > 0 ? (
+                {((data.education || []).filter(x => x.school?.trim() || x.degree?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>EĞİTİM GEÇMİŞİ</Text>
                         {(data.education || []).map((edu) => (
@@ -169,7 +169,7 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.projects?.length ?? 0) > 0 ? (
+                {((data.projects || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>PROJELER</Text>
                         {(data.projects || []).map((proj) => (
@@ -185,7 +185,7 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
 
-                {(data.certificates?.length ?? 0) > 0 ? (
+                {((data.certificates || []).filter(x => x.name?.trim()).length) > 0 ? (
                     <View style={styles.mainSection}>
                         <Text style={styles.mainTitle}>SERTİFİKALAR</Text>
                         {(data.certificates || []).map((cert) => (
@@ -203,3 +203,4 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
         </Page>
     </Document>
 );
+
