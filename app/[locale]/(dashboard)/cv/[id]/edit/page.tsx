@@ -20,6 +20,59 @@ import { CreativeTemplate } from "@/components/cv/templates/CreativeTemplate";
 import { ProfessionalTemplate } from "@/components/cv/templates/ProfessionalTemplate";
 import AIEnhanceModal from "@/components/cv/AIEnhanceModal";
 
+const TECH_LIST = ["ASP.NET", "ASP.NET Core", "ASP.NET MVC", "React", "Next.js", "Vue.js", "Angular", "Node.js", "Express.js", "TypeScript", "JavaScript", "Python", "Django", "FastAPI", "C#", "Java", "Spring Boot", "PHP", "Laravel", "SQL Server", "PostgreSQL", "MySQL", "MongoDB", "Redis", "Docker", "Kubernetes", "AWS", "Azure", "Vercel", "Supabase", "Firebase", "GraphQL", "REST API", "Tailwind CSS", "Bootstrap", "React Native", "Flutter", "Swift", "Kotlin", "Git", "GitHub", "CI/CD", "Linux", "Figma"];
+
+function ProjectTechInput({ value, onChange }: { value: string, onChange: (val: string) => void }) {
+    const [inputValue, setInputValue] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    
+    const selectedTechs = value ? value.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const filteredTechs = TECH_LIST.filter(t => t.toLowerCase().includes(inputValue.toLowerCase()) && !selectedTechs.includes(t));
+    
+    const handleAdd = (tech: string) => {
+        const newTechs = [...selectedTechs, tech];
+        onChange(newTechs.join(', '));
+        setInputValue("");
+        setIsOpen(false);
+    };
+    
+    const handleRemove = (tech: string) => {
+        const newTechs = selectedTechs.filter(t => t !== tech);
+        onChange(newTechs.join(', '));
+    };
+    
+    return (
+        <div className="space-y-2">
+            <div className="flex flex-wrap gap-2 mb-2">
+                {selectedTechs.map(tech => (
+                    <div key={tech} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded flex items-center gap-1 dark:bg-blue-900/30 dark:text-blue-300">
+                        {tech}
+                        <button onClick={(e) => { e.preventDefault(); handleRemove(tech); }} className="hover:text-red-500 font-bold">&times;</button>
+                    </div>
+                ))}
+            </div>
+            <div className="relative">
+                <Input 
+                    value={inputValue} 
+                    onChange={e => { setInputValue(e.target.value); setIsOpen(true); }}
+                    onFocus={() => setIsOpen(true)}
+                    onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+                    placeholder="Teknoloji ara ve seç..."
+                />
+                {isOpen && inputValue && filteredTechs.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-40 overflow-y-auto dark:bg-zinc-900 dark:border-zinc-800">
+                        {filteredTechs.map(tech => (
+                            <div key={tech} onMouseDown={(e) => { e.preventDefault(); handleAdd(tech); }} className="px-3 py-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm">
+                                {tech}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 export default function CVEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = React.use(params);
     const router = useRouter();
@@ -407,6 +460,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             if (!res.ok) {
                 if (res.status === 503 || res.status === 401) {
                     toast.info("Giriş yapmadığınız için çalışmalarınız tarayıcıda geçici tutulmaktadır.");
+                } else if (result.error && result.error.includes("Pro plana geçin")) {
+                    toast.error(result.error, {
+                        action: {
+                            label: "Pro'ya Yükselt →",
+                            onClick: () => router.push('/pricing')
+                        }
+                    });
                 } else {
                     toast.error(result.error || "CV kaydedilemedi.");
                 }
@@ -824,23 +884,23 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                             <CardContent className="p-6 space-y-4 pt-10">
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-4">
                                                     <div className="space-y-2">
                                                         <Label>Proje Adı</Label>
                                                         <Input value={proj.name} onChange={(e) => handleUpdateProject(proj.id, 'name', e.target.value)} placeholder="Örn: E-Ticaret Uygulaması" />
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Kullanılan Teknolojiler</Label>
-                                                        <Input value={proj.technologies || ""} onChange={(e) => handleUpdateProject(proj.id, 'technologies', e.target.value)} placeholder="Örn: React, Node.js, MongoDB" />
+                                                        <ProjectTechInput value={proj.technologies || ""} onChange={(val) => handleUpdateProject(proj.id, 'technologies', val)} />
                                                     </div>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <Label>Proje URL</Label>
-                                                    <Input value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} placeholder="Örn: github.com/kullanici/proje" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <Label>Açıklama</Label>
-                                                    <Textarea rows={3} value={proj.description} onChange={(e) => handleUpdateProject(proj.id, 'description', e.target.value)} placeholder="Projede neler yaptınız?" />
+                                                    <div className="space-y-2">
+                                                        <Label>Proje URL</Label>
+                                                        <Input value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} placeholder="Örn: github.com/kullanici/proje" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Açıklama</Label>
+                                                        <Textarea rows={3} value={proj.description} onChange={(e) => handleUpdateProject(proj.id, 'description', e.target.value)} placeholder="Projede neler yaptınız?" />
+                                                    </div>
                                                 </div>
                                             </CardContent>
                                         </Card>
@@ -887,7 +947,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                             <CardContent className="p-6 space-y-4 pt-10">
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-4">
                                                     <div className="space-y-2">
                                                         <Label>Sertifika Adı</Label>
                                                         <Input value={cert.name} onChange={(e) => handleUpdateCertificate(cert.id, 'name', e.target.value)} placeholder="Örn: AWS Certified Solutions Architect" />
@@ -896,8 +956,6 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                                         <Label>Veren Kurum</Label>
                                                         <Input value={cert.issuer} onChange={(e) => handleUpdateCertificate(cert.id, 'issuer', e.target.value)} placeholder="Örn: Amazon Web Services" />
                                                     </div>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-2">
                                                         <Label>Tarih</Label>
                                                         <Input value={cert.date} onChange={(e) => handleUpdateCertificate(cert.id, 'date', e.target.value)} placeholder="Örn: 2023 veya Aralık 2022" />
