@@ -9,7 +9,7 @@ const envSchema = z.object({
   RAPIDAPI_KEY: z.string().min(10).optional(),
   LEMONSQUEEZY_API_KEY: z.string().min(10).optional(),
   LEMONSQUEEZY_STORE_ID: z.string().min(1).optional(),
-  LEMONSQUEEZY_WEBHOOK_SECRET: z.string().min(10).optional(),
+  LEMONSQUEEZY_WEBHOOK_SECRET: z.string().optional(),
   NEXT_PUBLIC_LEMONSQUEEZY_PRO_MONTHLY_VARIANT_ID: z.string().min(1).optional(),
 });
 
