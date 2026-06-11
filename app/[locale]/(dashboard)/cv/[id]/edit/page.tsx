@@ -965,12 +965,12 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                     {/* Projects Tab */}
                     {activeTab === "projects" && (
                         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                                 <div>
                                     <h1 className="text-2xl font-bold">Projeler</h1>
                                     <p className="text-muted-foreground mt-1">Geliştirdiğiniz projeleri ve kullandığınız teknolojileri ekleyin.</p>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <input type="file" accept=".pdf,.txt" ref={projFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'project')} />
                                     <Button onClick={() => projFileRef.current?.click()} size="sm" variant="outline" disabled={isParsing.active && isParsing.type === 'project'}>
                                         {isParsing.active && isParsing.type === 'project' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mr-2" /> : <Download className="mr-2 h-4 w-4" />}
@@ -1028,12 +1028,12 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                     {/* Certificates Tab */}
                     {activeTab === "certificates" && (
                         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                                 <div>
                                     <h1 className="text-2xl font-bold">Sertifikalar</h1>
                                     <p className="text-muted-foreground mt-1">Kazandığınız sertifikaları ve lisansları ekleyin.</p>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap gap-2">
                                     <input type="file" accept=".pdf,.txt" ref={certFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'certificate')} />
                                     <Button onClick={() => certFileRef.current?.click()} size="sm" variant="outline" disabled={isParsing.active && isParsing.type === 'certificate'}>
                                         {isParsing.active && isParsing.type === 'certificate' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mr-2" /> : <Download className="mr-2 h-4 w-4" />}

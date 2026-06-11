@@ -20,6 +20,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const isEditorPage = pathname.includes('/cv/') && pathname.includes('/edit');
   const supabase = createClient();
   const t = useTranslations("Navigation");
 
@@ -124,8 +125,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-[#09090B] p-4 md:p-8">
-          <div className="mx-auto max-w-6xl">
+        <main className={`flex-1 overflow-y-auto bg-zinc-50 dark:bg-[#09090B] ${isEditorPage ? 'p-2 md:p-4' : 'p-4 md:p-8'}`}>
+          <div className={`mx-auto ${isEditorPage ? 'max-w-full' : 'max-w-6xl'}`}>
             {children}
           </div>
         </main>
