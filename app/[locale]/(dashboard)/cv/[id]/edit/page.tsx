@@ -261,6 +261,14 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const [mobileTab, setMobileTab] = useState<"sections" | "edit" | "preview">("sections");
     const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional'>('classic');
     const [isSaving, setIsSaving] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
     
     const [aiModalState, setAiModalState] = useState<{
         isOpen: boolean;
@@ -1120,7 +1128,20 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
                 {/* Render actual React PDF viewer */}
                 <div className="flex-1 w-full h-full min-h-0 overflow-y-auto rounded-lg shadow-sm">
-                    <CVPreview data={cvData} template={template} />
+                    {isMobile ? (
+                        <div className="flex flex-col items-center justify-center h-full gap-4 p-8 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+                            <FileText className="w-16 h-16 text-muted-foreground opacity-50" />
+                            <p className="text-center text-muted-foreground font-medium">
+                                Mobil cihazlarda PDF önizlemesi desteklenmemektedir.<br/>
+                                Sonucu görmek için PDF olarak indirebilirsiniz.
+                            </p>
+                            <Button onClick={handleDownloadPDF} className="mt-2 gradient-brand shadow-md">
+                                <Download className="w-4 h-4 mr-2" /> PDF İndir
+                            </Button>
+                        </div>
+                    ) : (
+                        <CVPreview data={cvData} template={template} />
+                    )}
                 </div>
             </div>
 
