@@ -50,8 +50,8 @@ export default function Home() {
     initial: { y: 30, opacity: 0 },
     whileInView: { y: 0, opacity: 1 },
     viewport: { once: true, margin: "-100px" },
-    transition: FADE_TRANSITION,
-  };
+    transition: FADE_TRANSITION as Transition,
+  } as const;
 
   const tATS = useTranslations("ATS");
   

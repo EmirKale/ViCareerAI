@@ -163,7 +163,7 @@ export default function AIInterviewPage() {
                             onClick={() => setIsRecording(!isRecording)}
                         >
                             <Mic className="w-5 h-5 mr-2" />
-                            {isRecording ? "Kaydı Durdur" : "Cevapla"}
+                            {isRecording ? t("stopRecording") : t("answer")}
                         </Button>
                     </div>
                 </div>

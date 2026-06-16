@@ -210,7 +210,28 @@
             "feature2": "İş ilanlarına göre CV uyumluluk analizi",
             "feature3": "Kişiselleştirilmiş motivasyon mektubu üretimi",
             "button": "İlan Analizi Başlat"
-        }
+        },
+        "recentWork": "Son Çalışmalarım",
+        "recentWorkDesc": "Kaldığınız yerden düzenlemeye devam edin",
+        "viewAll": "Tümünü Gör",
+        "edit": "Düzenle",
+        "noCvYet": "Henüz bir CV oluşturmadınız.",
+        "createNow": "Hemen Oluştur",
+        "profileStrength": "Profil Gücü",
+        "updateProfile": "Profilimi Güncelle",
+        "profileStrengthGood": "Harika gidiyorsunuz! Özgeçmişiniz işverenlerin dikkatini çekecek düzeyde.",
+        "profileStrengthImprove": "Profilinizi güçlendirmek için daha fazla detay ekleyin.",
+        "jobStats": "İş Arama İstatistikleri",
+        "jobStatsDesc": "Son 30 günlük aktiviteniz",
+        "pipelineApplied": "Başvurular",
+        "pipelineInterviews": "Görüşmeler",
+        "pipelineOffers": "Teklifler",
+        "detailedAnalysis": "Detaylı Analiz",
+        "dailyTip": "Günün Kariyer İpucu",
+        "dailyTipQuote": "İş ilanlarındaki anahtar kelimeleri özgeçmişinize birebir eklemek, ATS (Aday Takip Sistemi) puanınızı ortalama %40 oranında artırır.",
+        "dailyTipSource": "AI Asistanınızdan Tavsiyeler",
+        "unlimitedAccess": "Sınırsız erişim",
+        "limitedAccess": "Kısıtlı erişim"
     },
     "Tracker": {
         "title": "Başvuru Board'u",
@@ -349,7 +370,9 @@
         "toneValue": "Profesyonel",
         "userSim": "\"TechFlow'daki önceki rolümde, tüm altyapımızı şuraya taşımak için sekiz kişilik çapraz fonksiyonlu bir ekibi yönettim...\"",
         "recording": "Kaydediliyor...",
-        "stopAnalysis": "Analizi Durdur"
+        "stopAnalysis": "Analizi Durdur",
+        "stopRecording": "Kaydı Durdur",
+        "answer": "Cevapla"
     },
     "JobsDiscover": {
         "title": "İş İlanları Keşfet",

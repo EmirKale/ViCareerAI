@@ -210,7 +210,28 @@
             "feature2": "CV compatibility analysis according to job postings",
             "feature3": "Personalized cover letter production",
             "button": "Start Job Analysis"
-        }
+        },
+        "recentWork": "Recent Work",
+        "recentWorkDesc": "Continue editing where you left off",
+        "viewAll": "View All",
+        "edit": "Edit",
+        "noCvYet": "You haven't created a CV yet.",
+        "createNow": "Create Now",
+        "profileStrength": "Profile Strength",
+        "updateProfile": "Update My Profile",
+        "profileStrengthGood": "Great progress! Your resume is ready to catch employers' attention.",
+        "profileStrengthImprove": "Add more details to strengthen your profile.",
+        "jobStats": "Job Search Statistics",
+        "jobStatsDesc": "Your activity in the last 30 days",
+        "pipelineApplied": "Applications",
+        "pipelineInterviews": "Interviews",
+        "pipelineOffers": "Offers",
+        "detailedAnalysis": "Detailed Analysis",
+        "dailyTip": "Daily Career Tip",
+        "dailyTipQuote": "Adding keywords from job postings directly to your resume increases your ATS (Applicant Tracking System) score by an average of 40%.",
+        "dailyTipSource": "Tips from Your AI Assistant",
+        "unlimitedAccess": "Unlimited access",
+        "limitedAccess": "Limited access"
     },
     "Tracker": {
         "title": "Application Board",
@@ -349,7 +370,9 @@
         "toneValue": "Professional",
         "userSim": "\"In my previous role at TechFlow, I led a cross-functional team of eight to migrate our entire infrastructure to...\"",
         "recording": "Recording...",
-        "stopAnalysis": "Stop Analysis"
+        "stopAnalysis": "Stop Analysis",
+        "stopRecording": "Stop Recording",
+        "answer": "Answer"
     },
     "JobsDiscover": {
         "title": "Discover Jobs",

@@ -78,7 +78,7 @@ export default function DashboardPage() {
         { title: t("stats.cvs"), value: quota ? `${quota.cv_count}/${maxCv}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-blue-500" },
         { title: t("stats.letters"), value: quota ? `${quota.cover_letter_count || 0}/${maxLetter}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-purple-500" },
         { title: t("stats.analysis"), value: quota ? `${quota.analysis_count}/${maxAnalysis}` : "...", desc: t("stats.used"), icon: FileSearch, color: "text-teal-500" },
-        { title: t("stats.plan"), value: plan === "pro" ? t("stats.pro") : t("stats.free"), desc: plan === "pro" ? "Sınırsız erişim" : "Kısıtlı erişim", icon: Briefcase, color: plan === "pro" ? "text-yellow-500" : "text-orange-500" },
+        { title: t("stats.plan"), value: plan === "pro" ? t("stats.pro") : t("stats.free"), desc: plan === "pro" ? t("unlimitedAccess") : t("limitedAccess"), icon: Briefcase, color: plan === "pro" ? "text-yellow-500" : "text-orange-500" },
     ];
 
     const quickLinks = [
@@ -91,7 +91,7 @@ export default function DashboardPage() {
     // Dynamic data for new features
     const recentDocuments = cvs.slice(0, 3).map((cv, idx) => ({
         id: cv.id, 
-        title: cv.title || "İsimsiz CV", 
+        title: cv.title || "Untitled CV", 
         date: new Date(cv.updated_at).toLocaleDateString(), 
         type: "cv", 
         icon: FileText, 
@@ -100,9 +100,9 @@ export default function DashboardPage() {
     }));
 
     const pipelineStats = [
-        { label: "Başvurular", value: jobs.filter(j => j.status === 'Applied').length || 0, color: "bg-blue-500" },
-        { label: "Görüşmeler", value: jobs.filter(j => j.status === 'Interviewing').length || 0, color: "bg-amber-500" },
-        { label: "Teklifler", value: jobs.filter(j => j.status === 'Offer').length || 0, color: "bg-green-500" },
+        { label: t("pipelineApplied"), value: jobs.filter(j => j.status === 'Applied').length || 0, color: "bg-blue-500" },
+        { label: t("pipelineInterviews"), value: jobs.filter(j => j.status === 'Interviewing').length || 0, color: "bg-amber-500" },
+        { label: t("pipelineOffers"), value: jobs.filter(j => j.status === 'Offer').length || 0, color: "bg-green-500" },
     ];
 
     return (
@@ -151,13 +151,13 @@ export default function DashboardPage() {
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg">
                                 <Clock className="h-5 w-5 text-blue-500" />
-                                Son Çalışmalarım
+                                {t("recentWork")}
                             </CardTitle>
-                            <CardDescription>Kaldığınız yerden düzenlemeye devam edin</CardDescription>
+                            <CardDescription>{t("recentWorkDesc")}</CardDescription>
                         </div>
                         <Link href="/cv/history">
                             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-blue-600">
-                                Tümünü Gör <ChevronRight className="ml-1 h-4 w-4" />
+                                {t("viewAll")} <ChevronRight className="ml-1 h-4 w-4" />
                             </Button>
                         </Link>
                     </CardHeader>
@@ -174,15 +174,15 @@ export default function DashboardPage() {
                                         </div>
                                         <h3 className="font-semibold text-zinc-900 dark:text-white truncate pr-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doc.title}</h3>
                                         <div className="mt-4 flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-                                            Düzenle <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                                            {t("edit")} <ArrowRight className="ml-1 h-3.5 w-3.5" />
                                         </div>
                                     </div>
                                 </Link>
                             )) : (
                                 <div className="col-span-3 text-center py-6 text-muted-foreground bg-zinc-50 dark:bg-zinc-900/20 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800">
-                                    <p className="text-sm">Henüz bir CV oluşturmadınız.</p>
+                                    <p className="text-sm">{t("noCvYet")}</p>
                                     <Link href="/cv/new">
-                                        <Button variant="link" className="text-blue-600 mt-1">Hemen Oluştur</Button>
+                                        <Button variant="link" className="text-blue-600 mt-1">{t("createNow")}</Button>
                                     </Link>
                                 </div>
                             )}
@@ -195,7 +195,7 @@ export default function DashboardPage() {
                     <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-purple-500/10 blur-2xl pointer-events-none" />
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-indigo-900 dark:text-indigo-100">
-                            <Target className="h-5 w-5 text-indigo-500" /> Profil Gücü
+                            <Target className="h-5 w-5 text-indigo-500" /> {t("profileStrength")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-center text-center pt-2 pb-6">
@@ -210,11 +210,11 @@ export default function DashboardPage() {
                             </div>
                         </div>
                         <p className="text-sm text-indigo-800/80 dark:text-indigo-200/80 font-medium px-2">
-                            {profileStrength >= 80 ? "Harika gidiyorsunuz! Özgeçmişiniz işverenlerin dikkatini çekecek düzeyde." : "Profilinizi güçlendirmek için daha fazla detay ekleyin."}
+                            {profileStrength >= 80 ? t("profileStrengthGood") : t("profileStrengthImprove")}
                         </p>
                         <Link href="/profile">
                             <Button variant="outline" size="sm" className="mt-4 bg-white/50 dark:bg-zinc-900/50 border-indigo-200 dark:border-indigo-800 hover:bg-white dark:hover:bg-zinc-900">
-                                Profilimi Güncelle
+                                {t("updateProfile")}
                             </Button>
                         </Link>
                     </CardContent>
@@ -226,9 +226,9 @@ export default function DashboardPage() {
                 <Card className="col-span-1 lg:col-span-2">
                     <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-amber-500" /> İş Arama İstatistikleri
+                            <TrendingUp className="h-5 w-5 text-amber-500" /> {t("jobStats")}
                         </CardTitle>
-                        <CardDescription>Son 30 günlük aktiviteniz</CardDescription>
+                        <CardDescription>{t("jobStatsDesc")}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-5 pt-2">
@@ -243,7 +243,7 @@ export default function DashboardPage() {
                             ))}
                             <div className="pt-4 mt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-center">
                                 <Link href="/jobs/tracker" className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center">
-                                    Detaylı Analiz <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                                    {t("detailedAnalysis")} <ArrowRight className="ml-1 h-3.5 w-3.5" />
                                 </Link>
                             </div>
                         </div>
@@ -257,15 +257,15 @@ export default function DashboardPage() {
                             <div className="p-1.5 rounded-full bg-amber-100 dark:bg-amber-900/50">
                                 <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                             </div>
-                            Günün Kariyer İpucu
+                            {t("dailyTip")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-2">
                         <blockquote className="border-l-4 border-amber-400 pl-4 py-1 my-2 text-sm text-amber-800 dark:text-amber-200/90 italic leading-relaxed">
-                            &quot;İş ilanlarındaki anahtar kelimeleri özgeçmişinize birebir eklemek, ATS (Aday Takip Sistemi) puanınızı ortalama %40 oranında artırır.&quot;
+                            &quot;{t("dailyTipQuote")}&quot;
                         </blockquote>
                         <div className="mt-4 flex items-center gap-2 text-xs font-medium text-amber-700/70 dark:text-amber-400/70">
-                            <Sparkles className="h-3.5 w-3.5" /> AI Asistanınızdan Tavsiyeler
+                            <Sparkles className="h-3.5 w-3.5" /> {t("dailyTipSource")}
                         </div>
                     </CardContent>
                 </Card>
