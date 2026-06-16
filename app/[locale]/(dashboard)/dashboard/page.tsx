@@ -106,7 +106,7 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto p-4 md:p-8">
+        <div className="space-y-8 md:animate-in md:fade-in md:slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto p-4 md:p-8">
 
             {/* Welcome & Quick Actions */}
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
