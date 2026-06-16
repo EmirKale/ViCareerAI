@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save, Sparkles, Plus, Trash2, Download } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Plus, Trash2, Download, List, Edit3, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { pdf } from '@react-pdf/renderer';
 import CVPreview from "@/components/cv/CVPreview";
@@ -258,6 +258,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const [isImporting, setIsImporting] = useState(false);
     const [isParsing, setIsParsing] = useState<{type: string, active: boolean}>({type: "", active: false});
     const [activeTab, setActiveTab] = useState("personal");
+    const [mobileTab, setMobileTab] = useState<"sections" | "edit" | "preview">("sections");
     const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional'>('classic');
     const [isSaving, setIsSaving] = useState(false);
     
@@ -653,10 +654,10 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     }
 
     return (
-        <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-zinc-50 dark:bg-zinc-950 relative pb-16 md:pb-0">
 
             {/* Sidebar / Wizard Tabs */}
-            <div className="w-64 border-r bg-white dark:bg-zinc-900 flex flex-col h-full shrink-0">
+            <div className={`${mobileTab === "sections" ? "flex" : "hidden"} md:flex w-full md:w-64 border-r bg-white dark:bg-zinc-900 flex-col h-full shrink-0 pb-16 md:pb-0`}>
                 <div className="p-4 border-b space-y-3">
                     <Button variant="ghost" size="sm" onClick={() => router.push('/templates')} className="text-muted-foreground w-full justify-start -ml-2">
                         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -686,7 +687,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                         return (
                             <button
                                 key={tabId}
-                                onClick={() => setActiveTab(tabId)}
+                                onClick={() => { setActiveTab(tabId); setMobileTab("edit"); }}
                                 className={`text-left px-4 py-3 rounded-lg text-sm font-medium my-0.5 transition-colors ${isActive
                                     ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                                     : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
@@ -715,7 +716,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             </div>
 
             {/* Main Editor Form Area */}
-            <div className="flex-1 overflow-y-auto p-6 md:p-8">
+            <div className={`flex-1 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8 ${mobileTab === "edit" ? "block" : "hidden md:block"}`}>
                 <div className="max-w-2xl mx-auto space-y-6">
 
                     {/* Personal Info Tab */}
@@ -1121,6 +1122,31 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 <div className="flex-1 w-full h-full min-h-0 overflow-y-auto rounded-lg shadow-sm">
                     <CVPreview data={cvData} template={template} />
                 </div>
+            </div>
+
+            {/* Mobile Bottom Tab Bar */}
+            <div className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-around p-2 pb-safe">
+                <button 
+                    onClick={() => setMobileTab("sections")} 
+                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'sections' ? 'text-blue-600' : 'text-zinc-500'}`}
+                >
+                    <List className="h-5 w-5 mb-1" />
+                    <span className="text-[10px] font-medium">Bölümler</span>
+                </button>
+                <button 
+                    onClick={() => setMobileTab("edit")} 
+                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'edit' ? 'text-blue-600' : 'text-zinc-500'}`}
+                >
+                    <Edit3 className="h-5 w-5 mb-1" />
+                    <span className="text-[10px] font-medium">Düzenle</span>
+                </button>
+                <button 
+                    onClick={() => setMobileTab("preview")} 
+                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'preview' ? 'text-blue-600' : 'text-zinc-500'}`}
+                >
+                    <FileText className="h-5 w-5 mb-1" />
+                    <span className="text-[10px] font-medium">Önizleme</span>
+                </button>
             </div>
 
             <AIEnhanceModal

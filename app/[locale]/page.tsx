@@ -112,8 +112,8 @@ export default function Home() {
                 <ChevronRight className="ml-3 h-7 w-7 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <div className="flex flex-col items-start gap-1">
-               <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest pl-2">
+            <div className="flex flex-col items-center sm:items-start gap-1 w-full sm:w-auto">
+               <div className="flex items-center justify-center sm:justify-start gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest sm:pl-2">
                   <ShieldCheck className="h-4 w-4 text-green-500" />
                   {t("noCreditCard")}
                </div>
@@ -247,35 +247,43 @@ export default function Home() {
                </motion.div>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-              <TestimonialCard 
-                name="Ayşe Kaya" 
-                role="UX Designer, İstanbul" 
-                quote="ViCareerAI sayesinde CV'mi 30 dakikada hazırladım. ATS skoru 92 oldu ve ilk başvurumda mülakata çağrıldım!" 
-                avatar="https://api.dicebear.com/7.x/initials/svg?seed=AK&backgroundColor=2563EB" 
-                delay={0.1} 
-              />
-              <TestimonialCard 
-                name="Mehmet Demir" 
-                role="Software Developer, Ankara" 
-                quote="Motivasyon mektuplarını her iş ilanına özel oluşturmak çok zaman alıyordu. Artık 2 dakikada profesyonel mektup hazırlıyorum." 
-                avatar="https://api.dicebear.com/7.x/initials/svg?seed=MD&backgroundColor=2563EB" 
-                delay={0.2} 
-              />
-              <TestimonialCard 
-                name="Zeynep Arslan" 
-                role="Marketing Manager, İzmir" 
-                quote="Kanban takip sistemi sayesinde tüm başvurularımı organize ettim. 3 ayda 2 iş teklifi aldım!" 
-                avatar="https://api.dicebear.com/7.x/initials/svg?seed=ZA&backgroundColor=2563EB" 
-                delay={0.3} 
-              />
-              <TestimonialCard 
-                name="Can Yıldız" 
-                role="Data Analyst, İstanbul" 
-                quote="Skill gap analizi hangi teknolojileri öğrenmem gerektiğini net gösterdi. Kariyerimde büyük fark yarattı." 
-                avatar="https://api.dicebear.com/7.x/initials/svg?seed=CY&backgroundColor=2563EB" 
-                delay={0.4} 
-              />
+            <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-x-auto pb-4 snap-x snap-mandatory">
+              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
+                <TestimonialCard 
+                  name="Ayşe Kaya" 
+                  role="UX Designer, İstanbul" 
+                  quote="ViCareerAI sayesinde CV'mi 30 dakikada hazırladım. ATS skoru 92 oldu ve ilk başvurumda mülakata çağrıldım!" 
+                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=AK&backgroundColor=2563EB" 
+                  delay={0.1} 
+                />
+              </div>
+              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
+                <TestimonialCard 
+                  name="Mehmet Demir" 
+                  role="Software Developer, Ankara" 
+                  quote="Motivasyon mektuplarını her iş ilanına özel oluşturmak çok zaman alıyordu. Artık 2 dakikada profesyonel mektup hazırlıyorum." 
+                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=MD&backgroundColor=2563EB" 
+                  delay={0.2} 
+                />
+              </div>
+              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
+                <TestimonialCard 
+                  name="Zeynep Arslan" 
+                  role="Marketing Manager, İzmir" 
+                  quote="Kanban takip sistemi sayesinde tüm başvurularımı organize ettim. 3 ayda 2 iş teklifi aldım!" 
+                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=ZA&backgroundColor=2563EB" 
+                  delay={0.3} 
+                />
+              </div>
+              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
+                <TestimonialCard 
+                  name="Can Yıldız" 
+                  role="Data Analyst, İstanbul" 
+                  quote="Skill gap analizi hangi teknolojileri öğrenmem gerektiğini net gösterdi. Kariyerimde büyük fark yarattı." 
+                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=CY&backgroundColor=2563EB" 
+                  delay={0.4} 
+                />
+              </div>
             </div>
          </div>
       </section>
@@ -293,7 +301,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+          <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
             {/* Free Plan */}
             <motion.div {...fadeInUp} className="relative p-8 md:p-12 rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-xl text-left flex flex-col items-start group hover:bg-white/10 transition-all duration-500">
               <div className="mb-8 space-y-2">

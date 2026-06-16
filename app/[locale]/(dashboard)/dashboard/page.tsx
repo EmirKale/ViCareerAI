@@ -129,7 +129,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
                 {stats.map((stat, i) => (
                     <Card key={i} className="hover:shadow-md transition-shadow">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -144,9 +144,9 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-7">
                 {/* Recent Documents */}
-                <Card className="col-span-1 md:col-span-2 lg:col-span-5 bg-white dark:bg-zinc-900/50 shadow-sm border-zinc-200/50 dark:border-zinc-800/50">
+                <Card className="col-span-1 md:col-span-5 bg-white dark:bg-zinc-900/50 shadow-sm border-zinc-200/50 dark:border-zinc-800/50">
                     <CardHeader className="pb-3 flex flex-row items-center justify-between">
                         <div>
                             <CardTitle className="flex items-center gap-2 text-lg">
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Profile Strength */}
-                <Card className="col-span-1 lg:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 border-indigo-100 dark:border-indigo-900/50 relative overflow-hidden">
+                <Card className="col-span-1 md:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 border-indigo-100 dark:border-indigo-900/50 relative overflow-hidden">
                     <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-purple-500/10 blur-2xl pointer-events-none" />
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-indigo-900 dark:text-indigo-100">
@@ -221,9 +221,9 @@ export default function DashboardPage() {
                 </Card>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-7">
                 {/* Application Pipeline */}
-                <Card className="col-span-1 lg:col-span-2">
+                <Card className="col-span-1 md:col-span-2">
                     <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center gap-2">
                             <TrendingUp className="h-5 w-5 text-amber-500" /> {t("jobStats")}

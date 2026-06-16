@@ -43,14 +43,14 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 transform border-r border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 transform border-r border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -64,7 +64,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               <span className="gradient-brand-text">CareerAI</span>
             </Link>
             <button
-              className="lg:hidden text-muted-foreground hover:text-foreground"
+              className="md:hidden text-muted-foreground hover:text-foreground"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <X className="h-5 w-5" />
@@ -112,7 +112,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 shrink-0 items-center border-b border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 lg:hidden">
+        <header className="flex h-16 shrink-0 items-center border-b border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 md:hidden">
           <button
             className="text-muted-foreground hover:text-foreground p-2 -ml-2 rounded-md"
             onClick={() => setIsMobileMenuOpen(true)}
