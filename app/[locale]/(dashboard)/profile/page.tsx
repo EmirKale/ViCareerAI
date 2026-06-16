@@ -204,7 +204,7 @@ export default function ProfilePage() {
                             Hesabınızı silmek istediğinize emin misiniz?
                         </DialogTitle>
                         <DialogDescription className="pt-2">
-                            Bu işlem geri alınamaz. Tüm verileriniz (CV'leriniz, motivasyon mektuplarınız ve ilan takipleriniz) <strong>kalıcı olarak silinecektir</strong>.
+                            Bu işlem geri alınamaz. Tüm verileriniz (CV&apos;leriniz, motivasyon mektuplarınız ve ilan takipleriniz) <strong>kalıcı olarak silinecektir</strong>.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="mt-4 flex sm:justify-between gap-3">

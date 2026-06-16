@@ -364,7 +364,6 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             }
         };
         fetchCV();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     useEffect(() => {
