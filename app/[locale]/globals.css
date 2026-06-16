@@ -197,3 +197,14 @@
 .glow-on-hover:hover {
   box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
 }
+
+/* ===== Mobile GPU Glitch Fixes ===== */
+@media (max-width: 768px) {
+  * {
+    will-change: auto !important;
+  }
+  .motion-*, [data-framer-motion] {
+    animation: none !important;
+    transform: none !important;
+  }
+}

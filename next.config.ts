@@ -7,6 +7,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  experimental: {
+    optimizeCss: false,
+  },
   eslint: {
     ignoreDuringBuilds: false,
   },
