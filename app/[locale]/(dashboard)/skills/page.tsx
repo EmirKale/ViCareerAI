@@ -11,6 +11,12 @@ export default function SkillsPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto">
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-6 flex items-center gap-2">
+                <span>🚧</span>
+                <span className="text-yellow-400 text-sm">
+                    Bu özellik yakında aktif olacak. Şu an önizleme modunda.
+                </span>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 {/* Profile Info & AI Score */}
                 <div className="md:col-span-4 flex flex-col gap-6">

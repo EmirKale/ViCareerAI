@@ -16,6 +16,7 @@ import { ATSScore } from "@/components/landing/ATSScore";
 import LiveCVPreview from "@/components/landing/LiveCVPreview";
 import { ProcessSteps } from "@/components/landing/ProcessSteps";
 import { ComparisonTable } from "@/components/landing/ComparisonTable";
+import { TestimonialCard } from "@/components/landing/TestimonialCard";
 
 const EASE_SMOOTH: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FADE_TRANSITION: Transition = { duration: 0.8, ease: EASE_SMOOTH };
@@ -244,6 +245,37 @@ export default function Home() {
                    {t("testimonialsDesc")}
                  </p>
                </motion.div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+              <TestimonialCard 
+                name="Ayşe Kaya" 
+                role="UX Designer, İstanbul" 
+                quote="ViCareerAI sayesinde CV'mi 30 dakikada hazırladım. ATS skoru 92 oldu ve ilk başvurumda mülakata çağrıldım!" 
+                avatar="https://api.dicebear.com/7.x/initials/svg?seed=AK&backgroundColor=2563EB" 
+                delay={0.1} 
+              />
+              <TestimonialCard 
+                name="Mehmet Demir" 
+                role="Software Developer, Ankara" 
+                quote="Motivasyon mektuplarını her iş ilanına özel oluşturmak çok zaman alıyordu. Artık 2 dakikada profesyonel mektup hazırlıyorum." 
+                avatar="https://api.dicebear.com/7.x/initials/svg?seed=MD&backgroundColor=2563EB" 
+                delay={0.2} 
+              />
+              <TestimonialCard 
+                name="Zeynep Arslan" 
+                role="Marketing Manager, İzmir" 
+                quote="Kanban takip sistemi sayesinde tüm başvurularımı organize ettim. 3 ayda 2 iş teklifi aldım!" 
+                avatar="https://api.dicebear.com/7.x/initials/svg?seed=ZA&backgroundColor=2563EB" 
+                delay={0.3} 
+              />
+              <TestimonialCard 
+                name="Can Yıldız" 
+                role="Data Analyst, İstanbul" 
+                quote="Skill gap analizi hangi teknolojileri öğrenmem gerektiğini net gösterdi. Kariyerimde büyük fark yarattı." 
+                avatar="https://api.dicebear.com/7.x/initials/svg?seed=CY&backgroundColor=2563EB" 
+                delay={0.4} 
+              />
             </div>
          </div>
       </section>

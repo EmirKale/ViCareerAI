@@ -14,6 +14,12 @@ export default function AIInterviewPage() {
 
     return (
         <div className="h-full flex flex-col items-center justify-center py-8">
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-6 flex items-center gap-2 w-full max-w-lg">
+                <span>🚧</span>
+                <span className="text-yellow-400 text-sm">
+                    Bu özellik yakında aktif olacak. Şu an önizleme modunda.
+                </span>
+            </div>
             {/* Header */}
             <div className="w-full max-w-lg flex items-center justify-between mb-8">
                 <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">

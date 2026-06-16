@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { User, Lock, Crown, ShieldAlert, Save, Loader2 } from "lucide-react";
+import { User, Lock, Crown, ShieldAlert, Save, Loader2, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useRouter } from "@/i18n/routing";
 
 export default function ProfilePage() {
     const t = useTranslations("Profile");
@@ -17,6 +19,9 @@ export default function ProfilePage() {
     const [plan, setPlan] = useState("free");
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         fetch("/api/profile")
@@ -69,6 +74,25 @@ export default function ProfilePage() {
             }
         } catch {
             toast.error(t("errorOccurred"));
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        setIsDeleting(true);
+        try {
+            const res = await fetch("/api/auth/delete-account", {
+                method: "POST"
+            });
+            if (res.ok) {
+                toast.success("Hesabınız başarıyla silindi.");
+                router.push("/login");
+            } else {
+                toast.error("Hesap silinirken bir hata oluştu.");
+                setIsDeleting(false);
+            }
+        } catch {
+            toast.error(t("errorOccurred"));
+            setIsDeleting(false);
         }
     };
 
@@ -166,11 +190,34 @@ export default function ProfilePage() {
                     <CardDescription>{t("dangerZoneDesc")}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button variant="destructive" className="w-full" onClick={() => toast.error(t("deleteComingSoon"))}>
+                    <Button variant="destructive" className="w-full" onClick={() => setShowDeleteDialog(true)}>
                         {t("deleteAccount")}
                     </Button>
                 </CardContent>
             </Card>
+
+            <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-destructive">
+                            <AlertTriangle className="h-5 w-5" />
+                            Hesabınızı silmek istediğinize emin misiniz?
+                        </DialogTitle>
+                        <DialogDescription className="pt-2">
+                            Bu işlem geri alınamaz. Tüm verileriniz (CV'leriniz, motivasyon mektuplarınız ve ilan takipleriniz) <strong>kalıcı olarak silinecektir</strong>.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4 flex sm:justify-between gap-3">
+                        <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting}>
+                            İptal
+                        </Button>
+                        <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting}>
+                            {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Evet, Hesabımı Sil
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

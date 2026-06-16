@@ -10,6 +10,12 @@ export default function RoadmapPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto">
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-6 flex items-center gap-2">
+                <span>🚧</span>
+                <span className="text-yellow-400 text-sm">
+                    Bu özellik yakında aktif olacak. Şu an önizleme modunda.
+                </span>
+            </div>
             {/* Hero Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
