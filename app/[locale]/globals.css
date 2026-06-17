@@ -224,6 +224,39 @@
     background: transparent !important;
   }
 
+  /* Solidify dark mode backgrounds on mobile to avoid alpha-blending and oklch parsing bugs */
+  .dark [class*="bg-zinc-9"][class*="/"],
+  .dark [class*="bg-zinc-8"][class*="/"],
+  .dark [class*="bg-slate-9"][class*="/"],
+  .dark [class*="bg-zinc-950"] {
+    background-color: #18181b !important;
+  }
+  
+  .dark [class*="bg-blue-9"][class*="/"],
+  .dark [class*="bg-blue-8"][class*="/"] {
+    background-color: #1e3a8a !important;
+  }
+
+  .dark [class*="bg-indigo-9"][class*="/"] {
+    background-color: #312e81 !important;
+  }
+
+  .dark [class*="bg-purple-9"][class*="/"] {
+    background-color: #581c87 !important;
+  }
+  
+  .dark [class*="bg-amber-9"][class*="/"] {
+    background-color: #78350f !important;
+  }
+  
+  .dark [class*="bg-green-9"][class*="/"] {
+    background-color: #14532d !important;
+  }
+  
+  .dark [class*="bg-teal-9"][class*="/"] {
+    background-color: #134e4a !important;
+  }
+
   /* Reduce complex shadows */
   [class*="shadow-lg"], [class*="shadow-xl"], [class*="shadow-2xl"] {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
