@@ -106,7 +106,7 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="space-y-8 md:animate-in md:fade-in md:slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto p-4 md:p-8">
+        <div className="space-y-8 max-w-6xl mx-auto p-4 md:p-8">
 
             {/* Welcome & Quick Actions */}
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -116,7 +116,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <Link href="/cv/new">
-                        <Button className="gradient-brand text-white shadow-md shadow-blue-500/20">
+                        <Button className="bg-blue-600 text-white">
                             <PlusCircle className="mr-2 h-4 w-4" /> {t("newCv")}
                         </Button>
                     </Link>
@@ -191,8 +191,8 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Profile Strength */}
-                <Card className="col-span-1 md:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 border-indigo-100 dark:border-indigo-900/50 relative overflow-hidden">
-                    <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-purple-500/10 blur-2xl pointer-events-none" />
+                <Card className="col-span-1 md:col-span-2 relative overflow-hidden">
+                    {/* <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-purple-500/10 blur-2xl pointer-events-none" /> */}
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-indigo-900 dark:text-indigo-100">
                             <Target className="h-5 w-5 text-indigo-500" /> {t("profileStrength")}
@@ -203,7 +203,7 @@ export default function DashboardPage() {
                         <div className="relative flex items-center justify-center w-32 h-32 mb-4">
                             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                                 <path className="text-indigo-200 dark:text-indigo-900/50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
-                                <path className="text-indigo-600 dark:text-indigo-400 drop-shadow-md transition-all duration-1000 ease-out" strokeDasharray={`${profileStrength}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+                                <path className="text-indigo-600 dark:text-indigo-400 drop-shadow-md" strokeDasharray={`${profileStrength}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className="text-3xl font-black text-indigo-950 dark:text-indigo-50">{profileStrength}<span className="text-lg text-indigo-700/60 dark:text-indigo-300/60">%</span></span>
@@ -251,7 +251,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Daily AI Tip */}
-                <Card className="col-span-1 lg:col-span-2 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-100 dark:border-amber-900/50">
+                <Card className="col-span-1 lg:col-span-2">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg flex items-center gap-2 text-amber-900 dark:text-amber-100">
                             <div className="p-1.5 rounded-full bg-amber-100 dark:bg-amber-900/50">
