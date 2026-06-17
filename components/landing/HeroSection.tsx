@@ -65,7 +65,7 @@ export default function HeroSection() {
           <div className="glass-level-2 w-full max-w-lg aspect-square rounded-[40px] relative overflow-hidden flex justify-center items-center">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 opacity-30"></div>
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-12">
-              <Image width={500} height={500} className="w-full h-full object-contain mix-blend-screen opacity-90 drop-shadow-[0_0_30px_rgba(37,99,235,0.4)]" alt="brain hologram" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwYocT5yDfRzW3qaficDXXtyMTt9M8ZrHNkwxSB03ob_ApNWafgEUsdjr_pgvsSLfGt8OUENFXzCLjB1mBq2C0oJ_8FskaRUXY6Y8m0LDyk7gFo1pllpblX6rKvmpk3DHKB4sH0EYT9esfm6GVHu2vUKK6wFLPcSDfP2bWymW0mzWc8vDtVastZWiMVtUmi0iv_eyv3FkaisoEQvOLbMiQqknln4m-NbEARDeI3BrQ08xgm_jEMv8vezVzg2S50q9zLer0TmGtdDns" />
+              <Image priority width={500} height={500} className="w-full h-full object-contain mix-blend-screen opacity-90 drop-shadow-[0_0_30px_rgba(37,99,235,0.4)]" alt="brain hologram" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwYocT5yDfRzW3qaficDXXtyMTt9M8ZrHNkwxSB03ob_ApNWafgEUsdjr_pgvsSLfGt8OUENFXzCLjB1mBq2C0oJ_8FskaRUXY6Y8m0LDyk7gFo1pllpblX6rKvmpk3DHKB4sH0EYT9esfm6GVHu2vUKK6wFLPcSDfP2bWymW0mzWc8vDtVastZWiMVtUmi0iv_eyv3FkaisoEQvOLbMiQqknln4m-NbEARDeI3BrQ08xgm_jEMv8vezVzg2S50q9zLer0TmGtdDns" />
               
               {/* Floating Glass Cards around the brain */}
               <div className="absolute top-10 left-10 glass-level-1 px-4 py-2 rounded-lg border border-white/10 flex items-center gap-2 animate-pulse">
