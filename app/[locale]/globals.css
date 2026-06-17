@@ -220,6 +220,24 @@
   [class*="shadow-lg"], [class*="shadow-xl"], [class*="shadow-2xl"] {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
   }
+
+  /* Aggressive fixes for Dashboard Header */
+  [class*="gradient"]:not(.gradient-brand-text) {
+    background-image: none !important;
+    background-color: #1e293b !important;
+  }
+  
+  [class*="text-transparent"], .gradient-brand-text {
+    background-image: none !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: currentColor !important;
+  }
+  
+  header[class*="sticky"], 
+  nav[class*="sticky"],
+  .sticky {
+    position: relative !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
