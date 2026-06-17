@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,11 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
     const t = useTranslations("History");
     const [letters, setLetters] = useState<CoverLetter[]>(initialLetters || []);
     const [downloadingId, setDownloadingId] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Bu mektubu silmek istediğinize emin misiniz?")) return;
@@ -128,7 +133,7 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
                                         </h3>
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <Clock className="h-3.5 w-3.5" />
-                                            <span>{relativeTime(letter.updated_at)}</span>
+                                            <span>{mounted ? relativeTime(letter.updated_at) : ""}</span>
                                         </div>
                                     </div>
 

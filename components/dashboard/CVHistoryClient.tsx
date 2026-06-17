@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,6 +57,11 @@ export default function CVHistoryClient({ initialCvs }: { initialCvs: CVItem[] }
     const nav = useTranslations("Navigation");
     const [cvs, setCvs] = useState<CVItem[]>(initialCvs || []);
     const [downloadingId, setDownloadingId] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Bu CV'yi silmek istediğinize emin misiniz?")) return;
@@ -141,7 +146,7 @@ export default function CVHistoryClient({ initialCvs }: { initialCvs: CVItem[] }
                                         </div>
                                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                                             <Clock className="h-3 w-3" />
-                                            {relativeTime(cv.updated_at)}
+                                            {mounted ? relativeTime(cv.updated_at) : ""}
                                         </p>
                                     </div>
                                     <div className="flex gap-2 shrink-0">

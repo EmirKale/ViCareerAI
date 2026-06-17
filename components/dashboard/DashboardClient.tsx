@@ -49,8 +49,10 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
     const [userName, setUserName] = useState("Kullanıcı");
     const [plan, setPlan] = useState("free");
     const [profileStrength, setProfileStrength] = useState(25);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         let strength = 25; // Base strength
         
         if (profileData) {
@@ -128,8 +130,8 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
 
             {/* Stats Grid */}
             <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-                {stats.map((stat, i) => (
-                    <Card key={i} className="hover:shadow-md transition-shadow">
+                {stats.map((stat) => (
+                    <Card key={stat.title} className="hover:shadow-md transition-shadow">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
                             <stat.icon className={`h-4 w-4 ${stat.color}`} />
@@ -168,7 +170,9 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
                                             <div className={`p-2 rounded-lg ${doc.bg}`}>
                                                 <doc.icon className={`h-5 w-5 ${doc.color}`} />
                                             </div>
-                                            <div className="text-xs font-medium text-muted-foreground">{doc.date}</div>
+                                            <div className="text-xs font-medium text-muted-foreground">
+                                                {mounted ? doc.date : ""}
+                                            </div>
                                         </div>
                                         <h3 className="font-semibold text-zinc-900 dark:text-white truncate pr-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doc.title}</h3>
                                         <div className="mt-4 flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
@@ -228,8 +232,8 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-5 pt-2">
-                            {pipelineStats.map((stat, i) => (
-                                <div key={i} className="flex items-center justify-between">
+                            {pipelineStats.map((stat) => (
+                                <div key={stat.label} className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className={`h-2.5 w-2.5 rounded-full ${stat.color} shadow-[0_0_8px_rgba(0,0,0,0.2)] shadow-${stat.color.replace('bg-', '')}`} />
                                         <span className="font-medium text-zinc-700 dark:text-zinc-300">{stat.label}</span>
