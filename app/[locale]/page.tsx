@@ -420,8 +420,13 @@ export default function Home() {
                       <video 
                         src={faq.video} 
                         controls 
-                        className="absolute inset-0 w-full h-full object-cover"
-                        preload="metadata"
+                        className="absolute inset-0 w-full h-full object-cover hidden lg:block"
+                        preload="none"
+                      />
+                      <img 
+                        src="/video-poster.jpg" 
+                        alt="Video Thumbnail"
+                        className="absolute inset-0 w-full h-full object-cover block lg:hidden" 
                       />
                     </div>
                   )}
