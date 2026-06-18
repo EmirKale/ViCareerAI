@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { Sparkles, Loader2, Copy, Download, RotateCcw, Save } from "lucide-react
 
 export default function NewCoverLetterPage() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const editId = searchParams.get("id");
     const [form, setForm] = useState({
         position: "",
@@ -109,7 +110,10 @@ export default function NewCoverLetterPage() {
             }
 
             setGeneratedLetter(data.letter);
-            toast.success("Mektup başarıyla oluşturuldu!");
+            if (data.id) {
+                setLetterId(data.id);
+            }
+            toast.success("Mektup başarıyla oluşturuldu ve otomatik kaydedildi!");
             
             // Refresh quota after successful generation
             fetchQuota();
@@ -178,7 +182,8 @@ export default function NewCoverLetterPage() {
                     toast.error(data.error || "Mektup kaydedilemedi.");
                 }
             } else {
-                toast.success("Mektup başarıyla kaydedildi!");
+                toast.success("Mektup başarıyla güncellendi!");
+                router.push("/cover-letter/history");
             }
         } catch {
             toast.error("Kaydetme işlemi sırasında hata oluştu.");

@@ -111,6 +111,29 @@ Sadece mektubu yaz, başlık veya açıklama ekleme.`;
             );
         }
 
+        let letterId = null;
+
+        // Auto-save the generated letter to the database
+        const { data: newLetter, error: insertError } = await supabase
+            .from('cover_letters')
+            .insert({
+                user_id: user.id,
+                title: `${company} - ${position}`,
+                position,
+                company,
+                language: language,
+                tone: tone,
+                content: letter
+            })
+            .select("id")
+            .single();
+
+        if (insertError) {
+            console.error("Auto-save error:", insertError);
+        } else if (newLetter) {
+            letterId = newLetter.id;
+        }
+
         // Increment quota for free users
         if (profile?.plan === 'free') {
             const { data: quota } = await supabase
@@ -127,7 +150,7 @@ Sadece mektubu yaz, başlık veya açıklama ekleme.`;
             }
         }
 
-        return NextResponse.json({ letter });
+        return NextResponse.json({ letter, id: letterId });
     } catch (error: unknown) {
         console.error("Cover letter generation error:", error);
         return NextResponse.json(
