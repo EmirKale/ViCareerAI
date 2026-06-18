@@ -178,7 +178,11 @@
         "applications": "My Applications",
         "settings": "Settings",
         "menuLabel": "MENU",
-        "logout": "Logout"
+        "logout": "Logout",
+        "interview": "AI Interview",
+        "skills": "Skill Analysis",
+        "roadmap": "Career Roadmap",
+        "soon": "Soon"
     },
     "Dashboard": {
         "welcome": "Hello, {name} 👋",

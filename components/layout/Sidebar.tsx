@@ -13,7 +13,10 @@ import {
   Menu,
   X,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  Mic,
+  Target,
+  Route
 } from "lucide-react";
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
@@ -30,6 +33,9 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     { name: t("letterHistory"), href: "/cover-letter/history", icon: FileText },
     { name: t("jobs"), href: "/jobs/discover", icon: Briefcase },
     { name: t("applications"), href: "/jobs/tracker", icon: Briefcase },
+    { name: t("interview"), href: "/interview", icon: Mic, isSoon: true },
+    { name: t("skills"), href: "/skills", icon: Target, isSoon: true },
+    { name: t("roadmap"), href: "/roadmap", icon: Route, isSoon: true },
     { name: t("settings"), href: "/profile", icon: Settings },
   ];
 
@@ -81,7 +87,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               return (
                 <Link
                   key={item.name}
-                  href={item.href as "/dashboard" | "/cv/history" | "/cover-letter/history" | "/jobs/discover" | "/jobs/tracker" | "/profile"}
+                  href={item.href as "/dashboard" | "/cv/history" | "/cover-letter/history" | "/jobs/discover" | "/jobs/tracker" | "/profile" | "/interview" | "/skills" | "/roadmap"}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                     isActive
                       ? "bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-white shadow-sm ring-1 ring-blue-500/10 dark:ring-white/5"
@@ -91,6 +97,11 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 >
                   <item.icon className={`h-5 w-5 ${isActive ? "text-blue-500 dark:text-blue-400" : ""}`} />
                   {item.name}
+                  {item.isSoon && (
+                    <span className="text-xs bg-yellow-500/20 text-yellow-500 dark:text-yellow-400 px-1.5 py-0.5 rounded ml-2">
+                      {t("soon")}
+                    </span>
+                  )}
                   {isActive && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}
                 </Link>
               );

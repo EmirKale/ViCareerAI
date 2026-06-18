@@ -178,7 +178,11 @@
         "applications": "Başvurularım",
         "settings": "Hesabım",
         "menuLabel": "MENÜ",
-        "logout": "Çıkış Yap"
+        "logout": "Çıkış Yap",
+        "interview": "Mülakat Simülasyonu",
+        "skills": "Beceri Analizi",
+        "roadmap": "Kariyer Yol Haritası",
+        "soon": "Yakında"
     },
     "Dashboard": {
         "welcome": "Merhaba, {name} 👋",
