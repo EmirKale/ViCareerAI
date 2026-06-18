@@ -77,7 +77,7 @@ export function ATSScore({ score = 85, className = "" }: ATSScoreProps) {
                 <Sparkles className="h-5 w-5" />
              </div>
              <div>
-                <h4 className="font-bold text-lg leading-none mb-1 text-gray-900 dark:text-white">{t("aiSuggest")}</h4>
+                <h3 className="font-bold text-lg leading-none mb-1 text-gray-900 dark:text-white">{t("aiSuggest")}</h3>
                 <p className="text-xs text-gray-600 dark:text-[#A1A1AA]">{t("aiDesc")}</p>
              </div>
           </div>

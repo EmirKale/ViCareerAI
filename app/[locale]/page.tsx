@@ -106,19 +106,19 @@ export default function Home() {
             transition={{ delay: 0.5 }}
             className="flex flex-col gap-6 sm:flex-row w-full sm:w-auto items-center"
           >
-            <Link href={isLoggedIn ? "/dashboard" : "/register"} className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto h-16 md:h-20 rounded-[2rem] px-8 md:px-14 text-lg md:text-xl font-black gradient-brand text-white shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1.5 transition-all group active:scale-95">
+            <Link href={isLoggedIn ? "/dashboard" : "/register"} className="w-full sm:w-auto block">
+              <Button size="lg" className="w-full sm:w-auto min-h-11 h-16 md:h-20 rounded-[2rem] px-8 md:px-14 text-lg md:text-xl font-black gradient-brand text-white shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1.5 transition-all group active:scale-95">
                 {t("ctaPrimary")}
                 <ChevronRight className="ml-3 h-7 w-7 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <div className="flex flex-col items-center sm:items-start gap-1 w-full sm:w-auto">
+            <div className="flex flex-col items-center sm:items-start gap-2 w-full sm:w-auto">
                <div className="flex items-center justify-center sm:justify-start gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest sm:pl-2">
                   <ShieldCheck className="h-4 w-4 text-green-500" />
                   {t("noCreditCard")}
                </div>
-               <Link href="#features" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-16 md:h-20 rounded-[2rem] px-8 md:px-14 text-lg md:text-xl glass-card border-zinc-200/50 hover:bg-zinc-100/50 dark:border-zinc-800/80 dark:hover:bg-zinc-800/50 font-bold transition-all hover:-translate-y-1">
+               <Link href="#features" className="w-full sm:w-auto block mt-2 sm:mt-0">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto min-h-11 h-16 md:h-20 rounded-[2rem] px-8 md:px-14 text-lg md:text-xl glass-card border-zinc-200/50 hover:bg-zinc-100/50 dark:border-zinc-800/80 dark:hover:bg-zinc-800/50 font-bold transition-all hover:-translate-y-1">
                   {t("ctaSecondary")}
                 </Button>
               </Link>
@@ -199,7 +199,7 @@ export default function Home() {
                              <item.icon className="h-5 w-5" />
                           </div>
                           <div>
-                             <h4 className="font-bold text-base">{item.title}</h4>
+                             <h3 className="font-bold text-base">{item.title}</h3>
                              <p className="text-xs text-muted-foreground">{item.desc}</p>
                           </div>
                        </motion.div>
@@ -406,12 +406,12 @@ export default function Home() {
               }
             ].map((faq, i) => (
               <motion.div key={i} {...fadeInUp} className="p-6 md:p-10 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/10 hover:border-blue-500/30 transition-all group">
-                <h4 className="text-xl font-black mb-4 flex items-center gap-4">
+                <h3 className="text-xl font-black mb-4 flex items-center gap-4">
                    <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Sparkles className="h-4 w-4" />
                    </div>
                    {faq.q}
-                </h4>
+                </h3>
                 <div className="pl-12">
                   <p className="text-muted-foreground leading-relaxed font-medium">{faq.a}</p>
                   
@@ -491,7 +491,7 @@ export default function Home() {
              </div>
              
              <div className="space-y-6">
-                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">{tFooter("platform")}</h4>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{tFooter("platform")}</h3>
                 <nav className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
                    <Link href="#features" className="hover:text-blue-600 transition-colors">{tFooter("features")}</Link>
                    <Link href="#pricing" className="hover:text-blue-600 transition-colors">{tFooter("pricing")}</Link>
@@ -500,7 +500,7 @@ export default function Home() {
              </div>
 
              <div className="space-y-6">
-                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">{tFooter("legal")}</h4>
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">{tFooter("legal")}</h3>
                 <nav className="flex flex-col gap-4 text-sm font-bold text-muted-foreground">
                    <Link href="/privacy" className="hover:text-blue-600 transition-colors">{tFooter("privacy")}</Link>
                    <Link href="/terms" className="hover:text-blue-600 transition-colors">{tFooter("terms")}</Link>
@@ -509,10 +509,10 @@ export default function Home() {
           </div>
           
           <div className="pt-10 border-t border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-6">
-             <p className="text-sm font-bold text-zinc-400 tracking-tight">
+             <p className="text-sm font-bold text-zinc-500 dark:text-zinc-400 tracking-tight">
                {tFooter("rights", { year: new Date().getFullYear() })}
              </p>
-             <div className="flex items-center gap-6 text-zinc-400">
+             <div className="flex items-center gap-6 text-zinc-500 dark:text-zinc-400">
                 <Globe className="h-5 w-5 hover:text-blue-600 cursor-pointer transition-colors" />
                 <Briefcase className="h-5 w-5 hover:text-blue-600 cursor-pointer transition-colors" />
              </div>

@@ -91,7 +91,7 @@ export default function LiveCVPreview() {
                 <div key={i} className="relative pl-6 border-l-2 border-white/[0.06] group/job">
                    <div className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-[#131315] border-4 border-[#1c1b1d] group-hover/job:border-[#2563EB] transition-colors" />
                    <div className="flex flex-col md:flex-row md:justify-between items-start mb-2 group-hover/job:-translate-y-0.5 transition-transform">
-                      <h4 className="font-bold text-base leading-tight text-gray-900 dark:text-white">{job.role}</h4>
+                      <h3 className="font-bold text-base leading-tight text-gray-900 dark:text-white">{job.role}</h3>
                       <span className="text-[10px] font-bold text-[#2563EB] bg-[#2563EB]/10 px-2 py-1 rounded-md">{job.date}</span>
                    </div>
                    <p className="text-xs font-medium text-[#A1A1AA] mb-2">{job.company}</p>
@@ -108,11 +108,11 @@ export default function LiveCVPreview() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="p-4 rounded-lg border border-white/[0.06] bg-[#131315] hover:border-[#2563EB]/30 transition-all">
-                    <h4 className="text-sm font-bold text-gray-900 dark:text-white">{t("cs")}</h4>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t("cs")}</h3>
                     <p className="text-[10px] text-[#A1A1AA] uppercase tracking-wider font-semibold">Stanford University · 2018</p>
                  </div>
                  <div className="p-4 rounded-lg border border-white/[0.06] bg-[#131315] hover:border-[#2563EB]/30 transition-all">
-                    <h4 className="text-sm font-bold text-gray-900 dark:text-white">{t("ds")}</h4>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t("ds")}</h3>
                     <p className="text-[10px] text-[#A1A1AA] uppercase tracking-wider font-semibold">RISD · 2014</p>
                  </div>
               </div>

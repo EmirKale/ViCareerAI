@@ -37,7 +37,7 @@ export function TestimonialCard({ name, role, quote, avatar, delay = 0 }: Testim
            />
         </div>
         <div className="space-y-0.5">
-          <h4 className="font-bold text-base leading-tight text-gray-900 dark:text-white group-hover:text-[#2563EB] transition-colors">{name}</h4>
+          <h3 className="font-bold text-base leading-tight text-gray-900 dark:text-white group-hover:text-[#2563EB] transition-colors">{name}</h3>
           <p className="text-[11px] font-bold uppercase tracking-wider text-[#A1A1AA]/70 italic">{role}</p>
         </div>
       </div>
