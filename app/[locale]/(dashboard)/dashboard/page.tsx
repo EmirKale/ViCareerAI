@@ -15,7 +15,7 @@ export default async function DashboardPage() {
     // Fetch data in parallel
     const [profileRes, quotaRes, cvsRes, jobsRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).single(),
-        supabase.from("quota").select("*").eq("user_id", user.id).single(),
+        supabase.from("usage_quotas").select("*").eq("user_id", user.id).single(),
         supabase.from("cvs").select("id, title, updated_at").eq("user_id", user.id).order('updated_at', { ascending: false }),
         supabase.from("jobs_tracker").select("id, status").eq("user_id", user.id)
     ]);

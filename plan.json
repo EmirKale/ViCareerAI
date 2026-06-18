@@ -1,11 +1,21 @@
 {
   "projectId": "8a6964b8-1604-4431-82d6-633acc7c812e",
   "type": "frontend",
-  "name": "Homepage smoke test",
-  "description": "Verifies that the homepage loads successfully and main content is visible.",
-  "priority": "p0",
+  "name": "Template change persists after navigating away and back",
+  "description": "A logged-in user opens a CV, changes the template from the default to a different one, navigates away to CV history, then returns to the same CV and verifies the selected template and CV data are still intact.",
+  "priority": "p1",
   "planSteps": [
-    { "type": "action", "description": "Navigate to the homepage" },
-    { "type": "assertion", "description": "Verify the main content or header is visible and the page loaded without critical errors" }
+    { "type": "action", "description": "Navigate to https://vi-career-ai.vercel.app/login" },
+    { "type": "action", "description": "Enter testsprite@gmail.com in the email field" },
+    { "type": "action", "description": "Enter 12testsprite12 in the password field" },
+    { "type": "action", "description": "Submit the login form" },
+    { "type": "action", "description": "Navigate to the CV history page" },
+    { "type": "action", "description": "Open the existing CV for editing" },
+    { "type": "assertion", "description": "Verify the CV preview is currently visible and rendered with content, not a blank white area" },
+    { "type": "action", "description": "Change the template selector to a different template than the current one" },
+    { "type": "assertion", "description": "Verify the CV preview updates to reflect the newly selected template's distinct visual layout" },
+    { "type": "action", "description": "Navigate to the CV history page" },
+    { "type": "action", "description": "Open the same CV for editing again" },
+    { "type": "assertion", "description": "Verify the previously selected template is still applied and the CV preview shows content, not a blank white area" }
   ]
 }

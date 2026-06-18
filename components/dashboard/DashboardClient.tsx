@@ -72,10 +72,14 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
     const maxLetter = plan === "pro" ? "∞" : "3";
     const maxAnalysis = plan === "pro" ? "∞" : "5";
 
+    const cvCount = quotaData?.cv_count ?? 0;
+    const letterCount = quotaData?.cover_letter_count ?? 0;
+    const analysisCount = quotaData?.analysis_count ?? 0;
+
     const stats = [
-        { title: t("stats.cvs"), value: quotaData ? `${quotaData.cv_count}/${maxCv}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-blue-500" },
-        { title: t("stats.letters"), value: quotaData ? `${quotaData.cover_letter_count || 0}/${maxLetter}` : "...", desc: t("stats.thisMonth"), icon: FileText, color: "text-purple-500" },
-        { title: t("stats.analysis"), value: quotaData ? `${quotaData.analysis_count}/${maxAnalysis}` : "...", desc: t("stats.used"), icon: FileSearch, color: "text-teal-500" },
+        { title: t("stats.cvs"), value: `${cvCount}/${maxCv}`, desc: t("stats.thisMonth"), icon: FileText, color: "text-blue-500" },
+        { title: t("stats.letters"), value: `${letterCount}/${maxLetter}`, desc: t("stats.thisMonth"), icon: FileText, color: "text-purple-500" },
+        { title: t("stats.analysis"), value: `${analysisCount}/${maxAnalysis}`, desc: t("stats.used"), icon: FileSearch, color: "text-teal-500" },
         { title: t("stats.plan"), value: plan === "pro" ? t("stats.pro") : t("stats.free"), desc: plan === "pro" ? t("unlimitedAccess") : t("limitedAccess"), icon: Briefcase, color: plan === "pro" ? "text-yellow-500" : "text-orange-500" },
     ];
 
