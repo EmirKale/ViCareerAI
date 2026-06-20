@@ -16,7 +16,7 @@ import { ATSScore } from "@/components/landing/ATSScore";
 import LiveCVPreview from "@/components/landing/LiveCVPreview";
 import { ProcessSteps } from "@/components/landing/ProcessSteps";
 import { ComparisonTable } from "@/components/landing/ComparisonTable";
-import { TestimonialCard } from "@/components/landing/TestimonialCard";
+
 
 const EASE_SMOOTH: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FADE_TRANSITION: Transition = { duration: 0.8, ease: EASE_SMOOTH };
@@ -226,67 +226,7 @@ export default function Home() {
          </div>
       </section>
 
-      {/* 6. TESTIMONIALS SECTION */}
-      <section className="py-32 relative">
-         <div className="container mx-auto max-w-7xl px-6">
-            <div className="text-center">
-               <motion.div 
-                 initial={{ y: 30, opacity: 0 }}
-                 whileInView={{ y: 0, opacity: 1 }}
-                 viewport={{ once: true }}
-                 transition={{ duration: 0.8 }}
-                 className="max-w-2xl mx-auto"
-               >
-                 <div className="inline-flex items-center gap-3 rounded-full border border-blue-200/50 bg-blue-50/50 px-6 py-3 text-sm font-bold text-blue-600 backdrop-blur-xl dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-400 shadow-xl shadow-blue-500/5 mb-6">
-                   <Sparkles className="h-5 w-5" />
-                   <span className="tracking-wide">{t("testimonialsTitle")}</span>
-                 </div>
-                 <p className="text-2xl md:text-4xl font-bold text-muted-foreground">
-                   {t("testimonialsDesc")}
-                 </p>
-               </motion.div>
-            </div>
-            
-            <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-x-auto pb-4 snap-x snap-mandatory">
-              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
-                <TestimonialCard 
-                  name="Ayşe Kaya" 
-                  role="UX Designer, İstanbul" 
-                  quote="ViCareerAI sayesinde CV'mi 30 dakikada hazırladım. ATS skoru 92 oldu ve ilk başvurumda mülakata çağrıldım!" 
-                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=AK&backgroundColor=2563EB" 
-                  delay={0.1} 
-                />
-              </div>
-              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
-                <TestimonialCard 
-                  name="Mehmet Demir" 
-                  role="Software Developer, Ankara" 
-                  quote="Motivasyon mektuplarını her iş ilanına özel oluşturmak çok zaman alıyordu. Artık 2 dakikada profesyonel mektup hazırlıyorum." 
-                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=MD&backgroundColor=2563EB" 
-                  delay={0.2} 
-                />
-              </div>
-              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
-                <TestimonialCard 
-                  name="Zeynep Arslan" 
-                  role="Marketing Manager, İzmir" 
-                  quote="Kanban takip sistemi sayesinde tüm başvurularımı organize ettim. 3 ayda 2 iş teklifi aldım!" 
-                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=ZA&backgroundColor=2563EB" 
-                  delay={0.3} 
-                />
-              </div>
-              <div className="min-w-[85vw] sm:min-w-[320px] md:min-w-0 snap-center">
-                <TestimonialCard 
-                  name="Can Yıldız" 
-                  role="Data Analyst, İstanbul" 
-                  quote="Skill gap analizi hangi teknolojileri öğrenmem gerektiğini net gösterdi. Kariyerimde büyük fark yarattı." 
-                  avatar="https://api.dicebear.com/7.x/initials/svg?seed=CY&backgroundColor=2563EB" 
-                  delay={0.4} 
-                />
-              </div>
-            </div>
-         </div>
-      </section>
+
 
       {/* 7. PRICING SECTION */}
       <section id="pricing" className="py-32 bg-zinc-900 dark:bg-zinc-950/80 text-white relative overflow-hidden">
