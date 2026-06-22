@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { cvId, fileContent, targetPosition } = body;
+        const { cvId, fileContent, targetPosition, locale } = body;
 
         if (!cvId && !fileContent) {
             return NextResponse.json({ error: "cvId or fileContent is required" }, { status: 400 });
@@ -63,6 +63,10 @@ export async function POST(request: NextRequest) {
         // Limit text length
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
+        const languageInstruction = locale === "en" 
+            ? "CRITICAL: You MUST write ALL titles, descriptions, and JSON string values in English language." 
+            : "CRITICAL: SADECE Türkçe dilinde başlık, açıklama ve içerik oluştur.";
+
         const prompt = `Kullanıcının mevcut durumu:
 ${textToAnalyze}
 
@@ -70,6 +74,8 @@ Hedef pozisyonu: ${targetPosition || "Belirtilmemiş (CV'ye göre tahmin et)"}
 
 Bu kullanıcı için 4 adımlık bir kariyer gelişim yol haritası oluştur. Her adım: başlık, 1 cümle açıklama, durum (tamamlandı/devam ediyor/kilitli), devam ediyorsa ilerleme yüzdesi.
 Ayrıca: genel yetenek puanı (0-100), 3 alt kategori için hazırlık yüzdesi (pozisyona göre uyarla), 2 AI içgörüsü (1 kritik öncelik, 1 büyüme fırsatı).
+
+${languageInstruction}
 
 SADECE JSON formatında dön:
 {

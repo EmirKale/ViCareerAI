@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { ChevronRight, Check, Loader2, Lock, TrendingUp, BrainCircuit, Zap, RefreshCw, Upload, FileText, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function RoadmapClient({ analysisData, cvs }: { analysisData: any, cvs: any[] }) {
     const t = useTranslations("Roadmap");
+    const locale = useLocale();
     const router = useRouter();
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showUpload, setShowUpload] = useState(!analysisData);
@@ -24,7 +25,7 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
             const res = await fetch("/api/roadmap/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cvId, targetPosition })
+                body: JSON.stringify({ cvId, targetPosition, locale })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
@@ -66,7 +67,7 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
             const res = await fetch("/api/roadmap/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ fileContent: parseData.text, targetPosition })
+                body: JSON.stringify({ fileContent: parseData.text, targetPosition, locale })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");

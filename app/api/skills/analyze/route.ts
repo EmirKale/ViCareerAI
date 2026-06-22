@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { cvId, fileContent, targetRole } = body;
+        const { cvId, fileContent, targetRole, locale } = body;
 
         if (!cvId && !fileContent) {
             return NextResponse.json({ error: "cvId or fileContent is required" }, { status: 400 });
@@ -63,23 +63,38 @@ export async function POST(request: NextRequest) {
         // Limit text length
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
-        const roleContext = targetRole ? `Kullanıcının hedeflediği pozisyon: "${targetRole}". Analizini tamamen bu role uygunluk üzerinden yap.` : `Kullanıcının kariyer hedeflerine uygun genel bir analiz yap.`;
+        const languageInstruction = locale === "en" 
+            ? "CRITICAL: You MUST write ALL generated JSON string values (insight, recommendations, superpower, red_flags, corrections, action_plan, target_role, etc.) entirely in English language." 
+            : "CRITICAL: SADECE Türkçe dilinde değerler (insight, recommendations, superpower, vs.) üret.";
 
-        const prompt = `Aşağıdaki CV verisine göre kullanıcıyı şu 6 kategoride 0-100 arası puanla: Teknik Beceriler, İletişim, Uyumluluk, Problem Çözme, İşbirliği, Liderlik.
-Puanlama mantığı: deneyim yılı, proje karmaşıklığı, kullanılan teknoloji çeşitliliği ve iş tanımlarındaki ifadelerden çıkarım yap.
-${roleContext}
+        const prompt = `Kullanıcının özgeçmişi:
+${textToAnalyze}
+
+Hedeflenen Rol/Pozisyon: ${targetRole || "Belirtilmemiş, CV'den tahmin et"}
+
+Sen uzman bir Kariyer Danışmanısın. Kullanıcının özgeçmişini, hedeflediği pozisyona ne kadar uygun olduğu açısından değerlendireceksin. 
+Aşağıdaki metrikleri ve alanları JSON olarak döndür:
+1. overall_score (0-100)
+2. scores nesnesi (technical_skills, problem_solving, leadership, communication, adaptability, target_role) (her biri 0-100)
+3. ats_score (0-100) - Özgeçmişin ATS sistemleri (Applicant Tracking System) okunabilirliği
+4. insight (1 cümlelik temel analiz sonucu)
+5. superpower nesnesi (title, description) - adayın en güçlü yanı
+6. red_flags dizisi - her biri string uyarı (Örn: "Eksik tarih formatı", "Sektör dışı jargon")
+7. corrections dizisi - (original_text, improved_text, reason)
+8. action_plan dizisi - hemen yapılması gereken 3 şey (her biri string)
+9. recommendations dizisi (her biri: title, description, id(s1/s2 vb.))
+
+${languageInstruction}
 
 SADECE şu JSON formatında dön, başka hiçbir metin ekleme:
 {
   "scores": {
-    "teknik": 85, "iletisim": 70, "uyumluluk": 75, "problemCozme": 90, "isbirligi": 65, "liderlik": 60
+    "technical_skills": 85, "communication": 70, "adaptability": 75, "problem_solving": 90, "leadership": 60
   },
-  "overallScore": 78,
-  "insight": "Genel gidişat ve güçlü/zayıf yön özetini içeren 2 cümlelik yapay zeka içgörüsü.",
-  "superpower": "Adayı rakiplerinden ayıran en temel özellik (Örn: Hem teknik mimari kurabilmesi hem de takım liderliği yapabilmesi).",
+  "overall_score": 78,
+  "insight": "...",
+  "superpower": {"title": "...", "description": "..."},
   "ats_score": 85,
-  "ats_feedback": ["Tarihler yanlış formatta", "Anahtar kelime eksik"],
-  "red_flags": ["Sık iş değiştirme", "Ölçülebilir başarı yok"],
   "action_plan": ["Hemen bugün React yeteneklerini GitHub'da sergile", "Özgeçmişindeki x projesini daha detaylandır", "A firmasına uygun bir ön yazı hazırla"],
   "cv_corrections": [
     {

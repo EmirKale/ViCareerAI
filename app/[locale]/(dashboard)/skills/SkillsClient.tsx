@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Sparkles, Box, Users, Terminal, ArrowRight, Upload, FileText, Loader2, RefreshCw, AlertTriangle, Target, CheckCircle2, Zap, ArrowRightCircle, Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function SkillsClient({ analysisData, cvs }: { analysisData: any, cvs: any[] }) {
     const t = useTranslations("Skills");
+    const locale = useLocale();
     const router = useRouter();
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showUpload, setShowUpload] = useState(!analysisData);
@@ -25,7 +26,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
             const res = await fetch("/api/skills/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cvId, targetRole })
+                body: JSON.stringify({ cvId, targetRole, locale })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
@@ -67,7 +68,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
             const res = await fetch("/api/skills/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ fileContent: parseData.text, targetRole })
+                body: JSON.stringify({ fileContent: parseData.text, targetRole, locale })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
