@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Sparkles, Box, Users, Terminal, ArrowRight, Upload, FileText, Loader2, RefreshCw, AlertTriangle, Target, CheckCircle2, Zap, ArrowRightCircle, Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LiquidButton } from "@/components/ui/liquid-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useRef } from "react";
@@ -118,30 +119,28 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                                     <div className="w-full space-y-4">
                                         <h3 className="text-sm font-bold text-muted-foreground uppercase text-center">Mevcut CV&apos;niz ile analiz edin</h3>
                                         {cvs.map(cv => (
-                                            <Button 
+                                            <LiquidButton 
                                                 key={cv.id} 
-                                                variant="outline" 
-                                                className="w-full justify-between h-14 border-blue-200 hover:bg-blue-50 dark:border-blue-900 dark:hover:bg-blue-900/40"
+                                                className="w-full justify-between h-16 bg-white/60 dark:bg-zinc-900/40"
                                                 onClick={() => handleAnalyzeFromCV(cv.id)}
+                                                icon={<FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
                                             >
-                                                <div className="flex items-center gap-2">
-                                                    <FileText className="w-5 h-5 text-blue-500" />
-                                                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{cv.title || "CV'm"}</span>
+                                                <div className="flex items-center gap-2 flex-1">
+                                                    <span className="font-bold text-zinc-800 dark:text-zinc-200">{cv.title || "CV'm"}</span>
                                                 </div>
-                                                <ArrowRight className="w-4 h-4 text-blue-500" />
-                                            </Button>
+                                                <ArrowRight className="w-5 h-5 text-zinc-400" />
+                                            </LiquidButton>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="w-full">
-                                        <Button 
-                                            variant="outline" 
-                                            className="w-full h-14 border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40"
+                                        <LiquidButton 
+                                            className="w-full h-16 justify-center"
                                             onClick={() => router.push("/cv/new")}
+                                            icon={<FileText className="w-5 h-5" />}
                                         >
-                                            <FileText className="w-5 h-5 mr-2" />
                                             Yeni CV Oluştur
-                                        </Button>
+                                        </LiquidButton>
                                     </div>
                                 )}
 
