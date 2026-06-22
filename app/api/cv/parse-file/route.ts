@@ -41,9 +41,11 @@ export async function POST(request: NextRequest) {
         const buffer = Buffer.from(arrayBuffer);
 
         if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const PDFParser = require("pdf2json");
             extractedText = await new Promise<string>((resolve, reject) => {
                 const pdfParser = new PDFParser(null, 1);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
                 pdfParser.on("pdfParser_dataReady", () => {
                     resolve(pdfParser.getRawTextContent());

@@ -363,6 +363,7 @@ export default function Home() {
                         className="absolute inset-0 w-full h-full object-cover hidden lg:block"
                         preload="none"
                       />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
                         src="/video-poster.jpg" 
                         alt="Video Thumbnail"
