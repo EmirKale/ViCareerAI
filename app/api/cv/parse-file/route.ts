@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
         const formData = await request.formData();
         const file = formData.get("file") as File | null;
-        const type = formData.get("type") as string; // 'certificate' or 'project'
+        const type = formData.get("type") as string; // 'certificate' or 'project' or 'raw'
 
         if (!file || !type) {
             return NextResponse.json({ error: "File and type are required" }, { status: 400 });
@@ -40,22 +40,27 @@ export async function POST(request: NextRequest) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        if (file.type === "application/pdf") {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
-            const pdfParse = require("pdf-parse");
-            const textResult = await pdfParse(buffer);
-            extractedText = textResult.text;
-        } else if (file.type === "text/plain") {
+        if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+            const PDFParser = require("pdf2json");
+            extractedText = await new Promise<string>((resolve, reject) => {
+                const pdfParser = new PDFParser(null, 1);
+                pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
+                pdfParser.on("pdfParser_dataReady", () => {
+                    resolve(pdfParser.getRawTextContent());
+                });
+                pdfParser.parseBuffer(buffer);
+            });
+        } else if (file.type === "text/plain" || file.name.endsWith(".txt")) {
             extractedText = buffer.toString("utf-8");
         } else if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.name.endsWith(".docx")) {
             const result = await mammoth.extractRawText({ buffer: buffer });
             extractedText = result.value;
         } else {
-            return NextResponse.json({ error: "Only PDF, DOCX and TXT files are supported" }, { status: 400 });
+            return NextResponse.json({ error: "Sadece PDF, DOCX ve TXT dosyaları desteklenir." }, { status: 400 });
         }
 
         if (!extractedText || extractedText.trim() === "") {
-            return NextResponse.json({ error: "No text could be extracted from the file" }, { status: 400 });
+            return NextResponse.json({ error: "Dosyadan metin çıkarılamadı." }, { status: 400 });
         }
 
         // Limit text length to avoid token limits
@@ -104,7 +109,10 @@ If a field is missing, leave it empty ("").`;
         return NextResponse.json({ success: true, data: parsedData });
 
     } catch (error: unknown) {
-        console.error("Parse File Error:", error);
-        return NextResponse.json({ error: "Dosya parse edilirken hata oluştu." }, { status: 500 });
+        console.error("Parse Error:", error);
+        return NextResponse.json({ 
+            error: "Dosya parse edilirken hata oluştu.", 
+            details: error instanceof Error ? error.message : String(error) 
+        }, { status: 500 });
     }
 }
