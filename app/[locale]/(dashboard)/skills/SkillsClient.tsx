@@ -1,19 +1,22 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Sparkles, Share2, Box, Users, Terminal, ArrowRight, Verified, Upload, FileText, Loader2, RefreshCw } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Sparkles, Box, Users, Terminal, ArrowRight, Upload, FileText, Loader2, RefreshCw, AlertTriangle, Target, CheckCircle2, Zap, ArrowRightCircle, Activity } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function SkillsClient({ profile, analysisData, cvs }: { profile: any, analysisData: any, cvs: any[] }) {
+export default function SkillsClient({ analysisData, cvs }: { analysisData: any, cvs: any[] }) {
     const t = useTranslations("Skills");
     const router = useRouter();
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showUpload, setShowUpload] = useState(!analysisData);
+    const [targetRole, setTargetRole] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleAnalyzeFromCV = async (cvId: string) => {
@@ -22,7 +25,7 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
             const res = await fetch("/api/skills/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cvId })
+                body: JSON.stringify({ cvId, targetRole })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
@@ -49,7 +52,6 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
 
         setIsAnalyzing(true);
         try {
-            // First extract text
             const formData = new FormData();
             formData.append("file", file);
             formData.append("type", "raw");
@@ -62,11 +64,10 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
             
             if (!parseRes.ok) throw new Error(parseData.error || "Dosya okunamadı");
 
-            // Then analyze
             const res = await fetch("/api/skills/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ fileContent: parseData.text })
+                body: JSON.stringify({ fileContent: parseData.text, targetRole })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
@@ -89,7 +90,7 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                     <CardHeader className="text-center pb-2">
                         <CardTitle className="text-2xl">{t("title") || "Beceri Analizi"}</CardTitle>
                         <CardDescription>
-                            Yeteneklerinizi AI ile analiz edin ve size özel içgörüler alın.
+                            Hedef pozisyonunuzu belirleyin ve yeteneklerinizi AI ile analiz edin.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center p-8">
@@ -100,6 +101,18 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                             </div>
                         ) : (
                             <div className="flex flex-col items-center gap-6 w-full max-w-md">
+                                <div className="w-full space-y-2 mb-2">
+                                    <Label htmlFor="role" className="font-bold">Hedef Pozisyon (Opsiyonel)</Label>
+                                    <Input 
+                                        id="role"
+                                        placeholder="Örn: Frontend Developer, Product Manager..." 
+                                        value={targetRole}
+                                        onChange={(e) => setTargetRole(e.target.value)}
+                                        className="h-12 border-zinc-300 dark:border-zinc-700"
+                                    />
+                                    <p className="text-[11px] text-muted-foreground">Belirtirseniz analiz tamamen bu role uygunluğunuz üzerinden yapılır.</p>
+                                </div>
+
                                 {cvs.length > 0 ? (
                                     <div className="w-full space-y-4">
                                         <h3 className="text-sm font-bold text-muted-foreground uppercase text-center">Mevcut CV&apos;niz ile analiz edin</h3>
@@ -107,14 +120,14 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                                             <Button 
                                                 key={cv.id} 
                                                 variant="outline" 
-                                                className="w-full justify-between h-14"
+                                                className="w-full justify-between h-14 border-blue-200 hover:bg-blue-50 dark:border-blue-900 dark:hover:bg-blue-900/40"
                                                 onClick={() => handleAnalyzeFromCV(cv.id)}
                                             >
                                                 <div className="flex items-center gap-2">
                                                     <FileText className="w-5 h-5 text-blue-500" />
-                                                    <span className="font-semibold">{cv.title || "CV'm"}</span>
+                                                    <span className="font-semibold text-zinc-800 dark:text-zinc-200">{cv.title || "CV'm"}</span>
                                                 </div>
-                                                <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                                                <ArrowRight className="w-4 h-4 text-blue-500" />
                                             </Button>
                                         ))}
                                     </div>
@@ -146,7 +159,7 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                                         onChange={handleFileUpload}
                                     />
                                     <Button 
-                                        className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white"
+                                        className="w-full h-14 bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
                                         onClick={() => fileInputRef.current?.click()}
                                     >
                                         <Upload className="w-5 h-5 mr-2" />
@@ -169,79 +182,135 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
     }
 
     const { scores, overall_score, insight, recommendations } = analysisData;
-    const name = profile?.full_name || "Kullanıcı";
+    
+    // New Advanced fields parsed from the JSONB scores object
+    const targetRoleText = scores?.target_role;
+    const atsScore = scores?.ats_score || overall_score;
+    const superpower = scores?.superpower;
+    const redFlags = scores?.red_flags || [];
+    const actionPlan = scores?.action_plan || [];
+    const cvCorrections = scores?.cv_corrections || [];
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold tracking-tight">{t("title") || "Beceri Analizi"}</h1>
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto pb-10">
+            <div className="flex justify-between items-end mb-6">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">{t("title") || "Beceri Analizi"}</h1>
+                    {targetRoleText && <p className="text-muted-foreground mt-2 flex items-center gap-1.5 font-medium"><Target className="w-4 h-4 text-blue-500"/> Hedef: <span className="text-zinc-900 dark:text-zinc-100 font-bold">{targetRoleText}</span></p>}
+                </div>
                 <Button variant="outline" size="sm" onClick={() => setShowUpload(true)} className="gap-2">
                     <RefreshCw className="w-4 h-4" />
-                    Yeniden Analiz Et
+                    <span className="hidden sm:inline">Yeniden Analiz Et</span>
                 </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                {/* Profile Info & AI Score */}
-                <div className="md:col-span-4 flex flex-col gap-6">
-                    <Card className="overflow-hidden">
-                        <CardContent className="p-8 flex flex-col items-center text-center">
-                            <div className="relative mb-6">
-                                <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-white dark:border-zinc-900 shadow-xl bg-blue-100 flex items-center justify-center text-3xl font-bold text-blue-600">
-                                    {name.charAt(0)}
-                                </div>
-                                <div className="absolute bottom-4 right-0 bg-blue-600 text-white p-1 rounded-full border-2 border-white dark:border-zinc-900 shadow-sm">
-                                    <Verified className="w-4 h-4" />
-                                </div>
-                            </div>
-                            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{name}</h2>
-                            <p className="text-blue-600 dark:text-blue-400 mb-6 uppercase tracking-widest text-xs font-bold">{t("role") || "Kullanıcı"}</p>
-                            
-                            <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800 mb-6"></div>
-                            
-                            <div className="w-full">
-                                <div className="flex justify-between items-end mb-2">
-                                    <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">{t("aiResumeScore") || "AI Genel Puanı"}</span>
-                                    <span className="text-blue-600 dark:text-blue-400 text-xl font-black">{overall_score}<span className="text-sm font-medium text-muted-foreground">/100</span></span>
-                                </div>
-                                <div className="h-2.5 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-blue-500 rounded-full shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2)]" style={{ width: `${overall_score}%` }}></div>
-                                </div>
-                                <p className="text-muted-foreground mt-3 text-left text-sm">{t("scoreDesc") || "CV verinize dayalı genel değerlendirme."}</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-blue-50/50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/50">
+                
+                {/* AI Insight & Superpower */}
+                <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-blue-100 dark:border-blue-900/50 shadow-sm">
                         <CardHeader className="pb-2">
                             <CardTitle className="flex items-center gap-2 text-lg text-blue-900 dark:text-blue-100">
                                 <Sparkles className="text-blue-500 w-5 h-5" />
-                                {t("aiInsights") || "AI İçgörüleri"}
+                                {t("aiInsights") || "Yapay Zeka Değerlendirmesi"}
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                                <p className="text-zinc-700 dark:text-zinc-300 italic text-sm">{insight}</p>
+                        <CardContent>
+                            <p className="text-zinc-700 dark:text-zinc-300 font-medium leading-relaxed">{insight}</p>
+                        </CardContent>
+                    </Card>
+
+                    {superpower && (
+                    <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-amber-100 dark:border-amber-900/50 relative overflow-hidden shadow-sm">
+                        <div className="absolute -right-6 -top-6 opacity-10">
+                            <Zap className="w-32 h-32 text-amber-500" />
+                        </div>
+                        <CardHeader className="pb-2 relative z-10">
+                            <CardTitle className="flex items-center gap-2 text-lg text-amber-900 dark:text-amber-100">
+                                <Zap className="text-amber-500 w-5 h-5 fill-amber-500/20" />
+                                Süper Gücün
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="relative z-10">
+                            <p className="text-amber-800 dark:text-amber-200 font-bold text-lg leading-relaxed">{superpower}</p>
+                        </CardContent>
+                    </Card>
+                    )}
+                </div>
+
+                {/* Left Column: Scores & Radar */}
+                <div className="md:col-span-4 flex flex-col gap-6">
+                    {/* Overall & ATS Score */}
+                    <Card className="shadow-sm">
+                        <CardContent className="p-6 space-y-8">
+                            <div className="w-full">
+                                <div className="flex justify-between items-end mb-2">
+                                    <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"><Activity className="w-4 h-4 text-blue-500"/>Genel Uygunluk</span>
+                                    <span className="text-blue-600 dark:text-blue-400 text-xl font-black">{overall_score}<span className="text-sm font-medium text-muted-foreground">/100</span></span>
+                                </div>
+                                <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                    <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${overall_score}%` }}></div>
+                                </div>
+                            </div>
+                            
+                            <div className="w-full">
+                                <div className="flex justify-between items-end mb-2">
+                                    <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"><Terminal className="w-4 h-4 text-emerald-500"/>ATS Skoru</span>
+                                    <span className={`text-xl font-black ${atsScore >= 80 ? 'text-emerald-600' : atsScore >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
+                                        {atsScore}<span className="text-sm font-medium text-muted-foreground">/100</span>
+                                    </span>
+                                </div>
+                                <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                    <div className={`h-full rounded-full transition-all duration-1000 ${atsScore >= 80 ? 'bg-emerald-500' : atsScore >= 60 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${atsScore}%` }}></div>
+                                </div>
+                                {scores?.ats_feedback && scores.ats_feedback.length > 0 && (
+                                    <div className="mt-4 space-y-2 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-100 dark:border-amber-900/50">
+                                        {scores.ats_feedback.map((fb: string, i: number) => (
+                                            <p key={i} className="text-xs text-amber-800 dark:text-amber-300 font-medium flex items-start gap-1.5">
+                                                <span className="text-amber-500 mt-0.5">•</span> {fb}
+                                            </p>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
+
+                    {/* Red Flags */}
+                    {redFlags.length > 0 && (
+                        <Card className="border-red-100 dark:border-red-900/50 bg-red-50/30 dark:bg-red-950/10 shadow-sm">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-red-600 dark:text-red-400 flex items-center gap-2 text-base">
+                                    <AlertTriangle className="w-5 h-5" />
+                                    Kırmızı Bayraklar
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <ul className="space-y-3">
+                                    {redFlags.map((flag: string, i: number) => (
+                                        <li key={i} className="flex items-start gap-2.5 text-sm font-medium text-red-800 dark:text-red-300">
+                                            <div className="min-w-2 h-2 rounded-full bg-red-500 mt-1.5 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+                                            {flag}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
 
-                {/* Radar Chart Visualization */}
+                {/* Right Column: Radar Chart */}
                 <div className="md:col-span-8">
-                    <Card className="h-full min-h-[500px] flex flex-col overflow-hidden relative">
+                    <Card className="h-full min-h-[400px] flex flex-col overflow-hidden relative shadow-sm">
                         <div className="absolute inset-0 bg-grid-zinc-100 dark:bg-grid-zinc-900/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] dark:[mask-image:linear-gradient(0deg,black,rgba(0,0,0,0.5))] pointer-events-none"></div>
                         <CardHeader className="flex flex-row items-start justify-between relative z-10 pb-0">
                             <div>
-                                <CardTitle className="text-2xl font-bold">{t("competencyMatrix") || "Yetkinlik Matrisi"}</CardTitle>
-                                <CardDescription className="text-base mt-1">{t("competencyDesc") || "Farklı beceri alanlarındaki dağılımınız"}</CardDescription>
+                                <CardTitle className="text-xl font-bold">{t("competencyMatrix") || "Yetkinlik Matrisi"}</CardTitle>
+                                <CardDescription className="text-sm mt-1">{t("competencyDesc") || "Farklı beceri alanlarındaki dağılımınız"}</CardDescription>
                             </div>
-                            <Button variant="outline" size="icon" className="rounded-xl shadow-sm">
-                                <Share2 className="w-4 h-4 text-zinc-500" />
-                            </Button>
                         </CardHeader>
-                        <CardContent className="flex-grow flex items-center justify-center relative z-10 p-10">
-                            <div className="relative w-full max-w-md aspect-square flex items-center justify-center mt-6 mb-6">
+                        <CardContent className="flex-grow flex items-center justify-center relative z-10 p-6">
+                            <div className="relative w-full max-w-[320px] aspect-square flex items-center justify-center mt-6 mb-6">
                                 {/* Background Circles */}
                                 <div className="absolute inset-0 border border-zinc-200 dark:border-zinc-800 rounded-full"></div>
                                 <div className="absolute inset-[15%] border border-zinc-200 dark:border-zinc-800 rounded-full"></div>
@@ -254,15 +323,14 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                                 <div className="absolute w-full h-px bg-zinc-200 dark:bg-zinc-800 rotate-[120deg]"></div>
                                 
                                 {/* Skill Labels */}
-                                <span className="absolute -top-8 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-2">Teknik Beceriler ({scores?.teknik || 0})</span>
-                                <span className="absolute -bottom-8 text-zinc-500 text-xs font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-2">Problem Çözme ({scores?.problemCozme || 0})</span>
-                                <span className="absolute -left-20 top-1/4 text-zinc-500 text-xs font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-2">Liderlik ({scores?.liderlik || 0})</span>
-                                <span className="absolute -right-24 top-1/4 text-zinc-500 text-xs font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-2">İletişim ({scores?.iletisim || 0})</span>
-                                <span className="absolute -left-24 bottom-1/4 text-zinc-500 text-xs font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-2">İşbirliği ({scores?.isbirligi || 0})</span>
-                                <span className="absolute -right-16 bottom-1/4 text-zinc-500 text-xs font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-2">Uyumluluk ({scores?.uyumluluk || 0})</span>
+                                <span className="absolute -top-6 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Teknik ({scores?.teknik || 0})</span>
+                                <span className="absolute -bottom-6 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Problem Çözme ({scores?.problemCozme || 0})</span>
+                                <span className="absolute -left-16 top-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Liderlik ({scores?.liderlik || 0})</span>
+                                <span className="absolute -right-16 top-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">İletişim ({scores?.iletisim || 0})</span>
+                                <span className="absolute -left-16 bottom-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">İşbirliği ({scores?.isbirligi || 0})</span>
+                                <span className="absolute -right-16 bottom-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Uyumluluk ({scores?.uyumluluk || 0})</span>
                                 
-                                {/* Calculating SVG Polygon Points (0-100 scale -> 0-50 radius) */}
-                                {/* Angles: Top=270(Teknik), Right-Top=330(Iletisim), Right-Bottom=30(Uyumluluk), Bottom=90(Problem), Left-Bottom=150(Isbirligi), Left-Top=210(Liderlik) */}
+                                {/* Calculating SVG Polygon Points */}
                                 {(() => {
                                     const getPoint = (score: number, angleDeg: number) => {
                                         const r = (score || 0) / 100 * 50; 
@@ -294,11 +362,73 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                     </Card>
                 </div>
 
+                {/* CV Corrections Before / After */}
+                {cvCorrections.length > 0 && (
+                    <div className="md:col-span-12 mt-4">
+                        <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4 px-2 flex items-center gap-2">
+                            <FileText className="w-5 h-5 text-blue-500" />
+                            CV Cümle Düzeltme Önerileri
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            {cvCorrections.map((corr: any, idx: number) => (
+                                <Card key={idx} className="border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 flex-grow">
+                                        <div className="p-5 bg-red-50/40 dark:bg-red-950/20 sm:border-r border-b sm:border-b-0 border-zinc-200 dark:border-zinc-800">
+                                            <div className="text-[10px] font-bold text-red-500 uppercase mb-3 tracking-wider bg-red-100 dark:bg-red-900/30 inline-block px-2 py-0.5 rounded">Senin Yazdığın</div>
+                                            <p className="text-sm text-zinc-600 dark:text-zinc-400 line-through decoration-red-300 dark:decoration-red-800/60">{corr.original}</p>
+                                        </div>
+                                        <div className="p-5 bg-emerald-50/40 dark:bg-emerald-950/20">
+                                            <div className="text-[10px] font-bold text-emerald-600 uppercase mb-3 tracking-wider bg-emerald-100 dark:bg-emerald-900/30 inline-flex items-center gap-1 px-2 py-0.5 rounded">
+                                                <span>AI Önerisi</span>
+                                                <Sparkles className="w-3 h-3"/>
+                                            </div>
+                                            <p className="text-sm text-zinc-900 dark:text-zinc-100 font-semibold">{corr.improved}</p>
+                                        </div>
+                                    </div>
+                                    <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3.5 text-xs text-muted-foreground border-t border-zinc-200 dark:border-zinc-800 flex items-start gap-2">
+                                        <div className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                        <span><strong className="text-zinc-700 dark:text-zinc-300">Neden Değiştirilmeli?</strong> {corr.reason}</span>
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Action Plan */}
+                {actionPlan.length > 0 && (
+                    <div className="md:col-span-12 mt-6">
+                        <Card className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-md border-0">
+                            <CardHeader className="pb-5">
+                                <CardTitle className="flex items-center gap-2 text-xl">
+                                    <CheckCircle2 className="w-6 h-6 text-emerald-400 dark:text-emerald-600" />
+                                    Aksiyon Planı (Hemen Başla)
+                                </CardTitle>
+                                <CardDescription className="text-zinc-400 dark:text-zinc-600">CV&apos;ni ve kariyerini güçlendirmek için bugün atman gereken 3 adım.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {actionPlan.map((plan: string, i: number) => (
+                                        <div key={i} className="flex items-start gap-4 bg-white/10 dark:bg-black/5 p-5 rounded-xl transition-all hover:bg-white/15 dark:hover:bg-black/10">
+                                            <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-lg shadow-blue-500/30">{i+1}</div>
+                                            <p className="font-semibold text-zinc-100 dark:text-zinc-800 text-base leading-relaxed pt-1">{plan}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
                 {/* AI Recommendations */}
                 {recommendations && recommendations.length > 0 && (
-                    <div className="md:col-span-12 mt-4">
-                        <div className="flex items-center justify-between mb-4 px-2">
-                            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{t("recommendedGrowth") || "Gelişim Önerileri"}</h3>
+                    <div className="md:col-span-12 mt-6">
+                        <div className="flex items-center justify-between mb-5 px-2">
+                            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                <ArrowRightCircle className="w-5 h-5 text-blue-500" />
+                                {t("recommendedGrowth") || "Gelişim Önerileri"}
+                            </h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -309,17 +439,27 @@ export default function SkillsClient({ profile, analysisData, cvs }: { profile: 
                                 const Icon = icons[idx % 3];
                                 
                                 return (
-                                    <Card key={idx} className={`hover:border-${c}-300 dark:hover:border-${c}-700 transition-all cursor-pointer group shadow-sm hover:shadow-md`}>
-                                        <CardContent className="p-6">
+                                    <Card key={idx} className={`hover:border-${c}-300 dark:hover:border-${c}-700 transition-all flex flex-col shadow-sm hover:shadow-md h-full`}>
+                                        <CardContent className="p-6 flex-grow">
                                             <div className="flex justify-between items-start mb-6">
                                                 <div className={`w-12 h-12 rounded-xl bg-${c}-100 dark:bg-${c}-900/30 flex items-center justify-center text-${c}-600 dark:text-${c}-400`}>
                                                     {Icon}
                                                 </div>
                                                 <span className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-md">{rec.category || "Gelişim"}</span>
                                             </div>
-                                            <h4 className={`text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2 group-hover:text-${c}-600 dark:group-hover:text-${c}-400 transition-colors`}>{rec.title}</h4>
-                                            <p className="text-muted-foreground text-sm mb-6 line-clamp-3">{rec.description}</p>
+                                            <h4 className={`text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-3`}>{rec.title}</h4>
+                                            <p className="text-muted-foreground text-sm mb-4 line-clamp-3 leading-relaxed">{rec.description}</p>
                                         </CardContent>
+                                        <CardFooter className="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/50 mt-auto">
+                                            <Button 
+                                                variant="ghost" 
+                                                className={`w-full justify-between text-${c}-600 dark:text-${c}-400 hover:text-${c}-700 hover:bg-${c}-50 dark:hover:bg-${c}-900/20 font-semibold`}
+                                                onClick={() => router.push("/roadmap")}
+                                            >
+                                                Yol Haritasına Git
+                                                <ArrowRight className="w-4 h-4 ml-2" />
+                                            </Button>
+                                        </CardFooter>
                                     </Card>
                                 );
                             })}
