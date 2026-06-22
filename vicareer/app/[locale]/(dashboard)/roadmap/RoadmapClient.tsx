@@ -302,7 +302,6 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
                                                     <div className="mt-3">
                                                         <p className="text-xs font-bold uppercase text-zinc-500 mb-2">Önerilen Kaynaklar:</p>
                                                         <ul className="flex flex-wrap gap-2">
-                                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                                             {step.resources.map((res: string, rIdx: number) => (
                                                                 <li key={rIdx} className="bg-zinc-100 dark:bg-zinc-800 text-xs px-3 py-1 rounded-full text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
                                                                     {res}

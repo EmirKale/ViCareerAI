@@ -10,13 +10,11 @@ export default async function RoadmapPage() {
         redirect("/login");
     }
 
-    const [profileRes, analysisRes, cvsRes] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", user.id).single(),
+    const [analysisRes, cvsRes] = await Promise.all([
         supabase.from("roadmap_analysis").select("*").eq("user_id", user.id).order('created_at', { ascending: false }).limit(1).single(),
         supabase.from("cvs").select("id, title, updated_at").eq("user_id", user.id).order('updated_at', { ascending: false })
     ]);
 
-    const profileData = profileRes.data || null;
     const analysisData = analysisRes.data || null;
     const cvsData = cvsRes.data || [];
 
