@@ -117,9 +117,9 @@ export default function PricingPage() {
                     </Card>
 
                     {/* Pro Plan */}
-                    <ElectricCard color="blue" className="flex flex-col shadow-xl shadow-blue-500/10 relative overflow-visible scale-100 md:scale-105 z-10 p-0 !bg-transparent border-0">
-                        <div className="bg-white/5 backdrop-blur-xl h-full w-full rounded-2xl flex flex-col">
-                            <div className="absolute top-0 inset-x-0 h-1.5 gradient-brand rounded-t-2xl"></div>
+                    <ElectricCard color="blue" className="flex flex-col h-full shadow-xl shadow-blue-500/10 relative overflow-visible scale-100 md:scale-105 z-10 p-0 !bg-transparent border-0">
+                        <div className="bg-white/5 backdrop-blur-xl h-full w-full rounded-2xl flex flex-col relative overflow-hidden">
+                            <div className="absolute top-0 inset-x-0 h-1.5 gradient-brand"></div>
                             <div className="absolute top-5 right-5">
                                 <span className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full">
                                     {p("recommended")}
