@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import OpenAI from "openai";
 import { PDFParse } from "pdf-parse";
+import mammoth from "mammoth";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -46,8 +47,11 @@ export async function POST(request: NextRequest) {
             extractedText = textResult.text;
         } else if (file.type === "text/plain") {
             extractedText = buffer.toString("utf-8");
+        } else if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.name.endsWith(".docx")) {
+            const result = await mammoth.extractRawText({ buffer: buffer });
+            extractedText = result.value;
         } else {
-            return NextResponse.json({ error: "Only PDF and TXT files are supported" }, { status: 400 });
+            return NextResponse.json({ error: "Only PDF, DOCX and TXT files are supported" }, { status: 400 });
         }
 
         if (!extractedText || extractedText.trim() === "") {
@@ -56,6 +60,10 @@ export async function POST(request: NextRequest) {
 
         // Limit text length to avoid token limits
         const textToAnalyze = extractedText.slice(0, 15000);
+
+        if (type === "raw") {
+            return NextResponse.json({ success: true, text: textToAnalyze });
+        }
 
         let systemPrompt = "";
         let jsonFormat = "";
