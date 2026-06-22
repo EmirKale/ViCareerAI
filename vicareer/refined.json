@@ -1,0 +1,22 @@
+{
+  "projectId": "8a6964b8-1604-4431-82d6-633acc7c812e",
+  "type": "frontend",
+  "name": "Generating a cover letter with AI produces letter content",
+  "description": "A logged-in user navigates specifically to the cover letter creation page at /cover-letter/new, fills in job details, clicks the AI generate button, waits for generation, and verifies actual generated paragraph text appears in the letter body - not JSON, not a placeholder, not empty - and that the letter subsequently appears in Letter History.",
+  "priority": "p1",
+  "planSteps": [
+    { "type": "action", "description": "Navigate to https://vi-career-ai.vercel.app/login" },
+    { "type": "action", "description": "Enter testsprite@gmail.com in the email field" },
+    { "type": "action", "description": "Enter 12testsprite12 in the password field" },
+    { "type": "action", "description": "Submit the login form" },
+    { "type": "action", "description": "Click the Write Letter button on the dashboard" },
+    { "type": "assertion", "description": "Verify the page now shows a cover letter creation form with company name and position input fields" },
+    { "type": "action", "description": "Fill in the company name field with TestCorp" },
+    { "type": "action", "description": "Fill in the position field with Software Engineer" },
+    { "type": "action", "description": "Click the button that triggers AI letter generation" },
+    { "type": "action", "description": "Wait for the AI generation process to finish loading" },
+    { "type": "assertion", "description": "Verify a multi-sentence paragraph of natural language cover letter text is displayed in the letter content area, and confirm it does not contain curly braces, JSON key-value syntax, or array brackets" },
+    { "type": "action", "description": "Navigate to the Letter History page" },
+    { "type": "assertion", "description": "Verify the newly generated letter for TestCorp appears as an entry in the letter history list" }
+  ]
+}
