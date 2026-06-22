@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import OpenAI from "openai";
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require("pdf-parse");
 import mammoth from "mammoth";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -43,6 +41,8 @@ export async function POST(request: NextRequest) {
         const buffer = Buffer.from(arrayBuffer);
 
         if (file.type === "application/pdf") {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const pdfParse = require("pdf-parse");
             const textResult = await pdfParse(buffer);
             extractedText = textResult.text;
         } else if (file.type === "text/plain") {

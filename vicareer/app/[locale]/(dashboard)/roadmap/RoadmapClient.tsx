@@ -44,8 +44,8 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
         const file = e.target.files?.[0];
         if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error("Dosya boyutu 5MB'dan küçük olmalıdır.");
+        if (file.size > 4 * 1024 * 1024) {
+            toast.error("Dosya boyutu 4MB'dan küçük olmalıdır.");
             return;
         }
 
