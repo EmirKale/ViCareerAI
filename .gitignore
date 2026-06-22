@@ -52,3 +52,14 @@ stripe.exe
 
 # temp error logs
 ts-errors*.txt
+
+# Ignore specific dev tools and duplicates
+vicareer/
+*.jsonl
+plan*.json
+steps.json
+refined.json
+test-plan.json
+upgrade_to_pro.js
+resetQuota.js
+translate_missing.js

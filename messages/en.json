@@ -181,7 +181,8 @@
         "interview": "AI Interview",
         "skills": "Skill Analysis",
         "roadmap": "Career Roadmap",
-        "soon": "Soon"
+        "soon": "Soon",
+        "new": "New"
     },
     "Dashboard": {
         "welcome": "Hello, {name} 👋",

@@ -34,8 +34,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     { name: t("jobs"), href: "/jobs/discover", icon: Briefcase },
     { name: t("applications"), href: "/jobs/tracker", icon: Briefcase },
     { name: t("interview"), href: "/interview", icon: Mic, isSoon: true },
-    { name: t("skills"), href: "/skills", icon: Target, isSoon: true },
-    { name: t("roadmap"), href: "/roadmap", icon: Route, isSoon: true },
+    { name: t("skills"), href: "/skills", icon: Target, isNew: true },
+    { name: t("roadmap"), href: "/roadmap", icon: Route, isNew: true },
     { name: t("settings"), href: "/profile", icon: Settings },
   ];
 
@@ -100,6 +100,11 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   {item.isSoon && (
                     <span className="text-xs bg-yellow-500/20 text-yellow-500 dark:text-yellow-400 px-1.5 py-0.5 rounded ml-2">
                       {t("soon")}
+                    </span>
+                  )}
+                  {item.isNew && (
+                    <span className="text-xs bg-green-500/20 text-green-600 dark:text-green-400 px-1.5 py-0.5 rounded ml-2">
+                      {t("new")}
                     </span>
                   )}
                   {isActive && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}

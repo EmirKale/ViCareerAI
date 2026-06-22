@@ -181,7 +181,8 @@
         "interview": "Mülakat Simülasyonu",
         "skills": "Beceri Analizi",
         "roadmap": "Kariyer Yol Haritası",
-        "soon": "Yakında"
+        "soon": "Yakında",
+        "new": "Yeni"
     },
     "Dashboard": {
         "welcome": "Merhaba, {name} 👋",
