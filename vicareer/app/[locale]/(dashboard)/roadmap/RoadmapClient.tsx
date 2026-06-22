@@ -254,13 +254,13 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
 
                 {/* Right Column: Interactive Roadmap */}
                 <div className="lg:col-span-8">
-                    <Card className="h-full relative overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between pb-8">
+                    <Card className="h-full relative overflow-hidden flex flex-col max-h-[800px]">
+                        <CardHeader className="flex flex-row items-center justify-between pb-8 shrink-0">
                             <CardTitle className="text-2xl font-bold">{t("learningJourney") || "Öğrenme Yolculuğu"}</CardTitle>
                             <span className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Plan</span>
                         </CardHeader>
                         
-                        <CardContent className="relative pl-12 space-y-12 pb-10">
+                        <CardContent className="relative pl-12 space-y-12 pb-10 overflow-y-auto pr-4">
                             {/* Roadmap Vertical Line */}
                             <div className="absolute left-[39px] top-4 bottom-4 w-1 bg-gradient-to-b from-indigo-500 via-purple-400 to-zinc-200 dark:to-zinc-800 rounded-full"></div>
                             
@@ -291,7 +291,26 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
                                         <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl ${isCompleted ? 'bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/30' : isInProgress ? 'bg-white dark:bg-zinc-900 border-2 border-indigo-500 shadow-sm' : 'bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800'}`}>
                                             <div className="w-full">
                                                 <h4 className={`text-lg font-bold mb-1 ${isLocked ? 'text-muted-foreground' : 'text-zinc-900 dark:text-zinc-100'}`}>{step.title}</h4>
+                                                {step.estimatedDuration && (
+                                                    <span className="inline-block bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-2 py-1 rounded-md mb-2">
+                                                        Tahmini süre: {step.estimatedDuration}
+                                                    </span>
+                                                )}
                                                 <p className={isLocked ? 'text-muted-foreground/70 text-sm' : 'text-muted-foreground text-sm'}>{step.description}</p>
+                                                
+                                                {step.resources && step.resources.length > 0 && !isLocked && (
+                                                    <div className="mt-3">
+                                                        <p className="text-xs font-bold uppercase text-zinc-500 mb-2">Önerilen Kaynaklar:</p>
+                                                        <ul className="flex flex-wrap gap-2">
+                                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                                            {step.resources.map((res: string, rIdx: number) => (
+                                                                <li key={rIdx} className="bg-zinc-100 dark:bg-zinc-800 text-xs px-3 py-1 rounded-full text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+                                                                    {res}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
                                                 
                                                 {isInProgress && step.progress !== undefined && (
                                                     <div className="mt-4 flex items-center gap-4 w-full max-w-sm">

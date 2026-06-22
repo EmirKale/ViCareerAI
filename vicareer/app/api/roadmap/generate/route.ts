@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
     try {
@@ -68,22 +69,32 @@ ${textToAnalyze}
 
 Hedef pozisyonu: ${targetPosition || "Belirtilmemiş (CV'ye göre tahmin et)"}
 
-Bu kullanıcı için 4 adımlık bir kariyer gelişim yol haritası oluştur. Her adım: başlık, 1 cümle açıklama, durum (tamamlandı/devam ediyor/kilitli), devam ediyorsa ilerleme yüzdesi.
-Ayrıca: genel yetenek puanı (0-100), 3 alt kategori için hazırlık yüzdesi (pozisyona göre uyarla), 2 AI içgörüsü (1 kritik öncelik, 1 büyüme fırsatı).
+Bu kullanıcı için CV'deki GERÇEK deneyim, proje ve becerilere dayanan, kişiye özel ve DETAYLI bir kariyer gelişim yol haritası oluştur.
+
+Genel/jenerik tavsiyeler ('Temel programlama dillerini öğren' gibi) ÜRETME. Bunun yerine kullanıcının CV'sinde bahsi geçen spesifik teknolojiler, eksik kalan beceriler ve hedef pozisyonla mevcut durumu arasındaki gerçek boşluğa odaklan.
+
+6-8 adımlık bir yol haritası oluştur. Her adım için:
+- title: spesifik ve aksiyon odaklı başlık
+- description: 2-3 cümlelik detaylı açıklama, NEDEN bu adımın gerekli olduğunu CV'deki duruma referansla anlat
+- status: completed / in_progress / locked
+- progress: 0-100
+- estimatedDuration: bu adım için tahmini süre (örn. '2-3 ay')
+- resources: bu adımda kullanılabilecek 2-3 somut kaynak/yöntem önerisi (kurs, sertifika türü, proje fikri vb.)
+
+Ayrıca: genel yetenek puanı (0-100), 3-4 alt kategori için hazırlık yüzdesi (pozisyona özel, CV'deki gerçek deneyime göre hesapla), 3-4 AI içgörüsü - her biri kullanıcının CV'sindeki SPESİFİK bir detaya atıfta bulunsun.
 
 SADECE JSON formatında dön:
 {
   "overallScore": 84,
-  "readiness": {"Kategori 1": 92, "Kategori 2": 68, "Kategori 3": 45},
+  "readiness": {"Kategori 1": 92, "Kategori 2": 68, "Kategori 3": 45, "Kategori 4": 70},
   "steps": [
-    {"title": "...", "description": "...", "status": "completed", "progress": 100},
-    {"title": "...", "description": "...", "status": "in_progress", "progress": 65},
-    {"title": "...", "description": "...", "status": "locked", "progress": 0},
-    {"title": "...", "description": "...", "status": "locked", "progress": 0}
+    {"title": "...", "description": "...", "status": "completed", "progress": 100, "estimatedDuration": "...", "resources": ["...", "..."]},
+    {"title": "...", "description": "...", "status": "in_progress", "progress": 65, "estimatedDuration": "...", "resources": ["...", "..."]}
   ],
   "insights": [
     {"type": "critical", "title": "...", "description": "..."},
-    {"type": "growth", "title": "...", "description": "..."}
+    {"type": "growth", "title": "...", "description": "..."},
+    {"type": "strength", "title": "...", "description": "..."}
   ]
 }
 `;
@@ -93,6 +104,7 @@ SADECE JSON formatında dön:
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.5,
+            max_tokens: 2500,
         });
 
         const resultContent = completion.choices[0]?.message?.content || "{}";
