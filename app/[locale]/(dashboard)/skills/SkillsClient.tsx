@@ -159,11 +159,11 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                                         onChange={handleFileUpload}
                                     />
                                     <Button 
-                                        className="w-full h-14 bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                                        className="w-full h-14 flex items-center justify-center gap-2 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
                                         onClick={() => fileInputRef.current?.click()}
                                     >
-                                        <Upload className="w-5 h-5 mr-2" />
-                                        Dışarıdan CV Yükle (PDF / DOCX)
+                                        <Upload className="w-5 h-5 shrink-0" />
+                                        <span>Dışarıdan CV Yükle (PDF / DOCX)</span>
                                     </Button>
                                     <p className="text-xs text-center text-muted-foreground mt-2">Maksimum 5MB dosya boyutu</p>
                                 </div>

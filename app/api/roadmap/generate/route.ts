@@ -63,19 +63,19 @@ export async function POST(request: NextRequest) {
         // Limit text length
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
-        const languageInstruction = locale === "en" 
-            ? "CRITICAL: You MUST write ALL titles, descriptions, and JSON string values in English language." 
-            : "CRITICAL: SADECE Türkçe dilinde başlık, açıklama ve içerik oluştur.";
+        const languageInstruction = locale === 'tr' 
+            ? 'CRITICAL: TÜM çıktıyı (başlıklar, açıklamalar, içgörüler) TÜRKÇE olarak üret. İngilizce kelime kullanma.'
+            : 'CRITICAL: Generate ALL output (titles, descriptions, insights) in ENGLISH.';
 
-        const prompt = `Kullanıcının mevcut durumu:
+        const prompt = `${languageInstruction}
+
+Kullanıcının mevcut durumu:
 ${textToAnalyze}
 
 Hedef pozisyonu: ${targetPosition || "Belirtilmemiş (CV'ye göre tahmin et)"}
 
 Bu kullanıcı için 4 adımlık bir kariyer gelişim yol haritası oluştur. Her adım: başlık, 1 cümle açıklama, durum (tamamlandı/devam ediyor/kilitli), devam ediyorsa ilerleme yüzdesi.
 Ayrıca: genel yetenek puanı (0-100), 3 alt kategori için hazırlık yüzdesi (pozisyona göre uyarla), 2 AI içgörüsü (1 kritik öncelik, 1 büyüme fırsatı).
-
-${languageInstruction}
 
 SADECE JSON formatında dön:
 {
@@ -92,6 +92,8 @@ SADECE JSON formatında dön:
     {"type": "growth", "title": "...", "description": "..."}
   ]
 }
+
+${languageInstruction}
 `;
 
         const completion = await openai.chat.completions.create({
@@ -112,7 +114,8 @@ SADECE JSON formatında dön:
             readiness: parsedData.readiness,
             steps: parsedData.steps,
             insights: parsedData.insights,
-            source: source
+            source: source,
+            language: locale || 'tr'
         }).select().single();
 
         if (insertError) {

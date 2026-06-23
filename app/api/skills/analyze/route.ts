@@ -63,11 +63,13 @@ export async function POST(request: NextRequest) {
         // Limit text length
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
-        const languageInstruction = locale === "en" 
-            ? "CRITICAL: You MUST write ALL generated JSON string values (insight, recommendations, superpower, red_flags, corrections, action_plan, target_role, etc.) entirely in English language." 
-            : "CRITICAL: SADECE Türkçe dilinde değerler (insight, recommendations, superpower, vs.) üret.";
+        const languageInstruction = locale === 'tr' 
+            ? 'CRITICAL: TÜM çıktıyı (başlıklar, açıklamalar, içgörüler, vb.) TÜRKÇE olarak üret. İngilizce kelime kullanma.'
+            : 'CRITICAL: Generate ALL output (titles, descriptions, insights, etc.) in ENGLISH.';
 
-        const prompt = `Kullanıcının özgeçmişi:
+        const prompt = `${languageInstruction}
+
+Kullanıcının özgeçmişi:
 ${textToAnalyze}
 
 Hedeflenen Rol/Pozisyon: ${targetRole || "Belirtilmemiş, CV'den tahmin et"}
@@ -83,8 +85,6 @@ Aşağıdaki metrikleri ve alanları JSON olarak döndür:
 7. corrections dizisi - (original_text, improved_text, reason)
 8. action_plan dizisi - hemen yapılması gereken 3 şey (her biri string)
 9. recommendations dizisi (her biri: title, description, id(s1/s2 vb.))
-
-${languageInstruction}
 
 SADECE şu JSON formatında dön, başka hiçbir metin ekleme:
 {
@@ -110,6 +110,8 @@ SADECE şu JSON formatında dön, başka hiçbir metin ekleme:
 
 CV Verisi:
 ${textToAnalyze}
+
+${languageInstruction}
 `;
 
         const completion = await openai.chat.completions.create({
@@ -140,7 +142,8 @@ ${textToAnalyze}
             overall_score: parsedData.overallScore,
             insight: parsedData.insight,
             recommendations: parsedData.recommendations,
-            source: source
+            source: source,
+            language: locale || 'tr'
         }).select().single();
 
         if (insertError) {

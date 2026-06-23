@@ -153,6 +153,7 @@ create table if not exists public.skills_analysis (
   insight text,
   recommendations jsonb,
   source text check (source in ('cv', 'upload')),
+  language text default 'tr',
   created_at timestamp with time zone default now() not null
 );
 
@@ -172,6 +173,7 @@ create table if not exists public.roadmap_analysis (
   steps jsonb not null,
   insights jsonb not null,
   source text check (source in ('cv', 'upload')),
+  language text default 'tr',
   created_at timestamp with time zone default now() not null
 );
 
