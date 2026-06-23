@@ -110,7 +110,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                                         placeholder="Örn: Frontend Developer, Product Manager..." 
                                         value={targetRole}
                                         onChange={(e) => setTargetRole(e.target.value)}
-                                        className="h-12 border-zinc-300 dark:border-zinc-700"
+                                        className="h-12 border-zinc-300 dark:border-zinc-700 w-full text-base sm:text-sm"
                                     />
                                     <p className="text-[11px] text-muted-foreground">Belirtirseniz analiz tamamen bu role uygunluğunuz üzerinden yapılır.</p>
                                 </div>
@@ -222,7 +222,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
 
                     {superpower && (
                     <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-amber-100 dark:border-amber-900/50 relative overflow-hidden shadow-sm">
-                        <div className="absolute -right-6 -top-6 opacity-10">
+                        <div className="hidden md:block absolute -right-6 -top-6 opacity-10">
                             <Zap className="w-32 h-32 text-amber-500" />
                         </div>
                         <CardHeader className="pb-2 relative z-10">
@@ -372,18 +372,23 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {cvCorrections.map((corr: any, idx: number) => (
-                                <Card key={idx} className="border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 flex-grow">
-                                        <div className="p-5 bg-red-50/40 dark:bg-red-950/20 sm:border-r border-b sm:border-b-0 border-zinc-200 dark:border-zinc-800">
-                                            <div className="text-[10px] font-bold text-red-500 uppercase mb-3 tracking-wider bg-red-100 dark:bg-red-900/30 inline-block px-2 py-0.5 rounded">Senin Yazdığın</div>
-                                            <p className="text-sm text-zinc-600 dark:text-zinc-400 line-through decoration-red-300 dark:decoration-red-800/60">{corr.original}</p>
+                                <Card key={idx} className="border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col max-w-full">
+                                    <div className="flex flex-col md:flex-row flex-grow">
+                                        <div className="p-5 bg-red-50/40 dark:bg-red-950/20 md:border-r border-b md:border-b-0 border-zinc-200 dark:border-zinc-800 md:w-1/2 relative flex flex-col">
+                                            <div className="self-start text-[10px] font-bold text-red-500 uppercase mb-3 tracking-wider bg-red-100 dark:bg-red-900/30 inline-block px-2 py-0.5 rounded">Senin Yazdığın</div>
+                                            <p className="text-sm text-zinc-600 dark:text-zinc-400 line-through decoration-red-300 dark:decoration-red-800/60 break-words whitespace-pre-wrap">{corr.original}</p>
+                                            
+                                            {/* Mobile Arrow Divider */}
+                                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 md:hidden z-10 bg-white dark:bg-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-800 p-1">
+                                                <ArrowRight className="w-3 h-3 text-zinc-400 rotate-90" />
+                                            </div>
                                         </div>
-                                        <div className="p-5 bg-emerald-50/40 dark:bg-emerald-950/20">
-                                            <div className="text-[10px] font-bold text-emerald-600 uppercase mb-3 tracking-wider bg-emerald-100 dark:bg-emerald-900/30 inline-flex items-center gap-1 px-2 py-0.5 rounded">
+                                        <div className="p-5 bg-emerald-50/40 dark:bg-emerald-950/20 md:w-1/2 pt-8 md:pt-5">
+                                            <div className="self-start text-[10px] font-bold text-emerald-600 uppercase mb-3 tracking-wider bg-emerald-100 dark:bg-emerald-900/30 inline-flex items-center gap-1 px-2 py-0.5 rounded">
                                                 <span>AI Önerisi</span>
                                                 <Sparkles className="w-3 h-3"/>
                                             </div>
-                                            <p className="text-sm text-zinc-900 dark:text-zinc-100 font-semibold">{corr.improved}</p>
+                                            <p className="text-sm text-zinc-900 dark:text-zinc-100 font-semibold break-words whitespace-pre-wrap">{corr.improved}</p>
                                         </div>
                                     </div>
                                     <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3.5 text-xs text-muted-foreground border-t border-zinc-200 dark:border-zinc-800 flex items-start gap-2">
@@ -410,9 +415,9 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                             <CardContent>
                                 <div className="space-y-4">
                                     {actionPlan.map((plan: string, i: number) => (
-                                        <div key={i} className="flex items-start gap-4 bg-white/10 dark:bg-black/5 p-5 rounded-xl transition-all hover:bg-white/15 dark:hover:bg-black/10">
+                                        <div key={i} className="flex items-start gap-4 bg-white/10 dark:bg-black/5 p-5 rounded-xl transition-all hover:bg-white/15 dark:hover:bg-black/10 w-full max-w-full overflow-hidden">
                                             <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-lg shadow-blue-500/30">{i+1}</div>
-                                            <p className="font-semibold text-zinc-100 dark:text-zinc-800 text-base leading-relaxed pt-1">{plan}</p>
+                                            <p className="font-semibold text-zinc-100 dark:text-zinc-800 text-base leading-relaxed pt-1 break-words w-full">{plan}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -453,7 +458,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                                         <CardFooter className="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/50 mt-auto">
                                             <Button 
                                                 variant="ghost" 
-                                                className={`w-full justify-between text-${c}-600 dark:text-${c}-400 hover:text-${c}-700 hover:bg-${c}-50 dark:hover:bg-${c}-900/20 font-semibold`}
+                                                className={`w-full min-h-[44px] justify-between text-${c}-600 dark:text-${c}-400 hover:text-${c}-700 hover:bg-${c}-50 dark:hover:bg-${c}-900/20 font-semibold`}
                                                 onClick={() => router.push("/roadmap")}
                                             >
                                                 Yol Haritasına Git

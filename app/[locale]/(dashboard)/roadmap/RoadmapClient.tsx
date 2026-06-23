@@ -242,11 +242,11 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
                         <CardContent className="space-y-4">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {Array.isArray(insights) && insights.map((insight: any, idx: number) => (
-                                <div key={idx} className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                <div key={idx} className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm w-full max-w-full overflow-hidden break-words">
                                     <p className={`text-sm font-bold mb-1 ${insight.type === 'critical' ? 'text-red-500' : 'text-green-600 dark:text-green-500'}`}>
                                         {insight.title}
                                     </p>
-                                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{insight.description}</p>
+                                    <p className="text-sm text-zinc-600 dark:text-zinc-400 break-words">{insight.description}</p>
                                 </div>
                             ))}
                         </CardContent>
@@ -261,9 +261,9 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
                             <span className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Plan</span>
                         </CardHeader>
                         
-                        <CardContent className="relative pl-12 space-y-12 pb-10">
+                        <CardContent className="relative pl-8 md:pl-12 space-y-12 pb-10">
                             {/* Roadmap Vertical Line */}
-                            <div className="absolute left-[39px] top-4 bottom-4 w-1 bg-gradient-to-b from-indigo-500 via-purple-400 to-zinc-200 dark:to-zinc-800 rounded-full"></div>
+                            <div className="absolute left-[23px] md:left-[39px] top-4 bottom-4 w-1 bg-gradient-to-b from-indigo-500 via-purple-400 to-zinc-200 dark:to-zinc-800 rounded-full"></div>
                             
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                             {Array.isArray(steps) && steps.map((step: any, idx: number) => {
@@ -274,18 +274,18 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
                                 return (
                                     <div key={idx} className={`relative ${isLocked ? 'opacity-60' : ''}`}>
                                         {isCompleted && (
-                                            <div className="absolute -left-[45px] top-1 w-10 h-10 rounded-full bg-green-600 flex items-center justify-center border-4 border-white dark:border-zinc-950 z-10 shadow-sm">
-                                                <Check className="text-white w-5 h-5" />
+                                            <div className="absolute -left-[35px] md:-left-[45px] top-1 w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-600 flex items-center justify-center border-[3px] md:border-4 border-white dark:border-zinc-950 z-10 shadow-sm">
+                                                <Check className="text-white w-4 h-4 md:w-5 md:h-5" />
                                             </div>
                                         )}
                                         {isInProgress && (
-                                            <div className="absolute -left-[45px] top-1 w-10 h-10 rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center border-4 border-indigo-600 z-10 shadow-sm ring-2 ring-indigo-500/20 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950">
-                                                <Loader2 className="text-indigo-600 w-5 h-5 animate-spin" />
+                                            <div className="absolute -left-[35px] md:-left-[45px] top-1 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center border-[3px] md:border-4 border-indigo-600 z-10 shadow-sm ring-2 ring-indigo-500/20 ring-offset-2 ring-offset-white dark:ring-offset-zinc-950">
+                                                <Loader2 className="text-indigo-600 w-4 h-4 md:w-5 md:h-5 animate-spin" />
                                             </div>
                                         )}
                                         {isLocked && (
-                                            <div className="absolute -left-[45px] top-1 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border-4 border-white dark:border-zinc-950 z-10">
-                                                <Lock className="text-zinc-400 w-4 h-4" />
+                                            <div className="absolute -left-[35px] md:-left-[45px] top-1 w-8 h-8 md:w-10 md:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border-[3px] md:border-4 border-white dark:border-zinc-950 z-10">
+                                                <Lock className="text-zinc-400 w-3 h-3 md:w-4 md:h-4" />
                                             </div>
                                         )}
 
@@ -303,20 +303,20 @@ export default function RoadmapClient({ analysisData, cvs }: { analysisData: any
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="flex items-center gap-3 shrink-0 mt-4 md:mt-0">
+                                            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 shrink-0 mt-4 md:mt-0 w-full md:w-auto">
                                                 {isCompleted && (
                                                     <>
-                                                        <span className="text-xs font-mono text-green-600 dark:text-green-400 uppercase font-bold">{t("completed") || "Tamamlandı"}</span>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-green-100 dark:hover:bg-green-800/50">
-                                                            <ChevronRight className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                                        <span className="text-xs font-mono text-green-600 dark:text-green-400 uppercase font-bold text-center md:text-left">{t("completed") || "Tamamlandı"}</span>
+                                                        <Button variant="ghost" size="icon" className="h-10 w-full md:h-8 md:w-8 rounded-lg hover:bg-green-100 dark:hover:bg-green-800/50">
+                                                            <ChevronRight className="w-4 h-4 text-green-600 dark:text-green-400 mx-auto" />
                                                         </Button>
                                                     </>
                                                 )}
                                                 {isInProgress && (
-                                                    <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold">{t("continue") || "Devam Et"}</Button>
+                                                    <Button className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold min-h-[44px]">{t("continue") || "Devam Et"}</Button>
                                                 )}
                                                 {isLocked && (
-                                                    <span className="text-xs font-mono text-zinc-400 uppercase font-bold">{t("locked") || "Kilitli"}</span>
+                                                    <span className="text-xs font-mono text-zinc-400 uppercase font-bold text-center md:text-left">{t("locked") || "Kilitli"}</span>
                                                 )}
                                             </div>
                                         </div>
