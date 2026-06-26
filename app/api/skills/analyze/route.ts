@@ -142,8 +142,8 @@ ${languageInstruction}
             overall_score: parsedData.overallScore,
             insight: parsedData.insight,
             recommendations: parsedData.recommendations,
-            source: source,
-            language: locale || 'tr'
+            source: source
+            // language: locale || 'tr'
         }).select().single();
 
         if (insertError) {

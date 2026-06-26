@@ -334,33 +334,7 @@
             "desc": "Terminal aesthetics for developers. GitHub and TechStack focused."
         }
     },
-    "Roadmap": {
-        "title": "Career Roadmap",
-        "desc": "Create a step-by-step roadmap tailored to your target position.",
-        "analyzing": "AI is generating your roadmap...",
-        "targetPositionLabel": "TARGET POSITION (OPTIONAL)",
-        "targetPositionPlaceholder": "e.g., Senior Frontend Developer",
-        "targetPositionHint": "If left blank, it will be guessed based on your CV experiences.",
-        "createWith": "Create with",
-        "or": "OR",
-        "uploadExt": "Upload External CV (PDF / DOCX)",
-        "cancelAndReturn": "Cancel and Return to Map",
-        "roadmapCreated": "Roadmap created!"
-    },
-    "Skills": {
-        "title": "Skill Analysis",
-        "desc": "Define your target role and analyze your skills with AI.",
-        "analyzing": "AI is analyzing your CV...",
-        "targetRoleLabel": "TARGET POSITION (OPTIONAL)",
-        "targetRolePlaceholder": "e.g., Frontend Developer, Product Manager...",
-        "targetRoleHint": "If specified, the analysis will be strictly based on your suitability for this role.",
-        "createWith": "Create with",
-        "or": "OR",
-        "uploadExt": "Upload External CV (PDF / DOCX)",
-        "uploadHint": "Max 5MB file size",
-        "cancelAndReturn": "Cancel and Return to Analysis",
-        "analysisSuccess": "Analysis complete!"
-    },
+
     "Preview": {
         "role": "Sr. Solutions Architect",
         "tech": "Technical Arsenal",
@@ -404,8 +378,17 @@
         "navStart": "Start for Free"
     },
     "Roadmap": {
-        "title": "Senior Frontend Developer",
-        "desc": "Your specialized path to technical mastery. Follow the roadmap to bridge the gap between mid-level and senior architectural leadership.",
+        "title": "Career Roadmap",
+        "desc": "Create a step-by-step roadmap tailored to your target position.",
+        "analyzing": "AI is generating your roadmap...",
+        "targetPositionLabel": "TARGET POSITION (OPTIONAL)",
+        "targetPositionPlaceholder": "e.g., Senior Frontend Developer",
+        "targetPositionHint": "If left blank, it will be guessed based on your CV experiences.",
+        "createWith": "Create with",
+        "or": "OR",
+        "uploadExt": "Upload External CV (PDF / DOCX)",
+        "cancelAndReturn": "Cancel and Return to Map",
+        "roadmapCreated": "Roadmap created!",
         "resumeAnalysis": "Resume Analysis",
         "skillsScore": "Skills Score",
         "sinceLastAssessment": "+5% since last assessment",
@@ -434,7 +417,17 @@
     },
     "Skills": {
         "title": "Skill Analysis",
-        "role": "Senior Product Engineer",
+        "desc": "Define your target role and analyze your skills with AI.",
+        "analyzing": "AI is analyzing your CV...",
+        "targetRoleLabel": "TARGET POSITION (OPTIONAL)",
+        "targetRolePlaceholder": "e.g., Frontend Developer, Product Manager...",
+        "targetRoleHint": "If specified, the analysis will be strictly based on your suitability for this role.",
+        "createWith": "Create with",
+        "or": "OR",
+        "uploadExt": "Upload External CV (PDF / DOCX)",
+        "uploadHint": "Max 5MB file size",
+        "cancelAndReturn": "Cancel and Return to Analysis",
+        "analysisSuccess": "Analysis complete!",
         "aiResumeScore": "AI RESUME SCORE",
         "scoreDesc": "Your resume performs better than 92% of applicants in your field.",
         "aiInsights": "AI Insights",

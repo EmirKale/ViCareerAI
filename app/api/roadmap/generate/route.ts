@@ -114,8 +114,8 @@ ${languageInstruction}
             readiness: parsedData.readiness,
             steps: parsedData.steps,
             insights: parsedData.insights,
-            source: source,
-            language: locale || 'tr'
+            source: source
+            // language: locale || 'tr'
         }).select().single();
 
         if (insertError) {

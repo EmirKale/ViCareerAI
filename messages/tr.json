@@ -334,33 +334,7 @@
             "desc": "Yazılımcılar için terminal estetiği. GitHub ve TechStack odaklı."
         }
     },
-    "Roadmap": {
-        "title": "Kariyer Yol Haritası",
-        "desc": "Hedef pozisyonunuza ulaşmak için size özel, adım adım bir yol haritası oluşturun.",
-        "analyzing": "Yapay zeka yol haritanızı oluşturuyor...",
-        "targetPositionLabel": "HEDEF POZİSYON (OPSİYONEL)",
-        "targetPositionPlaceholder": "Örn: Senior Frontend Developer",
-        "targetPositionHint": "Boş bırakırsanız CV'nizdeki deneyimlere göre tahmin edilecektir.",
-        "createWith": "ile Oluştur",
-        "or": "VEYA",
-        "uploadExt": "Dışarıdan CV Yükle (PDF / DOCX)",
-        "cancelAndReturn": "İptal Et ve Haritaya Dön",
-        "roadmapCreated": "Yol haritası oluşturuldu!"
-    },
-    "Skills": {
-        "title": "Beceri Analizi",
-        "desc": "Hedef pozisyonunuzu belirleyin ve yeteneklerinizi AI ile analiz edin.",
-        "analyzing": "Yapay zeka CV'nizi analiz ediyor...",
-        "targetRoleLabel": "HEDEF POZİSYON (OPSİYONEL)",
-        "targetRolePlaceholder": "Örn: Frontend Developer, Product Manager...",
-        "targetRoleHint": "Belirtirseniz analiz tamamen bu role uygunluğunuz üzerinden yapılır.",
-        "createWith": "ile Oluştur",
-        "or": "VEYA",
-        "uploadExt": "Dışarıdan CV Yükle (PDF / DOCX)",
-        "uploadHint": "Maksimum 5MB dosya boyutu",
-        "cancelAndReturn": "İptal Et ve Analize Dön",
-        "analysisSuccess": "Analiz tamamlandı!"
-    },
+
     "Preview": {
         "role": "Kıdemli Çözüm Mimarı",
         "tech": "Teknik Yetkinlikler",
@@ -404,8 +378,17 @@
         "navStart": "Ücretsiz Başla"
     },
     "Roadmap": {
-        "title": "Kıdemli Frontend Geliştirici",
-        "desc": "Teknik ustalığa giden özel yolunuz. Orta seviyeden kıdemli mimari liderliğe geçiş yapmak için yol haritasını izleyin.",
+        "title": "Kariyer Yol Haritası",
+        "desc": "Hedef pozisyonunuza ulaşmak için size özel, adım adım bir yol haritası oluşturun.",
+        "analyzing": "Yapay zeka yol haritanızı oluşturuyor...",
+        "targetPositionLabel": "HEDEF POZİSYON (OPSİYONEL)",
+        "targetPositionPlaceholder": "Örn: Senior Frontend Developer",
+        "targetPositionHint": "Boş bırakırsanız CV'nizdeki deneyimlere göre tahmin edilecektir.",
+        "createWith": "ile Oluştur",
+        "or": "VEYA",
+        "uploadExt": "Dışarıdan CV Yükle (PDF / DOCX)",
+        "cancelAndReturn": "İptal Et ve Haritaya Dön",
+        "roadmapCreated": "Yol haritası oluşturuldu!",
         "resumeAnalysis": "CV Analizi",
         "skillsScore": "Yetenek Puanı",
         "sinceLastAssessment": "Son değerlendirmeden beri +%5",
@@ -434,7 +417,17 @@
     },
     "Skills": {
         "title": "Beceri Analizi",
-        "role": "Kıdemli Ürün Mühendisi",
+        "desc": "Hedef pozisyonunuzu belirleyin ve yeteneklerinizi AI ile analiz edin.",
+        "analyzing": "Yapay zeka CV'nizi analiz ediyor...",
+        "targetRoleLabel": "HEDEF POZİSYON (OPSİYONEL)",
+        "targetRolePlaceholder": "Örn: Frontend Developer, Product Manager...",
+        "targetRoleHint": "Belirtirseniz analiz tamamen bu role uygunluğunuz üzerinden yapılır.",
+        "createWith": "ile Oluştur",
+        "or": "VEYA",
+        "uploadExt": "Dışarıdan CV Yükle (PDF / DOCX)",
+        "uploadHint": "Maksimum 5MB dosya boyutu",
+        "cancelAndReturn": "İptal Et ve Analize Dön",
+        "analysisSuccess": "Analiz tamamlandı!",
         "aiResumeScore": "AI CV PUANI",
         "scoreDesc": "CV'niz, alanınızdaki adayların %92'sinden daha iyi performans gösteriyor.",
         "aiInsights": "AI İçgörüleri",
