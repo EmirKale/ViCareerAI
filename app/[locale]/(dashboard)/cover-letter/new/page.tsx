@@ -246,7 +246,7 @@ export default function NewCoverLetterPage() {
                         MEKTUP KOTASI <span className="val">{quota.cover_letter_count}/3</span>
                         {quota.cover_letter_count >= 3 && quota.plan === "free" && (
                             <button className="btn-stamp" style={{ padding: '4px 8px', fontSize: '10px' }} onClick={() => window.location.href = "/tr/pricing"}>
-                                PRO'YA GEÇ
+                                PRO&apos;YA GEÇ
                             </button>
                         )}
                     </div>
@@ -327,7 +327,7 @@ export default function NewCoverLetterPage() {
                         {isLoading ? (
                             <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Mektup Oluşturuluyor...</>
                         ) : quota?.plan === "free" && quota.cover_letter_count >= 3 ? (
-                            <>Limit Doldu - Pro'ya Geçin</>
+                            <>Limit Doldu - Pro&apos;ya Geçin</>
                         ) : (
                             <>✦ YAPAY ZEKA İLE OLUŞTUR</>
                         )}

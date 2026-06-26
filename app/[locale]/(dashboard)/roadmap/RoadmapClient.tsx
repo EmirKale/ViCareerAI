@@ -14,6 +14,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
     const t = useTranslations("Roadmap");
     const locale = useLocale();
     const router = useRouter();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [cvs] = useState<any[]>(initialCvs || []);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showUpload, setShowUpload] = useState(!analysisData);

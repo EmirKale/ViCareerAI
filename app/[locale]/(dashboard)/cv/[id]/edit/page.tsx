@@ -1047,6 +1047,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                     <select 
                         className="tmpl-select font-['JetBrains_Mono'] text-[11.5px] bg-transparent border border-[var(--dashboard-paper-border)] text-[var(--dashboard-text)] px-[10px] py-[8px] rounded-[var(--dashboard-radius)] focus:outline-none focus:border-[var(--dashboard-cyan)]"
                         value={template} 
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         onChange={(e) => setTemplate(e.target.value as any)}
                     >
                         <option value="classic" className="text-black">Classic</option>

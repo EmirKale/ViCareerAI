@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { Sparkles, Box, Users, Terminal, ArrowRight, Upload, FileText, Loader2, RefreshCw, AlertTriangle, Target, CheckCircle2, Zap, ArrowRightCircle, Activity } from "lucide-react";
+import { Sparkles, Box, Users, Terminal, ArrowRight, Upload, FileText, Loader2, RefreshCw, AlertTriangle, Target, CheckCircle2, Zap, ArrowRightCircle, Activity, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LiquidButton } from "@/components/ui/liquid-button";

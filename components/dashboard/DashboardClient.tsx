@@ -241,7 +241,7 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
                     <div className="relative z-10 px-2">
                         <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("dailyTip")}</h3>
                         <p className="border-l-[2px] border-[#E8543C] pl-[14px] text-[13.5px] text-[#EAF3F7]/60 italic leading-[1.6] mt-[14px] mb-[14px]">
-                            "{t("dailyTipQuote")}"
+                            &quot;{t("dailyTipQuote")}&quot;
                         </p>
                         <span className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] uppercase">✦ {t("dailyTipSource")}</span>
                     </div>
@@ -256,7 +256,7 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
                         <p className="text-[13px] text-[#EAF3F7]/60 mt-1 mb-1.5">{t("quickAccess.desc")}</p>
                         <div className="grid grid-cols-2 gap-[10px] mt-1.5">
                             {quickLinks.map((link, i) => (
-                                <Link key={i} className="flex flex-col items-start gap-2 p-[14px] border border-[#6FD6E8]/14 rounded-[2px] text-[#EAF3F7] text-[13px] hover:border-[#6FD6E8]/55 hover:bg-[#6FD6E8]/[0.03] transition-colors" href={link.href as any}>
+                                <Link key={i} className="flex flex-col items-start gap-2 p-[14px] border border-[#6FD6E8]/14 rounded-[2px] text-[#EAF3F7] text-[13px] hover:border-[#6FD6E8]/55 hover:bg-[#6FD6E8]/[0.03] transition-colors" href={link.href as React.ComponentProps<typeof Link>["href"]}>
                                     <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24">
                                         {link.icon}
                                     </svg>

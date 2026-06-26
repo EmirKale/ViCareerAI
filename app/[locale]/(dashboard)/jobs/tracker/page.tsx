@@ -227,7 +227,7 @@ export default function JobTrackerPage() {
             <div className="kanban-head">
                 <div className="page-head" style={{ marginBottom: 0 }}>
                     <div className="peyebrow">BAŞVURU TAKİBİ</div>
-                    <h1>Başvuru Board'u</h1>
+                    <h1>Başvuru Board&apos;u</h1>
                     <p>Sürükle-bırak ile iş başvuru süreçlerini görsel olarak yönet.</p>
                 </div>
                 <div className="head-actions">
