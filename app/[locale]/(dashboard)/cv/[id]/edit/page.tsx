@@ -662,508 +662,448 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     }
 
     return (
-        <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-zinc-50 dark:bg-zinc-950 relative pb-16 md:pb-0">
+        <div className="builder-shell grid grid-cols-1 md:grid-cols-[220px_1fr] xl:grid-cols-[240px_1fr_380px] min-h-[calc(100vh-64px)] relative z-[1] w-full text-[var(--dashboard-text)]">
 
             {/* Sidebar / Wizard Tabs */}
-            <div className={`${mobileTab === "sections" ? "flex" : "hidden"} md:flex w-full md:w-64 border-r bg-white dark:bg-zinc-900 flex-col h-full shrink-0 pb-16 md:pb-0`}>
-                <div className="p-4 border-b space-y-3">
-                    <Button variant="ghost" size="sm" onClick={() => router.push('/templates')} className="text-muted-foreground w-full justify-start -ml-2">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Şablonlara Dön
-                    </Button>
-                    <input type="file" multiple accept=".csv" ref={fileInputRef} className="hidden" onChange={handleLinkedInImport} />
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full justify-start border-blue-200 text-blue-700 bg-blue-50/50 hover:bg-blue-100 dark:border-blue-900 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/40"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isImporting}
-                    >
-                        {isImporting ? <div className="h-3.5 w-3.5 animate-spin border-2 border-current border-t-transparent rounded-full mr-2" /> : <Download className="mr-2 h-3.5 w-3.5" />}
-                        LinkedIn CSV Aktar
-                    </Button>
-                </div>
-                <div className="p-4 border-b pb-2 pt-3">
-                    <h2 className="font-semibold mb-1">CV Bölümleri</h2>
-                    <p className="text-xs text-muted-foreground">İlerlemeyi sağda görebilirsiniz</p>
-                </div>
+            <aside className={`step-rail ${mobileTab === "sections" ? "block" : "hidden"} md:block bg-[var(--dashboard-bg-2)] border-r border-[var(--dashboard-paper-border)] p-6 shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto`}>
+                <button onClick={() => router.push('/cv/new')} className="back-link flex items-center gap-2 text-[13px] text-[var(--dashboard-text-dim)] mb-6 hover:text-[var(--dashboard-cyan)] transition-colors">
+                    <ArrowLeft className="h-4 w-4" />
+                    Şablonlara Dön
+                </button>
+                <input type="file" multiple accept=".csv" ref={fileInputRef} className="hidden" onChange={handleLinkedInImport} />
+                <button 
+                    className="import-btn w-full flex items-center justify-center gap-2 font-['JetBrains_Mono'] text-[11.5px] tracking-[0.02em] bg-[rgba(111,214,232,0.08)] text-[var(--dashboard-cyan)] border border-[var(--dashboard-cyan-dim)] p-[11px] rounded-[var(--dashboard-radius)] mb-6 hover:bg-[rgba(111,214,232,0.15)] transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isImporting}
+                >
+                    {isImporting ? <div className="h-3.5 w-3.5 animate-spin border-2 border-current border-t-transparent rounded-full" /> : <svg className="icon w-[14px] h-[14px] stroke-current fill-none stroke-[1.6px]" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>}
+                    LinkedIn CSV Aktar
+                </button>
 
-                <div className="flex flex-col flex-1 overflow-y-auto p-2">
+                <div className="rail-eyebrow font-['JetBrains_Mono'] text-[11px] tracking-[0.1em] text-[var(--dashboard-mono-label)] mb-1">CV BÖLÜMLERİ</div>
+                <div className="rail-sub text-[12px] text-[var(--dashboard-text-dim)] mb-[18px]">İlerlemeyi sağda görebilirsin</div>
+
+                <div className="steps relative flex flex-col before:content-[''] before:absolute before:left-[9px] before:top-[6px] before:bottom-[6px] before:w-[1px] before:bg-[var(--dashboard-paper-border)]">
                     {['Kişisel Bilgiler', 'Profesyonel Özet', 'İş Deneyimi', 'Eğitim', 'Beceriler', 'Projeler', 'Sertifikalar'].map((tab, i) => {
                         const tabId = ['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certificates'][i];
                         const isActive = activeTab === tabId;
                         return (
-                            <button
+                            <div
                                 key={tabId}
                                 onClick={() => { setActiveTab(tabId); setMobileTab("edit"); }}
-                                className={`text-left px-4 py-3 rounded-lg text-sm font-medium my-0.5 transition-colors ${isActive
-                                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                    : 'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
-                                    }`}
+                                className={`step relative flex items-center gap-[14px] py-[11px] pl-[30px] pr-0 text-[14px] cursor-pointer transition-colors before:content-[''] before:absolute before:left-[4px] before:top-1/2 before:-translate-y-1/2 before:w-[9px] before:h-[9px] before:rounded-full before:border-[1.5px] ${
+                                    isActive 
+                                    ? 'active text-[var(--dashboard-text)] font-medium before:bg-[var(--dashboard-stamp)] before:border-[var(--dashboard-stamp)]' 
+                                    : 'text-[var(--dashboard-text-dim)] before:bg-[var(--dashboard-bg)] before:border-[var(--dashboard-paper-border)] hover:text-[#EAF3F7]'
+                                }`}
                             >
                                 {tab}
-                            </button>
+                            </div>
                         )
                     })}
                 </div>
-
-                <div className="p-4 border-t">
-                    <Button
-                        className="w-full gradient-brand text-white"
-                        onClick={handleSave}
-                        disabled={isSaving}
-                    >
-                        {isSaving ? (
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
-                        ) : (
-                            <Save className="mr-2 h-4 w-4" />
-                        )}
-                        Kaydet
-                    </Button>
-                </div>
-            </div>
+            </aside>
 
             {/* Main Editor Form Area */}
-            <div className={`flex-1 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8 ${mobileTab === "edit" ? "block" : "hidden md:block"}`}>
-                <div className="max-w-2xl mx-auto space-y-6">
+            <main className={`form-area ${mobileTab === "edit" ? "block" : "hidden md:block"} py-9 px-5 sm:px-11 pb-16 max-w-[680px] w-full`}>
+                {/* Dynamic Header based on active tab */}
+                <div className="form-head mb-7">
+                    <div className="feyebrow font-['JetBrains_Mono'] text-[11px] tracking-[0.12em] text-[var(--dashboard-mono-label)] mb-2 uppercase">
+                        ADIM 0{['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certificates'].indexOf(activeTab) + 1} / 07
+                    </div>
+                    <h1 className="text-[clamp(22px,3vw,28px)] font-['Space_Grotesk'] font-semibold tracking-tight mb-2">
+                        {activeTab === 'personal' && 'Kişisel Bilgiler'}
+                        {activeTab === 'summary' && 'Profesyonel Özet'}
+                        {activeTab === 'experience' && 'İş Deneyimi'}
+                        {activeTab === 'education' && 'Eğitim'}
+                        {activeTab === 'skills' && 'Beceriler'}
+                        {activeTab === 'projects' && 'Projeler'}
+                        {activeTab === 'certificates' && 'Sertifikalar'}
+                    </h1>
+                    <p className="text-[var(--dashboard-text-dim)] text-[14px]">
+                        {activeTab === 'personal' && 'İşverenlerin seninle iletişim kurabilmesi için temel bilgilerini gir.'}
+                        {activeTab === 'summary' && 'Kariyer geçmişini ve hedeflerini özetleyen kısa bir yazı.'}
+                        {activeTab === 'experience' && 'Geriye dönük olarak tüm iş deneyimlerini ekle.'}
+                        {activeTab === 'education' && 'Okuduğun okulları ve dereceleri gir.'}
+                        {activeTab === 'skills' && 'Sahip olduğun teknik becerileri, araçları ve teknolojileri ekle.'}
+                        {activeTab === 'projects' && 'Geliştirdiğin projeleri ve kullandığın teknolojileri ekle.'}
+                        {activeTab === 'certificates' && 'Kazandığın sertifikaları ve lisansları ekle.'}
+                    </p>
+                </div>
 
-                    {/* Personal Info Tab */}
-                    {activeTab === "personal" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div>
-                                <h1 className="text-2xl font-bold">Kişisel Bilgiler</h1>
-                                <p className="text-muted-foreground mt-1">İşverenlerin sizinle iletişim kurabilmesi için temel bilgilerinizi girin.</p>
-                            </div>
-
-                            <Card>
-                                <CardContent className="p-6 space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="fullName">Ad Soyad</Label>
-                                            <Input id="fullName" value={cvData.personal.fullName} onChange={handlePersonalChange} placeholder="Örn: Ahmet Yılmaz" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="jobTitle">Hedef Pozisyon</Label>
-                                            <Input id="jobTitle" value={cvData.personal.jobTitle} onChange={handlePersonalChange} placeholder="Örn: Frontend Developer" />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="email">E-posta</Label>
-                                            <Input id="email" type="email" value={cvData.personal.email} onChange={handlePersonalChange} placeholder="ahmet@example.com" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="phone">Telefon Numarası</Label>
-                                            <Input id="phone" type="tel" value={cvData.personal.phone} onChange={handlePersonalChange} placeholder="+90 555 123 4567" />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="linkedin">LinkedIn URL</Label>
-                                            <Input id="linkedin" value={cvData.personal.linkedin} onChange={handlePersonalChange} placeholder="linkedin.com/in/ahmetyilmaz" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="website">Kişisel Web Sitesi</Label>
-                                            <Input id="website" value={cvData.personal.website} onChange={handlePersonalChange} placeholder="ahmetyilmaz.dev" />
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Summary Tab */}
-                    {activeTab === "summary" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h1 className="text-2xl font-bold">Profesyonel Özet</h1>
-                                    <p className="text-muted-foreground mt-1">Kariyer geçmişinizi ve hedeflerinizi özetleyen kısa bir yazı.</p>
+                {/* Tab Contents */}
+                {activeTab === "personal" && (
+                    <div className="bp-card">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <div className="relative z-10 px-2 sm:px-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div className="field m-0">
+                                    <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Ad Soyad</label>
+                                    <input type="text" id="fullName" value={cvData.personal.fullName} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Emir Kale" />
                                 </div>
-                                <Button 
+                                <div className="field m-0">
+                                    <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Hedef Pozisyon</label>
+                                    <input type="text" id="jobTitle" value={cvData.personal.jobTitle} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Software Developer" />
+                                </div>
+                                <div className="field m-0">
+                                    <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">E-posta</label>
+                                    <input type="email" id="email" value={cvData.personal.email} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="emirkale@..." />
+                                </div>
+                                <div className="field m-0">
+                                    <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Telefon Numarası</label>
+                                    <input type="text" id="phone" value={cvData.personal.phone} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="+90..." />
+                                </div>
+                                <div className="field m-0">
+                                    <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">LinkedIn URL</label>
+                                    <input type="text" id="linkedin" value={cvData.personal.linkedin} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="linkedin.com/in/..." />
+                                </div>
+                                <div className="field m-0">
+                                    <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Kişisel Web Sitesi</label>
+                                    <input type="text" id="website" value={cvData.personal.website} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="vicareer.vercel.app" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === "summary" && (
+                    <div className="bp-card">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <div className="relative z-10 px-2 sm:px-3">
+                            <div className="flex justify-between items-center mb-5 mt-2">
+                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] m-0">Özet Bölümü</label>
+                                <button 
                                     onClick={() => setAiModalState({
                                         isOpen: true,
                                         initialText: typeof cvData.summary === 'string' ? cvData.summary : String((cvData.summary as Record<string, unknown>)?.['Profesyonel Özet'] || (cvData.summary as Record<string, unknown>)?.profesyonel_ozet || (cvData.summary as Record<string, unknown>)?.summary || ''),
                                         sectionType: "Profesyonel Özet",
                                         onApply: (text) => setCvData({ ...cvData, summary: text })
                                     })}
-                                    variant="outline" className="border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:text-purple-800 dark:border-purple-900 dark:bg-purple-900/30 dark:text-purple-300">
-                                    <Sparkles className="mr-2 h-4 w-4" />
-                                    AI ile Yaz
-                                </Button>
+                                    className="flex items-center gap-[7px] font-['JetBrains_Mono'] text-[11.5px] text-[var(--dashboard-purple)] border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.06)] px-[13px] py-[7px] rounded-[var(--dashboard-radius)] hover:bg-[rgba(167,139,250,0.12)] transition-colors">
+                                    ✦ AI ile Yaz
+                                </button>
                             </div>
-
-                            <Card>
-                                <CardContent className="p-6">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="summary">Özet Bölümü</Label>
-                                        <Textarea
-                                            id="summary"
-                                            rows={8}
-                                            className="resize-none"
-                                            value={typeof cvData.summary === 'string' ? cvData.summary : String((cvData.summary as Record<string, unknown>)?.['Profesyonel Özet'] || (cvData.summary as Record<string, unknown>)?.profesyonel_ozet || (cvData.summary as Record<string, unknown>)?.summary || '')}
-                                            onChange={(e) => setCvData({ ...cvData, summary: e.target.value })}
-                                            placeholder="Şu anki yazdıklarınız yapay zeka tarafından iyileştirilecektir..."
-                                        />
-                                        <p className="text-xs text-muted-foreground pt-1">İpucu: Sadece anahtar kelimeler ve biraz geçmiş yazmanız yeterlidir. AI gerisini toparlar.</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Experience Tab */}
-                    {activeTab === "experience" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h1 className="text-2xl font-bold">İş Deneyimi</h1>
-                                    <p className="text-muted-foreground mt-1">Geriye dönük olarak tüm iş deneyimlerinizi ekleyin.</p>
-                                </div>
-                                <Button onClick={handleAddExperience} size="sm" className="gradient-brand text-white">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Deneyim Ekle
-                                </Button>
-                            </div>
-
-                            <div className="space-y-4">
-                                {cvData.experience.length === 0 ? (
-                                    <div className="text-center py-10 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
-                                        <p className="text-muted-foreground">Henüz deneyim eklenmedi.</p>
-                                    </div>
-                                ) : (
-                                    cvData.experience.map((exp) => (
-                                        <Card key={exp.id} className="relative mt-2">
-                                            <Button
-                                                variant="ghost" size="icon"
-                                                className="absolute right-2 top-2 text-red-500 opacity-60 hover:opacity-100"
-                                                onClick={() => handleDeleteExperience(exp.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                            <CardContent className="p-6 space-y-4 pt-10">
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-2">
-                                                        <Label>Pozisyon</Label>
-                                                        <Input value={exp.title} onChange={(e) => handleUpdateExperience(exp.id, 'title', e.target.value)} placeholder="Örn: Yazılım Geliştirici" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Şirket</Label>
-                                                        <Input value={exp.company} onChange={(e) => handleUpdateExperience(exp.id, 'company', e.target.value)} placeholder="Örn: Google" />
-                                                    </div>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-2">
-                                                        <Label>Başlangıç</Label>
-                                                        <Input value={exp.startDate} onChange={(e) => handleUpdateExperience(exp.id, 'startDate', e.target.value)} placeholder="Örn: 2020" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Bitiş</Label>
-                                                        <Input value={exp.endDate} onChange={(e) => handleUpdateExperience(exp.id, 'endDate', e.target.value)} placeholder="Örn: 2023 veya Devam Ediyor" />
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <Label>Açıklama / Sorumluluklar</Label>
-                                                        <Button 
-                                                            variant="ghost" 
-                                                            size="sm" 
-                                                            className="h-6 px-2 text-xs text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                                                            onClick={() => setAiModalState({
-                                                                isOpen: true,
-                                                                initialText: exp.description,
-                                                                sectionType: "İş Deneyimi",
-                                                                onApply: (text) => handleUpdateExperience(exp.id, 'description', text)
-                                                            })}
-                                                        >
-                                                            <Sparkles className="mr-1 h-3 w-3" /> AI ile İyileştir
-                                                        </Button>
-                                                    </div>
-                                                    <Textarea rows={3} value={exp.description} onChange={(e) => handleUpdateExperience(exp.id, 'description', e.target.value)} placeholder="Neler yaptınız?" />
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))
-                                )}
+                            <div className="field m-0">
+                                <textarea 
+                                    rows={6} 
+                                    className="w-full py-[11px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all resize-y leading-[1.5]"
+                                    value={typeof cvData.summary === 'string' ? cvData.summary : String((cvData.summary as Record<string, unknown>)?.['Profesyonel Özet'] || (cvData.summary as Record<string, unknown>)?.profesyonel_ozet || (cvData.summary as Record<string, unknown>)?.summary || '')}
+                                    onChange={(e) => setCvData({ ...cvData, summary: e.target.value })}
+                                    placeholder="Kariyer geçmişini ve hedeflerini özetleyen kısa bir yazı..."
+                                ></textarea>
                             </div>
                         </div>
-                    )}
-
-                    {/* Education Tab */}
-                    {activeTab === "education" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h1 className="text-2xl font-bold">Eğitim</h1>
-                                    <p className="text-muted-foreground mt-1">Okuduğunuz okulları ve dereceleri girin.</p>
-                                </div>
-                                <Button onClick={handleAddEducation} size="sm" className="gradient-brand text-white">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Eğitim Ekle
-                                </Button>
-                            </div>
-
-                            <div className="space-y-4">
-                                {cvData.education.length === 0 ? (
-                                    <div className="text-center py-10 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
-                                        <p className="text-muted-foreground">Henüz eğitim eklenmedi.</p>
-                                    </div>
-                                ) : (
-                                    cvData.education.map((edu) => (
-                                        <Card key={edu.id} className="relative mt-2">
-                                            <Button
-                                                variant="ghost" size="icon"
-                                                className="absolute right-2 top-2 text-red-500 opacity-60 hover:opacity-100"
-                                                onClick={() => handleDeleteEducation(edu.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                            <CardContent className="p-6 space-y-4 pt-10">
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-2">
-                                                        <Label>Derece / Bölüm</Label>
-                                                        <Input value={edu.degree} onChange={(e) => handleUpdateEducation(edu.id, 'degree', e.target.value)} placeholder="Örn: Bilgisayar Mühendisliği" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Okul</Label>
-                                                        <Input value={edu.school} onChange={(e) => handleUpdateEducation(edu.id, 'school', e.target.value)} placeholder="Örn: ODTÜ" />
-                                                    </div>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-2">
-                                                        <Label>Başlangıç</Label>
-                                                        <Input value={edu.startDate} onChange={(e) => handleUpdateEducation(edu.id, 'startDate', e.target.value)} placeholder="Örn: 2016" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Bitiş</Label>
-                                                        <Input value={edu.endDate} onChange={(e) => handleUpdateEducation(edu.id, 'endDate', e.target.value)} placeholder="Örn: 2020" />
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Skills Tab */}
-                    {activeTab === "skills" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h1 className="text-2xl font-bold">Beceriler</h1>
-                                    <p className="text-muted-foreground mt-1">Sahip olduğunuz teknik becerileri, araçları ve teknolojileri ekleyin.</p>
-                                </div>
-                            </div>
-
-                            <Card>
-                                <CardContent className="p-6 space-y-4">
-                                    <SkillsTechInput 
-                                        skills={cvData.skills} 
-                                        onChange={(newSkills) => setCvData({ ...cvData, skills: newSkills })} 
-                                    />
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Projects Tab */}
-                    {activeTab === "projects" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-                                <div>
-                                    <h1 className="text-2xl font-bold">Projeler</h1>
-                                    <p className="text-muted-foreground mt-1">Geliştirdiğiniz projeleri ve kullandığınız teknolojileri ekleyin.</p>
-                                </div>
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <input type="file" accept=".pdf,.txt" ref={projFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'project')} />
-                                    <Button onClick={() => projFileRef.current?.click()} size="sm" variant="outline" disabled={isParsing.active && isParsing.type === 'project'}>
-                                        {isParsing.active && isParsing.type === 'project' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mr-2" /> : <Download className="mr-2 h-4 w-4" />}
-                                        Dosyadan Ekle
-                                    </Button>
-                                    <Button onClick={handleAddProject} size="sm" className="gradient-brand text-white">
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        Proje Ekle
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                {!cvData.projects || cvData.projects.length === 0 ? (
-                                    <div className="text-center py-10 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
-                                        <p className="text-muted-foreground">Henüz proje eklenmedi.</p>
-                                    </div>
-                                ) : (
-                                    cvData.projects.map((proj) => (
-                                        <Card key={proj.id} className="relative mt-2">
-                                            <Button
-                                                variant="ghost" size="icon"
-                                                className="absolute right-2 top-2 text-red-500 opacity-60 hover:opacity-100"
-                                                onClick={() => handleDeleteProject(proj.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                            <CardContent className="p-6 space-y-4 pt-10">
-                                                <div className="space-y-4">
-                                                    <div className="space-y-2">
-                                                        <Label>Proje Adı</Label>
-                                                        <Input value={proj.name} onChange={(e) => handleUpdateProject(proj.id, 'name', e.target.value)} placeholder="Örn: E-Ticaret Uygulaması" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Kullanılan Teknolojiler</Label>
-                                                        <ProjectTechInput value={proj.technologies || ""} onChange={(val) => handleUpdateProject(proj.id, 'technologies', val)} />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Proje URL</Label>
-                                                        <Input value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} placeholder="Örn: github.com/kullanici/proje" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Açıklama</Label>
-                                                        <Textarea rows={3} value={proj.description} onChange={(e) => handleUpdateProject(proj.id, 'description', e.target.value)} placeholder="Projede neler yaptınız?" />
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Certificates Tab */}
-                    {activeTab === "certificates" && (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-                            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-                                <div>
-                                    <h1 className="text-2xl font-bold">Sertifikalar</h1>
-                                    <p className="text-muted-foreground mt-1">Kazandığınız sertifikaları ve lisansları ekleyin.</p>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    <input type="file" accept=".pdf,.txt" ref={certFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'certificate')} />
-                                    <Button onClick={() => certFileRef.current?.click()} size="sm" variant="outline" disabled={isParsing.active && isParsing.type === 'certificate'}>
-                                        {isParsing.active && isParsing.type === 'certificate' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mr-2" /> : <Download className="mr-2 h-4 w-4" />}
-                                        Dosyadan Ekle
-                                    </Button>
-                                    <Button onClick={handleAddCertificate} size="sm" className="gradient-brand text-white">
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        Sertifika Ekle
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                {!cvData.certificates || cvData.certificates.length === 0 ? (
-                                    <div className="text-center py-10 border-2 border-dashed rounded-xl bg-zinc-50/50 dark:bg-zinc-900/50">
-                                        <p className="text-muted-foreground">Henüz sertifika eklenmedi.</p>
-                                    </div>
-                                ) : (
-                                    cvData.certificates.map((cert) => (
-                                        <Card key={cert.id} className="relative mt-2">
-                                            <Button
-                                                variant="ghost" size="icon"
-                                                className="absolute right-2 top-2 text-red-500 opacity-60 hover:opacity-100"
-                                                onClick={() => handleDeleteCertificate(cert.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                            <CardContent className="p-6 space-y-4 pt-10">
-                                                <div className="space-y-4">
-                                                    <div className="space-y-2">
-                                                        <Label>Sertifika Adı</Label>
-                                                        <Input value={cert.name} onChange={(e) => handleUpdateCertificate(cert.id, 'name', e.target.value)} placeholder="Örn: AWS Certified Solutions Architect" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Veren Kurum</Label>
-                                                        <Input value={cert.issuer} onChange={(e) => handleUpdateCertificate(cert.id, 'issuer', e.target.value)} placeholder="Örn: Amazon Web Services" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Tarih</Label>
-                                                        <Input value={cert.date} onChange={(e) => handleUpdateCertificate(cert.id, 'date', e.target.value)} placeholder="Örn: 2023 veya Aralık 2022" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label>Sertifika URL</Label>
-                                                        <Input value={cert.url || ""} onChange={(e) => handleUpdateCertificate(cert.id, 'url', e.target.value)} placeholder="Örn: credly.com/..." />
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                </div>
-            </div>
-
-            {/* PDF Real-time Preview Pane */}
-            <div className="hidden lg:flex flex-col w-[500px] border-l bg-zinc-100/50 dark:bg-zinc-950 p-4">
-                <div className="flex items-center justify-between mb-4 gap-2">
-                    <div className="flex items-center gap-2">
-                        <Select value={template} onValueChange={(v: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional') => setTemplate(v)}>
-                            <SelectTrigger className="h-8 w-[140px] text-xs">
-                                <SelectValue placeholder="Şablon" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="classic">Classic</SelectItem>
-                                <SelectItem value="modern">Modern</SelectItem>
-                                <SelectItem value="minimal">Minimal</SelectItem>
-                                <SelectItem value="executive">Executive</SelectItem>
-                                <SelectItem value="creative">Creative</SelectItem>
-                                <SelectItem value="professional">Professional</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Button size="sm" variant="outline" className="h-8 px-2 text-xs" onClick={handleDownloadPDF}>
-                            <Download className="mr-1.5 h-3.5 w-3.5" />
-                            PDF İndir
-                        </Button>
                     </div>
-                    <span className="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full dark:bg-green-900/30 dark:text-green-400 flex items-center gap-1">
-                        <Sparkles className="h-3 w-3" /> ATS: 85
-                    </span>
+                )}
+
+                {activeTab === "experience" && (
+                    <div className="space-y-5">
+                        <div className="flex justify-end">
+                            <button onClick={handleAddExperience} className="btn-outline !text-[var(--dashboard-cyan)] !border-[var(--dashboard-cyan-dim)] hover:!bg-[rgba(111,214,232,0.1)]">
+                                + Deneyim Ekle
+                            </button>
+                        </div>
+                        {cvData.experience.length === 0 ? (
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                                Henüz deneyim eklenmedi.
+                            </div>
+                        ) : (
+                            cvData.experience.map((exp) => (
+                                <div key={exp.id} className="bp-card">
+                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    <div className="relative z-10 px-2 sm:px-3">
+                                        <div className="flex justify-between items-start mb-5">
+                                            <div className="flex-1"></div>
+                                            <button onClick={() => handleDeleteExperience(exp.id)} className="text-[var(--dashboard-stamp)] opacity-60 hover:opacity-100 transition-opacity ml-4 mt-2 mr-2">
+                                                <Trash2 className="h-[15px] w-[15px]" />
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Pozisyon</label>
+                                                <input type="text" value={exp.title} onChange={(e) => handleUpdateExperience(exp.id, 'title', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Yazılım Geliştirici" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Şirket</label>
+                                                <input type="text" value={exp.company} onChange={(e) => handleUpdateExperience(exp.id, 'company', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Tech A.Ş." />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Başlangıç</label>
+                                                <input type="text" value={exp.startDate} onChange={(e) => handleUpdateExperience(exp.id, 'startDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2020" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Bitiş</label>
+                                                <input type="text" value={exp.endDate} onChange={(e) => handleUpdateExperience(exp.id, 'endDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2023 veya Devam Ediyor" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center mb-3.5">
+                                            <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] m-0">Açıklama / Sorumluluklar</label>
+                                            <button 
+                                                onClick={() => setAiModalState({
+                                                    isOpen: true,
+                                                    initialText: exp.description,
+                                                    sectionType: "İş Deneyimi",
+                                                    onApply: (text) => handleUpdateExperience(exp.id, 'description', text)
+                                                })}
+                                                className="flex items-center gap-[7px] font-['JetBrains_Mono'] text-[10px] text-[var(--dashboard-purple)] hover:opacity-80 transition-opacity">
+                                                ✦ AI ile İyileştir
+                                            </button>
+                                        </div>
+                                        <div className="field m-0">
+                                            <textarea 
+                                                rows={3} 
+                                                className="w-full py-[11px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all resize-y leading-[1.5]"
+                                                value={exp.description}
+                                                onChange={(e) => handleUpdateExperience(exp.id, 'description', e.target.value)}
+                                                placeholder="Neler yaptınız?"
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {activeTab === "education" && (
+                    <div className="space-y-5">
+                        <div className="flex justify-end">
+                            <button onClick={handleAddEducation} className="btn-outline !text-[var(--dashboard-cyan)] !border-[var(--dashboard-cyan-dim)] hover:!bg-[rgba(111,214,232,0.1)]">
+                                + Eğitim Ekle
+                            </button>
+                        </div>
+                        {cvData.education.length === 0 ? (
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                                Henüz eğitim eklenmedi.
+                            </div>
+                        ) : (
+                            cvData.education.map((edu) => (
+                                <div key={edu.id} className="bp-card">
+                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    <div className="relative z-10 px-2 sm:px-3">
+                                        <div className="flex justify-between items-start mb-5">
+                                            <div className="flex-1"></div>
+                                            <button onClick={() => handleDeleteEducation(edu.id)} className="text-[var(--dashboard-stamp)] opacity-60 hover:opacity-100 transition-opacity ml-4 mt-2 mr-2">
+                                                <Trash2 className="h-[15px] w-[15px]" />
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Derece / Bölüm</label>
+                                                <input type="text" value={edu.degree} onChange={(e) => handleUpdateEducation(edu.id, 'degree', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Bilgisayar Mühendisliği" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Okul</label>
+                                                <input type="text" value={edu.school} onChange={(e) => handleUpdateEducation(edu.id, 'school', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: İTÜ" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Başlangıç</label>
+                                                <input type="text" value={edu.startDate} onChange={(e) => handleUpdateEducation(edu.id, 'startDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2018" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Bitiş</label>
+                                                <input type="text" value={edu.endDate} onChange={(e) => handleUpdateEducation(edu.id, 'endDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2022" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {activeTab === "skills" && (
+                    <div className="bp-card">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <div className="relative z-10 px-2 sm:px-3">
+                            <SkillsTechInput 
+                                skills={cvData.skills} 
+                                onChange={(newSkills) => setCvData({ ...cvData, skills: newSkills })} 
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === "projects" && (
+                    <div className="space-y-5">
+                        <div className="flex flex-wrap justify-end gap-2">
+                            <input type="file" accept=".pdf,.txt" ref={projFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'project')} />
+                            <button onClick={() => projFileRef.current?.click()} disabled={isParsing.active && isParsing.type === 'project'} className="btn-outline !text-[var(--dashboard-cyan)] !border-[var(--dashboard-cyan-dim)] hover:!bg-[rgba(111,214,232,0.1)]">
+                                {isParsing.active && isParsing.type === 'project' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-1" /> : <Download className="mr-1 h-4 w-4" />} Dosyadan Ekle
+                            </button>
+                            <button onClick={handleAddProject} className="btn-outline !text-[var(--dashboard-cyan)] !border-[var(--dashboard-cyan-dim)] hover:!bg-[rgba(111,214,232,0.1)]">
+                                + Proje Ekle
+                            </button>
+                        </div>
+                        {(!cvData.projects || cvData.projects.length === 0) ? (
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                                Henüz proje eklenmedi.
+                            </div>
+                        ) : (
+                            cvData.projects.map((proj) => (
+                                <div key={proj.id} className="bp-card">
+                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    <div className="relative z-10 px-2 sm:px-3">
+                                        <div className="flex justify-between items-start mb-5">
+                                            <div className="flex-1"></div>
+                                            <button onClick={() => handleDeleteProject(proj.id)} className="text-[var(--dashboard-stamp)] opacity-60 hover:opacity-100 transition-opacity ml-4 mt-2 mr-2">
+                                                <Trash2 className="h-[15px] w-[15px]" />
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-col gap-5 mt-2">
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Proje Adı</label>
+                                                <input type="text" value={proj.name} onChange={(e) => handleUpdateProject(proj.id, 'name', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: E-Ticaret Uygulaması" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Kullanılan Teknolojiler</label>
+                                                <ProjectTechInput value={proj.technologies || ""} onChange={(val) => handleUpdateProject(proj.id, 'technologies', val)} />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Proje URL</label>
+                                                <input type="text" value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: github.com/..." />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Açıklama</label>
+                                                <textarea 
+                                                    rows={3} 
+                                                    className="w-full py-[11px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all resize-y leading-[1.5]"
+                                                    value={proj.description}
+                                                    onChange={(e) => handleUpdateProject(proj.id, 'description', e.target.value)}
+                                                    placeholder="Projede neler yaptınız?"
+                                                ></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {activeTab === "certificates" && (
+                    <div className="space-y-5">
+                        <div className="flex flex-wrap justify-end gap-2">
+                            <input type="file" accept=".pdf,.txt" ref={certFileRef} className="hidden" onChange={(e) => handleFileUpload(e, 'certificate')} />
+                            <button onClick={() => certFileRef.current?.click()} disabled={isParsing.active && isParsing.type === 'certificate'} className="btn-outline !text-[var(--dashboard-cyan)] !border-[var(--dashboard-cyan-dim)] hover:!bg-[rgba(111,214,232,0.1)]">
+                                {isParsing.active && isParsing.type === 'certificate' ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-1" /> : <Download className="mr-1 h-4 w-4" />} Dosyadan Ekle
+                            </button>
+                            <button onClick={handleAddCertificate} className="btn-outline !text-[var(--dashboard-cyan)] !border-[var(--dashboard-cyan-dim)] hover:!bg-[rgba(111,214,232,0.1)]">
+                                + Sertifika Ekle
+                            </button>
+                        </div>
+                        {(!cvData.certificates || cvData.certificates.length === 0) ? (
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                                Henüz sertifika eklenmedi.
+                            </div>
+                        ) : (
+                            cvData.certificates.map((cert) => (
+                                <div key={cert.id} className="bp-card">
+                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    <div className="relative z-10 px-2 sm:px-3">
+                                        <div className="flex justify-between items-start mb-5">
+                                            <div className="flex-1"></div>
+                                            <button onClick={() => handleDeleteCertificate(cert.id)} className="text-[var(--dashboard-stamp)] opacity-60 hover:opacity-100 transition-opacity ml-4 mt-2 mr-2">
+                                                <Trash2 className="h-[15px] w-[15px]" />
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Sertifika Adı</label>
+                                                <input type="text" value={cert.name} onChange={(e) => handleUpdateCertificate(cert.id, 'name', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: AWS Certified..." />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Veren Kurum</label>
+                                                <input type="text" value={cert.issuer} onChange={(e) => handleUpdateCertificate(cert.id, 'issuer', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Amazon Web Services" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Tarih</label>
+                                                <input type="text" value={cert.date} onChange={(e) => handleUpdateCertificate(cert.id, 'date', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2023" />
+                                            </div>
+                                            <div className="field m-0">
+                                                <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Sertifika URL</label>
+                                                <input type="text" value={cert.url || ""} onChange={(e) => handleUpdateCertificate(cert.id, 'url', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: credly.com/..." />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {/* Save Bar */}
+                <div className="save-bar flex justify-end mt-7">
+                    <button className="btn-stamp" onClick={handleSave} disabled={isSaving}>
+                        {isSaving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" /> : null}
+                        KAYDET →
+                    </button>
+                </div>
+            </main>
+
+            {/* Preview Panel */}
+            <aside className={`preview-panel hidden xl:block bg-[var(--dashboard-bg-2)] border-l border-[var(--dashboard-paper-border)] p-6 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto ${mobileTab === 'preview' ? '!block !static !w-full' : ''}`}>
+                <div className="preview-controls flex justify-between items-center mb-[18px] gap-[10px]">
+                    <select 
+                        className="tmpl-select font-['JetBrains_Mono'] text-[11.5px] bg-transparent border border-[var(--dashboard-paper-border)] text-[var(--dashboard-text)] px-[10px] py-[8px] rounded-[var(--dashboard-radius)] focus:outline-none focus:border-[var(--dashboard-cyan)]"
+                        value={template} 
+                        onChange={(e) => setTemplate(e.target.value as any)}
+                    >
+                        <option value="classic" className="text-black">Classic</option>
+                        <option value="modern" className="text-black">Modern</option>
+                        <option value="minimal" className="text-black">Minimal</option>
+                        <option value="executive" className="text-black">Executive</option>
+                        <option value="creative" className="text-black">Creative</option>
+                        <option value="professional" className="text-black">Professional</option>
+                    </select>
+                    <button className="pdf-btn flex items-center gap-[6px] font-['JetBrains_Mono'] text-[11.5px] border border-[var(--dashboard-paper-border)] px-[12px] py-[8px] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] hover:border-[var(--dashboard-cyan-dim)] hover:text-[var(--dashboard-cyan)] transition-colors" onClick={handleDownloadPDF}>
+                        <svg className="icon w-[14px] h-[14px] stroke-current fill-none stroke-[1.6px]" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+                        PDF İndir
+                    </button>
+                </div>
+                
+                <div className="ats-readout flex justify-between items-center font-['JetBrains_Mono'] text-[11px] tracking-[0.06em] py-[9px] px-[12px] border border-dashed border-[var(--dashboard-cyan-dim)] rounded-[var(--dashboard-radius)] mb-[16px] text-[var(--dashboard-mono-label)]">
+                    <span>ATS SKORU</span>
+                    <span className="val text-[var(--dashboard-cyan)] text-[14px] font-semibold">85</span>
                 </div>
 
-                {/* Render actual React PDF viewer */}
-                <div className="flex-1 w-full h-full min-h-0 overflow-y-auto rounded-lg shadow-sm">
-                    {isMobile ? (
-                        <div className="flex flex-col items-center justify-center h-full gap-4 p-8 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
-                            <FileText className="w-16 h-16 text-muted-foreground opacity-50" />
-                            <p className="text-center text-muted-foreground font-medium">
-                                Mobil cihazlarda PDF önizlemesi desteklenmemektedir.<br/>
-                                Sonucu görmek için PDF olarak indirebilirsiniz.
-                            </p>
-                            <Button onClick={handleDownloadPDF} className="mt-2 gradient-brand shadow-md">
-                                <Download className="w-4 h-4 mr-2" /> PDF İndir
-                            </Button>
-                        </div>
-                    ) : (
-                        <CVPreview data={cvData} template={template} />
-                    )}
+                <div className="sheet bg-[#0e1626] border border-[var(--dashboard-paper-border)] rounded-[2px] p-0 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+                    {/* Render actual React PDF viewer */}
+                    <div className="w-full h-[600px] overflow-y-auto custom-scrollbar bg-white">
+                        {isMobile ? (
+                            <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-black">
+                                <FileText className="w-16 h-16 opacity-50" />
+                                <p className="text-center font-medium">
+                                    Mobil cihazlarda PDF önizlemesi desteklenmemektedir.<br/>
+                                    Sonucu görmek için PDF olarak indirebilirsiniz.
+                                </p>
+                            </div>
+                        ) : (
+                            <CVPreview data={cvData} template={template} />
+                        )}
+                    </div>
                 </div>
-            </div>
+            </aside>
 
             {/* Mobile Bottom Tab Bar */}
-            <div className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-around p-2 pb-safe">
+            <div className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-[var(--dashboard-bg-2)] border-t border-[var(--dashboard-paper-border)] flex items-center justify-around p-2 pb-safe">
                 <button 
                     onClick={() => setMobileTab("sections")} 
-                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'sections' ? 'text-blue-600' : 'text-zinc-500'}`}
+                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'sections' ? 'text-[var(--dashboard-cyan)]' : 'text-[var(--dashboard-text-dim)]'}`}
                 >
                     <List className="h-5 w-5 mb-1" />
                     <span className="text-[10px] font-medium">Bölümler</span>
                 </button>
                 <button 
                     onClick={() => setMobileTab("edit")} 
-                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'edit' ? 'text-blue-600' : 'text-zinc-500'}`}
+                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'edit' ? 'text-[var(--dashboard-cyan)]' : 'text-[var(--dashboard-text-dim)]'}`}
                 >
                     <Edit3 className="h-5 w-5 mb-1" />
                     <span className="text-[10px] font-medium">Düzenle</span>
                 </button>
                 <button 
                     onClick={() => setMobileTab("preview")} 
-                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'preview' ? 'text-blue-600' : 'text-zinc-500'}`}
+                    className={`flex flex-col items-center p-2 rounded-lg ${mobileTab === 'preview' ? 'text-[var(--dashboard-cyan)]' : 'text-[var(--dashboard-text-dim)]'}`}
                 >
                     <FileText className="h-5 w-5 mb-1" />
                     <span className="text-[10px] font-medium">Önizleme</span>

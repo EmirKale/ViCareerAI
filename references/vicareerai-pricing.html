@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiyatlandırma — ViCareerAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1628; --bg-2:#0E2038;
+    --grid-line:rgba(110,168,200,0.10); --grid-line-major:rgba(110,168,200,0.18);
+    --cyan:#6FD6E8; --cyan-dim:rgba(111,214,232,0.55);
+    --stamp:#E8543C; --stamp-dim:rgba(232,84,60,0.18);
+    --paper:rgba(223,238,245,0.04); --paper-border:rgba(111,214,232,0.16);
+    --text:#EAF3F7; --text-dim:rgba(234,243,247,0.62);
+    --mono-label:#8FB9CC; --radius:2px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--cyan-dim);color:#06121f;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--mono-label);display:flex;align-items:center;gap:10px;margin-bottom:18px;
+  }
+  .eyebrow::before{content:'';width:18px;height:1px;background:var(--cyan-dim);}
+
+  .grid-field{
+    position:fixed;inset:-10%;
+    background-image:
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(0deg, var(--grid-line-major) 0 1px, transparent 1px 200px),
+      repeating-linear-gradient(90deg, var(--grid-line-major) 0 1px, transparent 1px 200px);
+    z-index:0;pointer-events:none;
+  }
+  .grid-vignette{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%, transparent 0%, var(--bg) 78%);z-index:0;pointer-events:none;}
+
+  section, header, footer{position:relative;z-index:1;padding:0 clamp(20px,6vw,80px);}
+
+  /* ---------- NAV ---------- */
+  .topnav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(20px,5vw,80px);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;}
+  .logo-mark{
+    width:30px;height:30px;border:1.5px solid var(--cyan);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);flex-shrink:0;
+  }
+  .nav-links{display:flex;align-items:center;gap:32px;}
+  .nav-links a{font-size:14px;color:var(--text-dim);transition:color .2s;}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-cta{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em;
+    color:var(--bg);background:var(--cyan);padding:9px 18px;border-radius:var(--radius);
+  }
+  @media(max-width:760px){.nav-links{display:none;}}
+
+  /* ---------- HEADER ---------- */
+  .pheader{padding-top:64px;padding-bottom:72px;text-align:center;}
+  .pheader h1{font-size:clamp(34px,5.5vw,56px);max-width:680px;margin:0 auto 18px;line-height:1.08;}
+  .pheader p{color:var(--text-dim);max-width:480px;margin:0 auto;font-size:16px;line-height:1.6;}
+  .eyebrow{justify-content:center;}
+
+  /* ---------- PRICING CARDS ---------- */
+  .pricing-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:28px;
+    max-width:860px;margin:0 auto 110px;
+  }
+  .price-card{position:relative;background:var(--paper);border:1px solid var(--paper-border);padding:40px 32px;border-radius:var(--radius);}
+  .price-card.popular{border-color:var(--stamp-dim);}
+  .price-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .price-card svg.corners path{stroke:var(--cyan);stroke-width:1.4;fill:none;}
+  .price-card.popular svg.corners path{stroke:var(--stamp);}
+  .popular-tag{
+    position:absolute;top:-13px;right:28px;background:var(--stamp);color:#0A1628;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;border-radius:var(--radius);
+  }
+  .price-card .ptier{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--mono-label);margin-bottom:6px;}
+  .price-card .ptag-line{font-size:13.5px;color:var(--text-dim);margin-bottom:20px;}
+  .price-card .pamount{display:flex;align-items:baseline;gap:6px;margin-bottom:26px;}
+  .price-card .pamount .num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:46px;}
+  .price-card .pamount .per{font-size:14px;color:var(--text-dim);}
+  .price-card ul{list-style:none;margin-bottom:30px;}
+  .price-card li{font-size:14.5px;color:var(--text-dim);padding:10px 0;border-top:1px solid var(--paper-border);display:flex;gap:10px;align-items:flex-start;}
+  .price-card li:first-child{border-top:none;}
+  .price-card li::before{content:'—';color:var(--cyan-dim);flex-shrink:0;}
+  .price-card.popular li::before{color:var(--stamp);}
+  .price-card .pbtn{
+    display:block;text-align:center;width:100%;height:50px;line-height:50px;
+    font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.05em;
+    border-radius:var(--radius);border:1px solid var(--paper-border);color:var(--text);
+    transition:border-color .2s, background .2s;
+  }
+  .price-card .pbtn:hover{border-color:var(--cyan-dim);background:rgba(111,214,232,.05);}
+  .price-card.popular .pbtn{background:var(--stamp);border-color:var(--stamp);color:#0A1628;}
+  @media(max-width:700px){.pricing-grid{grid-template-columns:1fr;}}
+
+  /* ---------- COMPARISON ŞARTNAME ---------- */
+  .compare{padding-bottom:120px;}
+  .compare-head{max-width:560px;margin:0 auto 56px;text-align:center;}
+  .compare-head h2{font-size:clamp(26px,4vw,36px);margin-bottom:14px;}
+  .compare-head p{color:var(--text-dim);font-size:15px;}
+  .compare-table{
+    max-width:760px;margin:0 auto;
+    border:1px solid var(--paper-border);
+  }
+  .compare-row{
+    display:grid;grid-template-columns:1fr 90px 90px;
+    border-bottom:1px solid var(--paper-border);
+  }
+  .compare-row:last-child{border-bottom:none;}
+  .compare-row.header-row{background:var(--bg-2);}
+  .compare-row > div{
+    padding:16px 18px;font-size:13.5px;display:flex;align-items:center;
+  }
+  .compare-row .feat-name{color:var(--text-dim);}
+  .compare-row.header-row .feat-name{color:var(--mono-label);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;}
+  .compare-row > div:nth-child(2), .compare-row > div:nth-child(3){justify-content:center;}
+  .compare-row.header-row > div:nth-child(2), .compare-row.header-row > div:nth-child(3){
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--mono-label);text-align:center;
+  }
+  .yes{color:var(--cyan);font-size:16px;}
+  .no{color:rgba(234,243,247,0.25);font-size:16px;}
+  @media(max-width:600px){
+    .compare-row{grid-template-columns:1fr 60px 60px;}
+    .compare-row > div{padding:14px 10px;font-size:12.5px;}
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq{padding-bottom:130px;}
+  .faq-head{max-width:560px;margin-bottom:40px;}
+  .faq-head h2{font-size:clamp(26px,4vw,36px);margin-top:0;}
+  .faq-list{max-width:720px;}
+  .faq-item{border-top:1px solid var(--paper-border);}
+  .faq-item:last-child{border-bottom:1px solid var(--paper-border);}
+  .faq-q{
+    width:100%;text-align:left;background:transparent;border:none;color:var(--text);
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    padding:22px 4px;font-size:16px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;
+  }
+  .faq-q .sym{font-family:'JetBrains Mono',monospace;color:var(--cyan);flex-shrink:0;transition:transform .25s;}
+  .faq-item.open .sym{transform:rotate(45deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .faq-a p{padding:0 4px 22px;font-size:14.5px;color:var(--text-dim);line-height:1.65;max-width:600px;}
+
+  /* ---------- FOOTER CTA ---------- */
+  .footer-cta{padding-bottom:120px;text-align:center;}
+  .footer-cta h2{font-size:clamp(26px,4vw,38px);margin-bottom:28px;}
+  .stamp-btn{
+    font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.05em;
+    background:var(--stamp);color:#0A1628;padding:15px 30px;border-radius:var(--radius);
+    display:inline-flex;align-items:center;gap:10px;
+  }
+
+  footer.site-footer{
+    padding:40px clamp(20px,6vw,80px) 36px;border-top:1px solid var(--paper-border);
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--mono-label);
+    text-align:center;
+  }
+
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  @media(prefers-reduced-motion: reduce){*{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}}
+</style>
+</head>
+<body>
+
+<div class="grid-field"></div>
+<div class="grid-vignette"></div>
+
+<nav class="topnav">
+  <div class="logo"><span class="logo-mark">Vi</span>ViCareerAI</div>
+  <div class="nav-links">
+    <a href="vicareerai-landing.html#features">Özellikler</a>
+    <a href="vicareerai-pricing.html">Fiyatlandırma</a>
+    <a href="https://vi-career-ai.vercel.app/login">Giriş Yap</a>
+  </div>
+  <a class="nav-cta" href="https://vi-career-ai.vercel.app/register">ÜCRETSİZ DENE</a>
+</nav>
+
+<header class="pheader">
+  <div class="eyebrow">FİYATLANDIRMA</div>
+  <h1>Basit, şeffaf, her bütçeye uygun.</h1>
+  <p>Sıradan araçlarla vakit kaybetme. İhtiyacın olan her şey tek bir planda — ya da hepsinde.</p>
+</header>
+
+<section class="pricing-grid">
+
+  <div class="price-card">
+    <div class="ptier">BAŞLANGIÇ</div>
+    <div class="ptag-line">Arayışına hızlı başla</div>
+    <div class="pamount"><span class="num">₺0</span><span class="per">/ay</span></div>
+    <ul>
+      <li>Aylık 2 AI CV</li>
+      <li>2 kişiselleştirilmiş mektup</li>
+      <li>Standart ATS şablonları</li>
+      <li>İş eşleştirme analizi yok</li>
+    </ul>
+    <a class="pbtn" href="https://vi-career-ai.vercel.app/register">HEMEN BAŞLA</a>
+  </div>
+
+  <div class="price-card popular">
+    <span class="popular-tag">EN POPÜLER</span>
+    <div class="ptier">SINIRSIZ PRO</div>
+    <div class="ptag-line">Elit profesyonel süit</div>
+    <div class="pamount"><span class="num">₺299</span><span class="per">/ay</span></div>
+    <ul>
+      <li>Tüm premium şablonlar, filigransız</li>
+      <li>Sınırsız PDF indirme</li>
+      <li>Sınırsız motivasyon mektubu (AI düzenleme)</li>
+      <li>İş ilanı skill gap analizi ve skorlama</li>
+      <li>Kişiselleştirilmiş öğrenme önerileri</li>
+    </ul>
+    <a class="pbtn" href="https://vi-career-ai.vercel.app/register">PRO'YA YÜKSELT</a>
+  </div>
+
+</section>
+
+<section class="compare">
+  <div class="compare-head">
+    <div class="eyebrow">ŞARTNAME KARŞILAŞTIRMASI</div>
+    <h2>Neden ViCareerAI?</h2>
+    <p>Sıradan yapay zeka araçlarıyla bir kıyaslama.</p>
+  </div>
+  <div class="compare-table">
+    <div class="compare-row header-row">
+      <div class="feat-name">ÖZELLİK</div>
+      <div>VICAREERAI</div>
+      <div>SIRADAN AI</div>
+    </div>
+    <div class="compare-row"><div class="feat-name">ATS sistemleri için AI optimizasyonu</div><div><span class="yes">✓</span></div><div><span class="no">–</span></div></div>
+    <div class="compare-row"><div class="feat-name">CV içerik tutarlılık kontrolleri</div><div><span class="yes">✓</span></div><div><span class="no">–</span></div></div>
+    <div class="compare-row"><div class="feat-name">Spesifik iş eşleştirme analizi</div><div><span class="yes">✓</span></div><div><span class="no">–</span></div></div>
+    <div class="compare-row"><div class="feat-name">Doğru meta veri içeren PDF çıktısı</div><div><span class="yes">✓</span></div><div><span class="no">–</span></div></div>
+    <div class="compare-row"><div class="feat-name">Gizlilik odaklı veri işleme</div><div><span class="yes">✓</span></div><div><span class="no">–</span></div></div>
+    <div class="compare-row"><div class="feat-name">Gerçek zamanlı beceri gelişimi analizi</div><div><span class="yes">✓</span></div><div><span class="no">–</span></div></div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="faq-head">
+    <div class="eyebrow">SSS</div>
+    <h2>Sıkça sorulan sorular</h2>
+  </div>
+  <div class="faq-list">
+
+    <div class="faq-item open">
+      <button class="faq-q" aria-expanded="true">Gerçekten ATS uyumlu mu? <span class="sym">+</span></button>
+      <div class="faq-a" style="max-height:200px;"><p>Evet. ViCareerAI'deki her şablon Workday, SAP, Taleo ve Lever'ın ayrıştırıcı kriterlerine göre test edilir. Sıfır biçimlendirme hatası garanti edilir.</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Hangi AI modelini kullanıyorsunuz? <span class="sym">+</span></button>
+      <div class="faq-a"><p>Yüksek dönüşüm sağlayan özgeçmişler ve profesyonel işe alım standartları için ince ayarlanmış bir GPT-4o motoru kullanılıyor.</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">İstediğim zaman iptal edebilir miyim? <span class="sym">+</span></button>
+      <div class="faq-a"><p>Kesinlikle. Sözleşme yok, pürüz yok. Panel üzerinden tek tıkla aboneliğini yönetebilir ve iptal edebilirsin.</p></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Ücretsiz plandan Pro'ya geçince verilerim ne olur? <span class="sym">+</span></button>
+      <div class="faq-a"><p>Tüm CV'lerin, mektupların ve analiz geçmişin aynen korunur — yükseltme sadece limitleri ve şablon erişimini açar.</p></div>
+    </div>
+
+  </div>
+</section>
+
+<section class="footer-cta">
+  <h2>Kariyer yolculuğunu bugün başlat.</h2>
+  <a class="stamp-btn" href="https://vi-career-ai.vercel.app/register">ÜCRETSİZ DENE →</a>
+</section>
+
+<footer class="site-footer">© 2026 VICAREERAI · GÜVENLİ ÖDEME · %100 GİZLİLİK · YAPAY ZEKA DESTEKLİ</footer>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var item = btn.closest('.faq-item');
+    var answer = item.querySelector('.faq-a');
+    var isOpen = item.classList.contains('open');
+
+    document.querySelectorAll('.faq-item.open').forEach(function(openItem){
+      if(openItem !== item){
+        openItem.classList.remove('open');
+        openItem.querySelector('.faq-a').style.maxHeight = null;
+        openItem.querySelector('.faq-q').setAttribute('aria-expanded','false');
+      }
+    });
+
+    if(isOpen){
+      item.classList.remove('open');
+      answer.style.maxHeight = null;
+      btn.setAttribute('aria-expanded','false');
+    } else {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+});
+</script>
+</body>
+</html>

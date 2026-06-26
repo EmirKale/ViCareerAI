@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import {
   FileText,
   Briefcase,
@@ -12,11 +14,12 @@ import {
   LogOut,
   Menu,
   X,
-  Sparkles,
-  ChevronRight,
   Mic,
   Target,
-  Route
+  Route,
+  Search,
+  CheckCircle,
+  HelpCircle
 } from "lucide-react";
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
@@ -31,12 +34,11 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
     { name: t("cvHistory"), href: "/cv/history", icon: FileText },
     { name: t("letterHistory"), href: "/cover-letter/history", icon: FileText },
-    { name: t("jobs"), href: "/jobs/discover", icon: Briefcase },
-    { name: t("applications"), href: "/jobs/tracker", icon: Briefcase },
+    { name: t("jobs"), href: "/jobs/discover", icon: Search },
+    { name: t("applications"), href: "/jobs/tracker", icon: CheckCircle },
     { name: t("interview"), href: "/interview", icon: Mic, isSoon: true },
     { name: t("skills"), href: "/skills", icon: Target, isNew: true },
     { name: t("roadmap"), href: "/roadmap", icon: Route, isNew: true },
-    { name: t("settings"), href: "/profile", icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -45,106 +47,122 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-screen w-full pt-16 bg-zinc-50 dark:bg-zinc-950 font-sans">
-      {/* Mobile Sidebar Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
+    <div className="dashboard-theme">
+      {/* ---------- TOPBAR ---------- */}
+      <header className="topbar flex items-center justify-between px-6 h-16 sticky top-0 z-50 bg-[#0A1628]/90 backdrop-blur-md border-b border-[#6FD6E8]/10 text-[#EAF3F7]">
+        <div className="logo flex items-center gap-2.5 font-['Space_Grotesk'] font-semibold text-base">
+          <span className="logo-mark w-7 h-7 border-[1.5px] border-[#6FD6E8] rounded-full flex items-center justify-center font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] shrink-0">
+            Vi
+          </span>
+          ViCareerAI
+          <span className="pro-badge font-['JetBrains_Mono'] text-[10px] tracking-widest text-[#E8543C] border border-[#E8543C]/20 px-1.5 py-0.5 rounded-[2px] ml-1">
+            PRO
+          </span>
+        </div>
 
-      {/* Sidebar Navigation */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 transform border-r border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex h-full flex-col">
-          {/* Logo */}
-          <div className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-200 dark:border-slate-700 px-6">
-            <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl group">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-brand transition-transform group-hover:scale-105">
-                <Sparkles className="h-4 w-4 text-white" />
-              </div>
-              <span className="gradient-brand-text">CareerAI</span>
-            </Link>
-            <button
-              className="md:hidden text-muted-foreground hover:text-foreground"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+        {/* Mobile menu toggle */}
+        <button
+          className="md:hidden text-[#8FB9CC] hover:text-[#6FD6E8]"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
 
-          {/* Navigation Links */}
-          <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
-            <div className="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-wider mb-4 px-3 mt-4">
-              {t("menuLabel")}
+        <div className="topbar-right hidden md:flex items-center gap-3.5">
+          <LanguageSwitcher />
+          <ThemeToggle />
+          <Link className="panel-btn flex items-center gap-2 font-['JetBrains_Mono'] text-xs tracking-wider bg-[#6FD6E8] text-[#0A1628] px-4 py-2 rounded-[2px] hover:opacity-90 transition-opacity" href="/dashboard">
+            <LayoutDashboard className="w-4 h-4" />
+            Panelim
+          </Link>
+        </div>
+      </header>
+
+      {/* ---------- SHELL ---------- */}
+      <div className="shell-body flex relative z-[1] min-h-[calc(100vh-64px)]">
+        
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-[#0A1628]/80 backdrop-blur-sm md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        <aside
+          className={`sidebar fixed inset-y-0 left-0 z-50 w-[248px] shrink-0 bg-[#0E2038] border-r border-[#6FD6E8]/10 p-6 pt-6 flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          } md:flex`}
+        >
+          {isMobileMenuOpen && (
+            <div className="flex justify-end mb-4 md:hidden">
+              <button className="text-[#8FB9CC]" onClick={() => setIsMobileMenuOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
             </div>
+          )}
+          
+          <div className="sidebar-eyebrow font-['JetBrains_Mono'] text-[11px] tracking-[0.14em] text-[#8FB9CC] px-3 mb-3.5">
+            MENÜ
+          </div>
+          
+          <nav className="nav-list flex flex-col gap-0.5 flex-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.name}
-                  href={item.href as "/dashboard" | "/cv/history" | "/cover-letter/history" | "/jobs/discover" | "/jobs/tracker" | "/profile" | "/interview" | "/skills" | "/roadmap"}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                  href={item.href as any}
+                  className={`nav-item flex items-center gap-3 px-3 py-2.5 rounded-[2px] text-sm relative border-l-2 transition-colors ${
                     isActive
-                      ? "bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-white shadow-sm ring-1 ring-blue-500/10 dark:ring-white/5"
-                      : "text-zinc-500 dark:text-slate-400 hover:bg-zinc-100 dark:hover:bg-slate-800/50 hover:text-zinc-900 dark:hover:text-white"
-                  }`}
+                      ? "text-[#EAF3F7] bg-[#6FD6E8]/5 border-[#E8543C] font-medium"
+                      : "text-[#EAF3F7]/60 border-transparent hover:text-[#EAF3F7] hover:bg-white/5"
+                  } ${item.isSoon ? "opacity-45 cursor-default pointer-events-none" : ""}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <item.icon className={`h-5 w-5 ${isActive ? "text-blue-500 dark:text-blue-400" : ""}`} />
+                  <item.icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.6} />
                   {item.name}
                   {item.isSoon && (
-                    <span className="text-xs bg-yellow-500/20 text-yellow-500 dark:text-yellow-400 px-1.5 py-0.5 rounded ml-2">
-                      {t("soon")}
+                    <span className="nav-badge soon font-['JetBrains_Mono'] text-[9.5px] tracking-wider py-0.5 px-1.5 rounded-[2px] ml-auto text-[#E8543C] border border-[#E8543C]/20">
+                      YAKINDA
                     </span>
                   )}
                   {item.isNew && (
-                    <span className="text-xs bg-green-500/20 text-green-600 dark:text-green-400 px-1.5 py-0.5 rounded ml-2">
-                      {t("new")}
+                    <span className="nav-badge new font-['JetBrains_Mono'] text-[9.5px] tracking-wider py-0.5 px-1.5 rounded-[2px] ml-auto text-[#6FD6E8] border border-[#6FD6E8]/50">
+                      YENİ
                     </span>
                   )}
-                  {isActive && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}
                 </Link>
               );
             })}
           </nav>
 
-          {/* User & Logout section */}
-          <div className="border-t border-zinc-200 dark:border-slate-700 p-4">
+          <div className="sidebar-foot border-t border-[#6FD6E8]/10 pt-3.5 mt-2.5">
+            <Link
+              href="/profile"
+              className={`nav-item flex items-center gap-3 px-3 py-2.5 rounded-[2px] text-sm relative border-l-2 transition-colors ${
+                pathname.startsWith('/profile')
+                  ? "text-[#EAF3F7] bg-[#6FD6E8]/5 border-[#E8543C] font-medium"
+                  : "text-[#EAF3F7]/60 border-transparent hover:text-[#EAF3F7] hover:bg-white/5"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Settings className="w-[18px] h-[18px] shrink-0" strokeWidth={1.6} />
+              {t("settings")}
+            </Link>
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
+              className="logout flex w-full items-center gap-3 px-3 py-2.5 text-sm text-[#E8543C] transition-colors hover:bg-white/5 rounded-[2px]"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="w-[18px] h-[18px] shrink-0" strokeWidth={1.6} />
               {t("logout")}
             </button>
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-16 shrink-0 items-center border-b border-zinc-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 md:hidden">
-          <button
-            className="text-muted-foreground hover:text-foreground p-2 -ml-2 rounded-md"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-          <div className="ml-4 flex items-center gap-2 font-bold text-lg">
-            <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="gradient-brand-text">CareerAI</span>
-          </div>
-        </header>
-
-        <main className={`flex-1 overflow-y-auto bg-zinc-50 dark:bg-[#09090B] ${isEditorPage ? 'p-2 md:p-4' : 'p-4 md:p-8'}`}>
-          <div className={`mx-auto ${isEditorPage ? 'max-w-full' : 'max-w-6xl'}`}>
-            {children}
-          </div>
+        {/* Main Content Area */}
+        <main className={`main flex-1 w-full ${isEditorPage ? 'p-0 max-w-none' : 'py-9 px-5 md:px-11 pb-16 max-w-[1320px]'}`}>
+          {children}
         </main>
       </div>
     </div>

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     FileText, Briefcase, PlusCircle, FileSearch, ArrowRight, Sparkles,
     TrendingUp, Lightbulb, Target, Clock, ChevronRight
@@ -77,225 +76,198 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
     const analysisCount = quotaData?.analysis_count ?? 0;
 
     const stats = [
-        { title: t("stats.cvs"), value: `${cvCount}/${maxCv}`, desc: t("stats.thisMonth"), icon: FileText, color: "text-blue-500" },
-        { title: t("stats.letters"), value: `${letterCount}/${maxLetter}`, desc: t("stats.thisMonth"), icon: FileText, color: "text-purple-500" },
-        { title: t("stats.analysis"), value: `${analysisCount}/${maxAnalysis}`, desc: t("stats.used"), icon: FileSearch, color: "text-teal-500" },
-        { title: t("stats.plan"), value: plan === "pro" ? t("stats.pro") : t("stats.free"), desc: plan === "pro" ? t("unlimitedAccess") : t("limitedAccess"), icon: Briefcase, color: plan === "pro" ? "text-yellow-500" : "text-orange-500" },
+        { title: t("stats.cvs"), value: `${cvCount}`, max: `/${maxCv}`, desc: t("stats.thisMonth"), icon: <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/> },
+        { title: t("stats.letters"), value: `${letterCount}`, max: `/${maxLetter}`, desc: t("stats.thisMonth"), icon: <><path d="M4 4h16v16H4z"/><path d="M4 7l8 6 8-6"/></> },
+        { title: t("stats.analysis"), value: `${analysisCount}`, max: `/${maxAnalysis}`, desc: t("stats.used"), icon: <><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></> },
+        { title: t("stats.plan"), value: plan === "pro" ? "Pro" : t("stats.free"), max: "", desc: plan === "pro" ? t("unlimitedAccess") : t("limitedAccess"), icon: <path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/>, isPro: true }
     ];
 
     const quickLinks = [
-        { href: "/cv/history", label: t("quickAccess.cvs"), icon: FileText },
-        { href: "/cover-letter/new", label: t("quickAccess.letter"), icon: PlusCircle },
-        { href: "/jobs/tracker", label: t("quickAccess.applications"), icon: Briefcase },
-        { href: "/jobs/discover", label: t("quickAccess.find"), icon: FileSearch },
+        { href: "/cv/history", label: t("quickAccess.cvs"), icon: <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/> },
+        { href: "/cover-letter/new", label: t("quickAccess.letter"), icon: <><path d="M12 5v14M5 12h14"/></> },
+        { href: "/jobs/tracker", label: t("quickAccess.applications"), icon: <><path d="M3 7h18M3 7l2-4h14l2 4M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7"/></> },
+        { href: "/jobs/discover", label: t("quickAccess.find"), icon: <><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></> },
     ];
 
     const recentDocuments = cvData.slice(0, 3).map((cv, idx) => ({
         id: cv.id, 
-        title: cv.title || "Untitled CV", 
-        date: new Date(cv.updated_at).toLocaleDateString(), 
-        type: "cv", 
-        icon: FileText, 
-        color: idx === 0 ? "text-blue-500" : idx === 1 ? "text-indigo-500" : "text-purple-500", 
-        bg: idx === 0 ? "bg-blue-50 dark:bg-blue-900/20" : idx === 1 ? "bg-indigo-50 dark:bg-indigo-900/20" : "bg-purple-50 dark:bg-purple-900/20" 
+        title: cv.title || "İsimsiz CV", 
+        date: new Date(cv.updated_at).toLocaleDateString()
     }));
 
     const pipelineStats = [
-        { label: t("pipelineApplied"), value: jobsData.filter(j => j.status === 'Applied').length || 0, color: "bg-blue-500" },
-        { label: t("pipelineInterviews"), value: jobsData.filter(j => j.status === 'Interviewing').length || 0, color: "bg-amber-500" },
-        { label: t("pipelineOffers"), value: jobsData.filter(j => j.status === 'Offer').length || 0, color: "bg-green-500" },
+        { label: t("pipelineApplied"), value: jobsData.filter(j => j.status === 'Applied').length || 0, color: "var(--dashboard-cyan)" },
+        { label: t("pipelineInterviews"), value: jobsData.filter(j => j.status === 'Interviewing').length || 0, color: "#E8B85E" },
+        { label: t("pipelineOffers"), value: jobsData.filter(j => j.status === 'Offer').length || 0, color: "var(--dashboard-green)" },
     ];
 
-    // Get initial userName immediately if profileData exists so we don't flash "Kullanıcı" on first render
     const displayUserName = profileData?.full_name || profileData?.email?.split("@")[0] || userName;
 
     return (
-        <div className="space-y-8 max-w-6xl mx-auto p-4 md:p-8">
-
-            {/* Welcome & Quick Actions */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="w-full text-[#EAF3F7]">
+            {/* ---------- DASHBOARD HEADER ---------- */}
+            <div className="flex justify-between items-start flex-wrap gap-5 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t("welcome", { name: displayUserName })}</h1>
-                    <p className="text-muted-foreground mt-1">{t("todayGoal")}</p>
+                    <h1 className="text-[clamp(24px,3vw,30px)] font-['Space_Grotesk'] font-semibold tracking-tight mb-1.5">{t("welcome", { name: displayUserName.split(' ')[0] })}</h1>
+                    <p className="text-[#EAF3F7]/60 text-[14.5px]">{t("todayGoal")}</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                    <Link href="/cv/new">
-                        <Button className="bg-blue-600 text-white">
-                            <PlusCircle className="mr-2 h-4 w-4" /> {t("newCv")}
-                        </Button>
+                <div className="flex flex-wrap gap-3">
+                    <Link href="/cv/new" className="btn-stamp">
+                        + {t("newCv")}
                     </Link>
-                    <Link href="/cover-letter/new">
-                        <Button variant="outline" className="dark:border-zinc-700">
-                            {t("writeLetter")}
-                        </Button>
+                    <Link href="/cover-letter/new" className="btn-outline">
+                        {t("writeLetter")}
                     </Link>
                 </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-                {stats.map((stat) => (
-                    <Card key={stat.title} className="hover:shadow-md transition-shadow">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                            <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground mt-1">{stat.desc}</p>
-                        </CardContent>
-                    </Card>
+            {/* ---------- STAT CARDS ---------- */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {stats.map((stat, i) => (
+                    <div key={i} className="bp-card" style={stat.isPro ? { borderColor: "var(--dashboard-stamp-dim)" } : {}}>
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="M6,15 L6,6 L15,6" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
+                            <path d="M85,6 L94,6 L94,15" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
+                            <path d="M94,85 L94,94 L85,94" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
+                            <path d="M15,94 L6,94 L6,85" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
+                        </svg>
+                        <div className="relative z-10 px-2">
+                            <div className="flex justify-between items-start mb-[18px]">
+                                <span className="text-[13px] text-[#EAF3F7]/60">{stat.title}</span>
+                                <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24" style={{ color: stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan-dim)" }}>
+                                    {stat.icon}
+                                </svg>
+                            </div>
+                            <div className="font-['Space_Grotesk'] font-bold text-[28px] mb-1 leading-none" style={{ color: stat.isPro ? "var(--dashboard-stamp)" : "inherit" }}>
+                                {stat.value}<span className="text-[#EAF3F7]/60 text-[18px]">{stat.max}</span>
+                            </div>
+                            <div className="font-['JetBrains_Mono'] text-[10.5px] tracking-[0.06em] text-[#8FB9CC]">
+                                {stat.desc}
+                            </div>
+                        </div>
+                    </div>
                 ))}
             </div>
 
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-7">
-                {/* Recent Documents */}
-                <Card className="col-span-1 md:col-span-5 bg-white dark:bg-zinc-900/50 shadow-sm border-zinc-200/50 dark:border-zinc-800/50">
-                    <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                        <div>
-                            <CardTitle className="flex items-center gap-2 text-lg">
-                                <Clock className="h-5 w-5 text-blue-500" />
-                                {t("recentWork")}
-                            </CardTitle>
-                            <CardDescription>{t("recentWorkDesc")}</CardDescription>
+            {/* ---------- MID ROW ---------- */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bp-card md:col-span-2">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
+                    </svg>
+                    <div className="relative z-10 px-2 sm:px-4">
+                        <div className="flex justify-between items-center mb-[18px]">
+                            <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("recentWork")}</h3>
+                            <Link className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] flex items-center gap-1 hover:opacity-80" href="/cv/history">
+                                {t("viewAll")} →
+                            </Link>
                         </div>
-                        <Link href="/cv/history">
-                            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-blue-600">
-                                {t("viewAll")} <ChevronRight className="ml-1 h-4 w-4" />
-                            </Button>
-                        </Link>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid gap-4 sm:grid-cols-3">
-                            {recentDocuments.length > 0 ? recentDocuments.map(doc => (
-                                <Link key={doc.id} href={`/cv/${doc.id}/edit`}>
-                                    <div className="group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-4 transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 cursor-pointer h-full">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className={`p-2 rounded-lg ${doc.bg}`}>
-                                                <doc.icon className={`h-5 w-5 ${doc.color}`} />
-                                            </div>
-                                            <div className="text-xs font-medium text-muted-foreground">
-                                                {mounted ? doc.date : ""}
-                                            </div>
-                                        </div>
-                                        <h3 className="font-semibold text-zinc-900 dark:text-white truncate pr-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{doc.title}</h3>
-                                        <div className="mt-4 flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-                                            {t("edit")} <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                                        </div>
+                        
+                        <div className="flex flex-col gap-3">
+                            {recentDocuments.length > 0 ? recentDocuments.map((doc) => (
+                                <Link key={doc.id} href={`/cv/${doc.id}/edit`} className="flex items-center gap-[14px] p-4 border border-[#6FD6E8]/14 rounded-[2px] bg-white/[0.015] hover:bg-[#6FD6E8]/5 transition-colors">
+                                    <div className="w-9 h-9 rounded-[2px] bg-[#6FD6E8]/10 flex items-center justify-center text-[#6FD6E8] shrink-0">
+                                        <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                    </div>
+                                    <div>
+                                        <div className="font-['JetBrains_Mono'] text-[11px] text-[#8FB9CC] mb-1">{mounted ? doc.date : ""}</div>
+                                        <div className="text-[14.5px] font-medium text-[#EAF3F7]">{doc.title}</div>
                                     </div>
                                 </Link>
                             )) : (
-                                <div className="col-span-3 text-center py-6 text-muted-foreground bg-zinc-50 dark:bg-zinc-900/20 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800">
-                                    <p className="text-sm">{t("noCvYet")}</p>
-                                    <Link href="/cv/new">
-                                        <Button variant="link" className="text-blue-600 mt-1">{t("createNow")}</Button>
-                                    </Link>
+                                <div className="text-center py-6 text-[#EAF3F7]/60 border border-dashed border-[#6FD6E8]/14 rounded-[2px]">
+                                    <p className="text-[14.5px] mb-2">{t("noCvYet")}</p>
+                                    <Link href="/cv/new" className="text-[#6FD6E8] font-['JetBrains_Mono'] text-[11px] hover:underline">{t("createNow")} →</Link>
                                 </div>
                             )}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
-                {/* Profile Strength */}
-                <Card className="col-span-1 md:col-span-2 relative overflow-hidden">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center gap-2 text-indigo-900 dark:text-indigo-100">
-                            <Target className="h-5 w-5 text-indigo-500" /> {t("profileStrength")}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col items-center justify-center text-center pt-2 pb-6">
-                        <div className="relative flex items-center justify-center w-32 h-32 mb-4">
-                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                <path className="text-indigo-200 dark:text-indigo-900/50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
-                                <path className="text-indigo-600 dark:text-indigo-400 drop-shadow-md" strokeDasharray={`${profileStrength}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+                <div className="bp-card flex flex-col items-center text-center">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
+                    </svg>
+                    <div className="relative z-10 px-2 w-full flex flex-col items-center">
+                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px] mb-[18px] self-start">{t("profileStrength")}</h3>
+                        <div className="relative w-[140px] h-[140px] mb-[18px]">
+                            <svg width="140" height="140" viewBox="0 0 140 140" className="transform -rotate-90">
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--dashboard-paper-border)" strokeWidth="8"/>
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--dashboard-cyan)" strokeWidth="8"
+                                  strokeDasharray="377" strokeDashoffset={377 - (377 * profileStrength) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out"/>
                             </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-3xl font-black text-indigo-950 dark:text-indigo-50">{profileStrength}<span className="text-lg text-indigo-700/60 dark:text-indigo-300/60">%</span></span>
+                            <div className="absolute inset-0 flex items-center justify-center font-['Space_Grotesk'] font-bold text-[30px]">
+                                {profileStrength}%
                             </div>
                         </div>
-                        <p className="text-sm text-indigo-800/80 dark:text-indigo-200/80 font-medium px-2">
-                            {profileStrength >= 80 ? t("profileStrengthGood") : t("profileStrengthImprove")}
-                        </p>
-                        <Link href="/profile">
-                            <Button variant="outline" size="sm" className="mt-4 bg-white/50 dark:bg-zinc-900/50 border-indigo-200 dark:border-indigo-800 hover:bg-white dark:hover:bg-zinc-900">
-                                {t("updateProfile")}
-                            </Button>
+                        <p className="text-[13px] text-[#EAF3F7]/60 mb-[18px] max-w-[220px]">{profileStrength >= 75 ? t("profileStrengthGood") : t("profileStrengthImprove")}</p>
+                        <Link href="/profile" className="btn-outline w-full justify-center">
+                            {t("updateProfile")}
                         </Link>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
 
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-7">
-                {/* Application Pipeline */}
-                <Card className="col-span-1 md:col-span-2">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-amber-500" /> {t("jobStats")}
-                        </CardTitle>
-                        <CardDescription>{t("jobStatsDesc")}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-5 pt-2">
-                            {pipelineStats.map((stat) => (
-                                <div key={stat.label} className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`h-2.5 w-2.5 rounded-full ${stat.color} shadow-[0_0_8px_rgba(0,0,0,0.2)] shadow-${stat.color.replace('bg-', '')}`} />
-                                        <span className="font-medium text-zinc-700 dark:text-zinc-300">{stat.label}</span>
-                                    </div>
-                                    <span className="font-bold text-lg">{stat.value}</span>
+            {/* ---------- BOTTOM ROW ---------- */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1.2fr] gap-4">
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
+                    </svg>
+                    <div className="relative z-10 px-2">
+                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("jobStats")}</h3>
+                        <div className="font-['JetBrains_Mono'] text-[11px] text-[#8FB9CC] mt-1 mb-1.5 uppercase">{t("jobStatsDesc")}</div>
+                        <div className="flex flex-col">
+                            {pipelineStats.map((stat, i) => (
+                                <div key={i} className={`flex justify-between items-center py-[11px] text-[14px] ${i !== 0 ? 'border-t border-[#6FD6E8]/14' : ''}`}>
+                                    <span className="flex items-center text-[#EAF3F7]/60">
+                                        <span className="w-[7px] h-[7px] rounded-full inline-block mr-[9px]" style={{ background: stat.color }}></span>
+                                        {stat.label}
+                                    </span>
+                                    <span className="font-['JetBrains_Mono']">{stat.value}</span>
                                 </div>
                             ))}
-                            <div className="pt-4 mt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-center">
-                                <Link href="/jobs/tracker" className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center">
-                                    {t("detailedAnalysis")} <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                                </Link>
-                            </div>
                         </div>
-                    </CardContent>
-                </Card>
+                        <Link className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] flex items-center gap-1 hover:opacity-80 mt-4 block uppercase" href="/jobs/tracker">
+                            {t("detailedAnalysis")} →
+                        </Link>
+                    </div>
+                </div>
 
-                {/* Daily AI Tip */}
-                <Card className="col-span-1 lg:col-span-2">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center gap-2 text-amber-900 dark:text-amber-100">
-                            <div className="p-1.5 rounded-full bg-amber-100 dark:bg-amber-900/50">
-                                <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                            </div>
-                            {t("dailyTip")}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                        <blockquote className="border-l-4 border-amber-400 pl-4 py-1 my-2 text-sm text-amber-800 dark:text-amber-200/90 italic leading-relaxed">
-                            &quot;{t("dailyTipQuote")}&quot;
-                        </blockquote>
-                        <div className="mt-4 flex items-center gap-2 text-xs font-medium text-amber-700/70 dark:text-amber-400/70">
-                            <Sparkles className="h-3.5 w-3.5" /> {t("dailyTipSource")}
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className="bp-card" style={{ borderColor: "var(--dashboard-stamp-dim)" }}>
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M6,15 L6,6 L15,6" stroke="var(--dashboard-stamp)"/><path d="M85,6 L94,6 L94,15" stroke="var(--dashboard-stamp)"/><path d="M94,85 L94,94 L85,94" stroke="var(--dashboard-stamp)"/><path d="M15,94 L6,94 L6,85" stroke="var(--dashboard-stamp)"/>
+                    </svg>
+                    <div className="relative z-10 px-2">
+                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("dailyTip")}</h3>
+                        <p className="border-l-[2px] border-[#E8543C] pl-[14px] text-[13.5px] text-[#EAF3F7]/60 italic leading-[1.6] mt-[14px] mb-[14px]">
+                            "{t("dailyTipQuote")}"
+                        </p>
+                        <span className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] uppercase">✦ {t("dailyTipSource")}</span>
+                    </div>
+                </div>
 
-                {/* Quick navigation links */}
-                <Card className="col-span-1 lg:col-span-3 border-zinc-200/60 dark:border-zinc-800/60">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">{t("quickAccess.title")}</CardTitle>
-                        <CardDescription>{t("quickAccess.desc")}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-2 gap-3">
-                            {quickLinks.map(link => (
-                                <Link key={link.href} href={link.href as "/cv/history" | "/cover-letter/new" | "/jobs/tracker" | "/jobs/discover"}>
-                                    <div className="flex items-center gap-3 p-3 rounded-lg border bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-white dark:hover:bg-zinc-800 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-sm transition-all group cursor-pointer h-full">
-                                        <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
-                                            <link.icon className="h-4 w-4 text-zinc-500 dark:text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
-                                        </div>
-                                        <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">{link.label}</span>
-                                    </div>
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
+                    </svg>
+                    <div className="relative z-10 px-2">
+                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("quickAccess.title")}</h3>
+                        <p className="text-[13px] text-[#EAF3F7]/60 mt-1 mb-1.5">{t("quickAccess.desc")}</p>
+                        <div className="grid grid-cols-2 gap-[10px] mt-1.5">
+                            {quickLinks.map((link, i) => (
+                                <Link key={i} className="flex flex-col items-start gap-2 p-[14px] border border-[#6FD6E8]/14 rounded-[2px] text-[#EAF3F7] text-[13px] hover:border-[#6FD6E8]/55 hover:bg-[#6FD6E8]/[0.03] transition-colors" href={link.href as any}>
+                                    <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24">
+                                        {link.icon}
+                                    </svg>
+                                    {link.label}
                                 </Link>
                             ))}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
+
         </div>
     );
 }

@@ -13,167 +13,126 @@ export default function AIInterviewPage() {
     const t = useTranslations("Interview");
 
     return (
-        <div className="h-full flex flex-col items-center justify-center py-8">
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-6 flex items-center gap-2 w-full max-w-lg">
-                <span>🚧</span>
-                <span className="text-yellow-400 text-sm">
-                    Bu özellik yakında aktif olacak. Şu an önizleme modunda.
-                </span>
+        <div className="h-full flex flex-col items-center py-8">
+            <style dangerouslySetInnerHTML={{__html: `
+                .preview-banner{
+                    display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+                    color:var(--dashboard-stamp);border:1px dashed var(--dashboard-stamp-dim);border-radius:var(--dashboard-radius);padding:13px 16px;
+                    margin-bottom:28px;max-width:680px;width:100%;
+                }
+                .interview-wrap{max-width:680px;width:100%;}
+                .iv-eyebrow{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:500;margin-bottom:18px;}
+                .iv-eyebrow svg{width:16px;height:16px;color:var(--dashboard-cyan);}
+
+                .avatar-box{
+                    position:relative;border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);overflow:hidden;
+                    background:radial-gradient(ellipse at center, rgba(167,139,250,.15), var(--dashboard-bg-2) 70%);
+                    height:300px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;
+                }
+                .avatar-glow{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle, rgba(167,139,250,.4), transparent 70%);display:flex;align-items:center;justify-content:center;}
+                .avatar-glow svg{width:70px;height:70px;color:var(--dashboard-cyan);}
+                .avatar-mic{
+                    position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+                    width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.4);border:1px solid var(--dashboard-paper-border);
+                    display:flex;align-items:center;justify-content:center;color:var(--dashboard-cyan);
+                }
+
+                .q-counter{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--dashboard-mono-label);text-align:center;margin-bottom:14px;}
+                .q-text{font-size:19px;font-weight:600;text-align:center;line-height:1.5;margin-bottom:28px;font-family:'Space Grotesk',sans-serif;}
+
+                .analysis-card{position:relative;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:26px;margin-bottom:20px;}
+                .analysis-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+                .analysis-card svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
+                .analysis-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:20px;}
+                .analysis-title{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--dashboard-cyan);}
+                .score-circle{width:64px;height:64px;border-radius:50%;border:2px solid var(--dashboard-cyan);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;flex-shrink:0;}
+                .check-list{display:flex;flex-direction:column;gap:9px;}
+                .check-item{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--dashboard-text-dim);}
+                .check-item svg{width:14px;height:14px;flex-shrink:0;}
+                .check-item.good svg{color:var(--dashboard-green);}
+                .check-item.warn svg{color:var(--dashboard-amber);}
+
+                .metric-block{margin-bottom:18px;}
+                .metric-block:last-of-type{margin-bottom:0;}
+                .metric-top{display:flex;justify-content:space-between;margin-bottom:10px;font-size:12.5px;}
+                .metric-name{font-family:'JetBrains Mono',monospace;letter-spacing:.06em;color:var(--dashboard-mono-label);}
+                .metric-pct{font-family:'JetBrains Mono',monospace;font-weight:600;}
+                .metric-track{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+                .metric-fill{height:100%;border-radius:3px;}
+
+                .tone-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--dashboard-paper-border);}
+                .tone-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--dashboard-mono-label);}
+                .tone-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-cyan);border:1px solid var(--dashboard-cyan-dim);padding:4px 10px;border-radius:var(--dashboard-radius);}
+
+                .transcript-box{
+                    width:100%;min-height:64px;background:rgba(255,255,255,.02);border:1px solid var(--dashboard-paper-border);
+                    border-radius:var(--dashboard-radius);padding:14px 16px;font-size:13.5px;color:var(--dashboard-text-dim);line-height:1.6;margin-bottom:18px;
+                }
+                .iv-actions{display:flex;gap:12px;}
+                .iv-actions .btn-outline, .iv-actions .btn-stamp{flex:1;justify-content:center;}
+                .btn-stamp{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.03em;background:var(--dashboard-stamp);color:var(--dashboard-bg);padding:11px 18px;border-radius:var(--dashboard-radius);border:none;}
+                .btn-outline{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.03em;background:transparent;color:var(--dashboard-text);padding:11px 18px;border-radius:var(--dashboard-radius);border:1px solid var(--dashboard-paper-border);}
+                .btn-outline:hover{border-color:var(--dashboard-cyan-dim);}
+                @media(max-width:600px){.analysis-top{flex-direction:column;}}
+            `}} />
+
+            <div className="preview-banner">
+                <svg className="icon" viewBox="0 0 24 24" style={{ color: 'var(--dashboard-stamp)', width: '16px', height: '16px' }}><path d="M12 9v4M12 17h.01M10.3 3.86L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
+                Bu özellik yakında aktif olacak. Şu an önizleme modunda.
             </div>
-            {/* Header */}
-            <div className="w-full max-w-lg flex items-center justify-between mb-8">
-                <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
-                    <ChevronLeft className="w-6 h-6" />
-                </Link>
-                <div className="flex items-center gap-2 font-bold">
-                    <Sparkles className="w-5 h-5 text-blue-600" />
-                    ViCareer AI
-                </div>
-                <div className="w-6 h-6"></div> {/* Spacer for center alignment */}
-            </div>
 
-            {/* Main Interview Container */}
-            <div className="w-full max-w-lg space-y-6">
-                
-                {/* Avatar / Video area */}
-                <Card className="overflow-hidden border-2 shadow-lg">
-                    <div className="relative w-full aspect-video flex items-center justify-center bg-zinc-100 dark:bg-zinc-900">
-                        {/* Placeholder for 3D AI Avatar */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-purple-500/5"></div>
-                        <Image 
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwYocT5yDfRzW3qaficDXXtyMTt9M8ZrHNkwxSB03ob_ApNWafgEUsdjr_pgvsSLfGt8OUENFXzCLjB1mBq2C0oJ_8FskaRUXY6Y8m0LDyk7gFo1pllpblX6rKvmpk3DHKB4sH0EYT9esfm6GVHu2vUKK6wFLPcSDfP2bWymW0mzWc8vDtVastZWiMVtUmi0iv_eyv3FkaisoEQvOLbMiQqknln4m-NbEARDeI3BrQ08xgm_jEMv8vezVzg2S50q9zLer0TmGtdDns" 
-                            alt="AI Avatar" 
-                            width={300} 
-                            height={300} 
-                            className="object-contain w-3/4 h-3/4 opacity-90 mix-blend-multiply dark:mix-blend-screen"
-                        />
-                        
-                        {/* Active Speaker Indicator */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-white/80 dark:bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm">
-                            <div className="w-1 h-3 bg-blue-600 rounded-full animate-[bounce_1s_infinite]"></div>
-                            <div className="w-1 h-4 bg-blue-600 rounded-full animate-[bounce_1.2s_infinite]"></div>
-                            <div className="w-1 h-2 bg-blue-600 rounded-full animate-[bounce_0.8s_infinite]"></div>
-                            <div className="w-1 h-5 bg-blue-600 rounded-full animate-[bounce_1.5s_infinite]"></div>
-                            <div className="w-1 h-3 bg-blue-600 rounded-full animate-[bounce_1.1s_infinite]"></div>
-                        </div>
+            <div className="interview-wrap w-full px-4">
+                <div className="iv-eyebrow"><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>✦ ViCareer AI</div>
+
+                <div className="avatar-box">
+                    <div className="avatar-glow">
+                        <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" fill="none"><path d="M9.5 2a2.5 2.5 0 015 0v8a2.5 2.5 0 01-5 0z"/><path d="M12 6.5a3 3 0 013 3M9 9.5a3 3 0 013-3"/></svg>
                     </div>
-                </Card>
-
-                {/* Question Area */}
-                <div className="text-center space-y-3 px-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-blue-600">{t("questionCount")}</p>
-                    <h2 className="text-xl md:text-2xl font-bold leading-relaxed text-zinc-900 dark:text-zinc-100">
-                        {t("question")}
-                    </h2>
+                    <div className="avatar-mic"><svg className="icon" viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}><path d="M12 2a4 4 0 0 1 4 4v4a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div>
                 </div>
 
-                {/* Live Analysis */}
-                <Card className="border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/50">
-                    <CardContent className="p-6 space-y-6">
-                        <div className="flex items-start justify-between">
-                            <h3 className="text-sm font-bold flex items-center gap-2">
-                                <Activity className="w-4 h-4 text-blue-600" />
-                                {t("liveAnalysis")}
-                            </h3>
-                        </div>
+                <div className="q-counter">{t("questionCount")}</div>
+                <div className="q-text">{t("question")}</div>
 
-                        <div className="flex items-center gap-6">
-                            {/* Circular Score */}
-                            <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
-                                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" className="text-zinc-200 dark:text-zinc-800" strokeWidth="8" />
-                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#2563EB" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - 0.85)} strokeLinecap="round" />
-                                </svg>
-                                <div className="absolute flex flex-col items-center justify-center">
-                                    <span className="text-xl font-black">85</span>
-                                    <span className="text-[10px] text-muted-foreground font-bold">%</span>
-                                </div>
-                            </div>
-                            
-                            {/* Live Feedback Points */}
-                            <div className="space-y-2 flex-1">
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-emerald-500" />
-                                    <span className="text-sm font-medium">{t("strongStart")}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4 text-emerald-500" />
-                                    <span className="text-sm font-medium">{t("clearArtic")}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 rounded-full border-2 border-orange-500 flex items-center justify-center">
-                                        <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                                    </div>
-                                    <span className="text-sm font-medium">{t("pacingFast")}</span>
-                                </div>
+                <div className="analysis-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <div className="analysis-top">
+                        <div>
+                            <div className="analysis-title"><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none" style={{ width: '16px', height: '16px' }}><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>{t("liveAnalysis")}</div>
+                            <div className="check-list" style={{ marginTop: '16px' }}>
+                                <div className="check-item good"><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none"><path d="M20 6L9 17l-5-5"/></svg>{t("strongStart")}</div>
+                                <div className="check-item good"><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none"><path d="M20 6L9 17l-5-5"/></svg>{t("clearArtic")}</div>
+                                <div className="check-item warn"><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.86L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>{t("pacingFast")}</div>
                             </div>
                         </div>
-
-                        {/* Metrics Bars */}
-                        <div className="space-y-4 pt-2">
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-bold">
-                                    <span className="text-muted-foreground uppercase tracking-wider">{t("techAccuracy")}</span>
-                                    <span className="text-emerald-600 dark:text-emerald-400">92%</span>
-                                </div>
-                                <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: '92%' }}></div>
-                                </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-bold">
-                                    <span className="text-muted-foreground uppercase tracking-wider">{t("fluency")}</span>
-                                    <span className="text-blue-600 dark:text-blue-400">88%</span>
-                                </div>
-                                <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-blue-500 rounded-full" style={{ width: '88%' }}></div>
-                                </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-bold">
-                                    <span className="text-muted-foreground uppercase tracking-wider">{t("confidence")}</span>
-                                    <span className="text-purple-600 dark:text-purple-400">76%</span>
-                                </div>
-                                <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-purple-500 rounded-full" style={{ width: '76%' }}></div>
-                                </div>
-                            </div>
-                            <div className="pt-4 mt-2 flex justify-between items-center border-t border-zinc-200 dark:border-zinc-800">
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider font-bold">{t("tone")}</span>
-                                <span className="text-xs font-bold bg-zinc-200 dark:bg-zinc-800 px-2.5 py-1 rounded-md">{t("toneValue")}</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Controls Area */}
-                <div className="pt-2 space-y-4">
-                    {/* User text input (simulated) */}
-                    <div className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 flex items-center gap-3 shadow-sm">
-                        <div className="flex-1 text-sm text-muted-foreground">
-                            {t("userSim")}
-                        </div>
-                        <div className="w-1 h-4 bg-blue-600 animate-pulse rounded-full"></div>
+                        <div className="score-circle">85</div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-4">
-                        <Button 
-                            variant="outline" 
-                            className="font-bold border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900"
-                        >
-                            <ImageIcon className="w-4 h-4 mr-2" /> {t("showResume")}
-                        </Button>
-                        <Button 
-                            size="lg"
-                            className={`flex-1 font-bold h-12 transition-all ${isRecording ? 'bg-red-500 hover:bg-red-600 text-white shadow-md shadow-red-500/20' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/20'}`}
-                            onClick={() => setIsRecording(!isRecording)}
-                        >
-                            <Mic className="w-5 h-5 mr-2" />
-                            {isRecording ? t("stopRecording") : t("answer")}
-                        </Button>
+                    <div className="metric-block">
+                        <div className="metric-top"><span className="metric-name">{t("techAccuracy")}</span><span className="metric-pct" style={{ color: 'var(--dashboard-green)' }}>92%</span></div>
+                        <div className="metric-track"><div className="metric-fill" style={{ width: '92%', background: 'var(--dashboard-green)' }}></div></div>
                     </div>
+                    <div className="metric-block">
+                        <div className="metric-top"><span className="metric-name">{t("fluency")}</span><span className="metric-pct" style={{ color: 'var(--dashboard-cyan)' }}>88%</span></div>
+                        <div className="metric-track"><div className="metric-fill" style={{ width: '88%', background: 'var(--dashboard-cyan)' }}></div></div>
+                    </div>
+                    <div className="metric-block">
+                        <div className="metric-top"><span className="metric-name">{t("confidence")}</span><span className="metric-pct" style={{ color: 'var(--dashboard-purple)' }}>76%</span></div>
+                        <div className="metric-track"><div className="metric-fill" style={{ width: '76%', background: 'var(--dashboard-purple)' }}></div></div>
+                    </div>
+
+                    <div className="tone-row"><span className="tone-label">{t("tone")}</span><span className="tone-tag">{t("toneValue")}</span></div>
                 </div>
 
+                <div className="transcript-box">{t("userSim")}</div>
+
+                <div className="iv-actions">
+                    <button className="btn-outline"><svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>{t("showResume")}</button>
+                    <button className="btn-stamp" onClick={() => setIsRecording(!isRecording)} style={{ background: isRecording ? 'var(--dashboard-stamp)' : 'var(--dashboard-cyan)', color: '#0A1628' }}>
+                        <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}><path d="M12 2a4 4 0 0 1 4 4v4a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/></svg>
+                        {isRecording ? t("stopRecording") : t("answer")}
+                    </button>
+                </div>
             </div>
         </div>
     );

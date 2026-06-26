@@ -5,17 +5,15 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import styles from "../auth.module.css";
 
 export default function LoginPage() {
     const supabase = createClient();
     const router = useRouter();
-    const t = useTranslations("Auth");
+    const tAuth = useTranslations("Auth");
+    const t = useTranslations("AuthBlueprint");
     const locale = useLocale();
 
     const [email, setEmail] = useState("");
@@ -37,7 +35,7 @@ export default function LoginPage() {
             return;
         }
 
-        toast.success(t("successLogin"));
+        toast.success(tAuth("successLogin"));
         router.push("/dashboard");
         setIsLoading(false);
     }
@@ -52,69 +50,115 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center p-4 bg-[#131315] text-white">
-            <Card className="w-full max-w-sm bg-[#1c1b1d] border-white/[0.06] shadow-2xl rounded-lg">
-                <CardHeader className="space-y-2 text-center">
-                    <CardTitle className="text-2xl font-bold">{t("loginTitle")}</CardTitle>
-                    <CardDescription className="text-[#A1A1AA]">{t("loginDesc")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleEmailLogin} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="email">{t("email")}</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="bg-[#131315] border-white/[0.06] rounded-lg text-white"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password">{t("password")}</Label>
-                                <Link href="#" className="text-sm text-[#2563EB] hover:underline">
-                                    {t("forgotPassword")}
-                                </Link>
-                            </div>
-                            <Input
-                                id="password"
-                                type="password"
-                                required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="bg-[#131315] border-white/[0.06] rounded-lg text-white"
-                            />
-                        </div>
-                        <Button type="submit" className="w-full rounded-lg bg-[#2563EB] hover:bg-[#1E40AF] text-white" disabled={isLoading}>
-                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t("loginButton")}
-                        </Button>
-                    </form>
+        <div className={styles.authWrapper}>
+            <div className={styles.gridField}></div>
+            <div className={styles.shell}>
+                <div className={styles.brandPanel}>
+                    <div className={styles.logo}>
+                        <span className={styles.logoMark}>Vi</span>ViCareerAI
+                    </div>
 
-                    <div className="relative my-4">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-white/[0.06]" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-[#1c1b1d] px-2 text-[#A1A1AA]">{t("or")}</span>
+                    <div className={styles.brandMid}>
+                        <div className={styles.eyebrow}>{t("logEyebrow")}</div>
+                        <h1>{t("logTitle")}</h1>
+                        <p>{t("logDesc")}</p>
+
+                        <div className={styles.miniSteps}>
+                            <div className={styles.mstep}>
+                                <span className={styles.mnum}>{t("lstep1Num")}</span>
+                                <div>
+                                    <h3>{t("lstep1Title")}</h3>
+                                    <p>{t("lstep1Desc")}</p>
+                                </div>
+                            </div>
+                            <div className={styles.mstep}>
+                                <span className={styles.mnum}>{t("lstep2Num")}</span>
+                                <div>
+                                    <h3>{t("lstep2Title")}</h3>
+                                    <p>{t("lstep2Desc")}</p>
+                                </div>
+                            </div>
+                            <div className={styles.mstep}>
+                                <span className={styles.mnum}>{t("lstep3Num")}</span>
+                                <div>
+                                    <h3>{t("lstep3Title")}</h3>
+                                    <p>{t("lstep3Desc")}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <Button variant="outline" type="button" className="w-full rounded-lg bg-[#131315] border-white/[0.06] text-white hover:bg-white/5" onClick={handleGoogleLogin}>
-                        {t("googleContinue")}
-                    </Button>
-                </CardContent>
-                <CardFooter className="flex flex-col gap-2 text-center text-sm text-[#A1A1AA]">
-                    <p>
-                        {t("noAccount")}{" "}
-                        <Link href="/register" className="text-[#2563EB] hover:underline font-medium">
-                            {t("registerButton")}
-                        </Link>
-                    </p>
-                </CardFooter>
-            </Card>
+                    <div className={styles.brandFooter}>{t("brandFooter")}</div>
+                </div>
+
+                <div className={styles.formPanel}>
+                    <div className={styles.formCard}>
+                        <svg className={styles.corners} viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="M6,22 L6,6 L22,6" />
+                            <path d="M78,6 L94,6 L94,22" />
+                            <path d="M94,78 L94,94 L78,94" />
+                            <path d="M22,94 L6,94 L6,78" />
+                        </svg>
+
+                        <div className={styles.formHead}>
+                            <h2>{t("logCardTitle")}</h2>
+                            <p>{t("logCardDesc")}</p>
+                        </div>
+
+                        <form onSubmit={handleEmailLogin} noValidate>
+                            <div className={styles.field}>
+                                <label htmlFor="email">{tAuth("email")}</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="m@example.com"
+                                    autoComplete="email"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                            <div className={styles.field}>
+                                <div className={styles.fieldRowLabel}>
+                                    <label htmlFor="password" style={{ marginBottom: 0 }}>{tAuth("password")}</label>
+                                    <Link href="#">{t("forgotPassword")}</Link>
+                                </div>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="********"
+                                    autoComplete="current-password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </div>
+
+                            <button type="submit" className={styles.submitBtn} disabled={isLoading}>
+                                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("btnLogin")}
+                            </button>
+                        </form>
+
+                        <div className={styles.divider}>{t("or")}</div>
+
+                        <button type="button" className={styles.oauthBtn} onClick={handleGoogleLogin} disabled={isLoading}>
+                            <svg viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.56c2.08-1.92 3.28-4.74 3.28-8.1z" opacity=".5" />
+                                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.77c-.99.67-2.26 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z" opacity=".75" />
+                                <path fill="currentColor" d="M5.84 14.1A6.6 6.6 0 0 1 5.5 12c0-.73.12-1.43.34-2.1V7.06H2.18A10.99 10.99 0 0 0 1 12c0 1.77.43 3.45 1.18 4.94l3.66-2.84z" opacity=".6" />
+                                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z" />
+                            </svg>
+                            {t("btnGoogle")}
+                        </button>
+
+                        <div className={styles.formFoot}>
+                            {t("noAccount")} <Link href="/register">{t("registerLink")}</Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

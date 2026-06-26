@@ -180,208 +180,201 @@ export default function JobTrackerPage() {
     const getJobsByStatus = (status: JobStatus) => jobs.filter(job => job.status === status);
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto p-4 md:p-8 h-full flex flex-col">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
-                    <p className="text-muted-foreground mt-1">{t("desc")}</p>
+        <>
+            <style dangerouslySetInnerHTML={{__html: `
+                .kanban-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:32px;}
+                .head-actions{display:flex;gap:12px;flex-wrap:wrap;}
+                .btn-ai-solid{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--dashboard-purple);color:#0A1628;padding:11px 18px;border-radius:var(--dashboard-radius);border:none;}
+
+                .kanban-board{display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;}
+                .kcol{flex:0 0 280px;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:16px;min-height:420px;display:flex;flex-direction:column;}
+                .kcol-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+                .kcol-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:var(--dashboard-radius);}
+                .kcol-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-mono-label);}
+                .kcard{
+                    position:relative;background:var(--dashboard-bg-2);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);
+                    padding:14px;margin-bottom:10px;
+                }
+                .kcard .kgrip{position:absolute;top:12px;left:10px;color:var(--dashboard-mono-label);}
+                .kcard-title{font-size:14px;font-weight:500;margin-bottom:6px;padding-left:14px;}
+                .kcard-co{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--dashboard-text-dim);margin-bottom:12px;padding-left:14px;}
+                .kcard-foot{display:flex;justify-content:space-between;align-items:center;padding-left:14px;}
+                .kcard-date{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dashboard-mono-label);display:flex;align-items:center;gap:5px;}
+                .kcard-match{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dashboard-green);background:rgba(111,232,168,.1);padding:3px 7px;border-radius:var(--dashboard-radius);}
+
+                .modal-overlay{position:fixed;inset:0;background:rgba(6,12,22,.7);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
+                .modal{position:relative;background:var(--dashboard-bg-2);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:30px;max-width:440px;width:100%;}
+                .modal svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+                .modal svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
+                .modal.ai svg.corners path{stroke:var(--dashboard-purple);}
+                .modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+                .modal-head h3{font-size:17px;display:flex;align-items:center;gap:9px;}
+                .modal-head h3 svg{width:18px;height:18px;color:var(--dashboard-cyan);}
+                .modal.ai .modal-head h3 svg{color:var(--dashboard-purple);}
+                .modal-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--dashboard-paper-border);background:transparent;color:var(--dashboard-text-dim);display:flex;align-items:center;justify-content:center;}
+                .modal p.sub{font-size:13px;color:var(--dashboard-text-dim);margin-bottom:22px;line-height:1.55;}
+                .field{margin-bottom:18px;}
+                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-mono-label);margin-bottom:9px;}
+                .field input, .field textarea{width:100%;height:46px;padding:0 13px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;}
+                .field textarea{height:auto;padding:11px 13px;resize:vertical;}
+                .field input:focus, .field textarea:focus{outline:none;border-color:var(--dashboard-cyan);}
+                .field input::placeholder, .field textarea::placeholder{color:rgba(234,243,247,0.25);}
+                .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+                .modal-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px;}
+                @media(max-width:760px){.field-row{grid-template-columns:1fr;}}
+            `}} />
+
+            <div className="kanban-head">
+                <div className="page-head" style={{ marginBottom: 0 }}>
+                    <div className="peyebrow">BAŞVURU TAKİBİ</div>
+                    <h1>Başvuru Board'u</h1>
+                    <p>Sürükle-bırak ile iş başvuru süreçlerini görsel olarak yönet.</p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button 
-                        onClick={() => setIsAiModalOpen(true)}
-                        variant="outline" 
-                        className="border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-900 dark:text-purple-400"
-                    >
-                        <Sparkles className="mr-2 h-4 w-4" /> {t("aiAdd")}
-                    </Button>
-                    <Button 
-                        onClick={() => setIsManualModalOpen(true)}
-                        className="gradient-brand text-white shadow-md shadow-blue-500/20"
-                    >
-                        <Plus className="mr-2 h-4 w-4" /> {t("manualAdd")}
-                    </Button>
+                <div className="head-actions">
+                    <button className="btn-ai-solid" onClick={() => setIsAiModalOpen(true)}>✦ AI İlan Ekle</button>
+                    <button className="btn-stamp" onClick={() => setIsManualModalOpen(true)}>+ Manuel Ekle</button>
                 </div>
             </div>
 
-            {/* AI Add Modal */}
-            <Dialog open={isAiModalOpen} onOpenChange={setIsAiModalOpen}>
-                <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
-                            <Sparkles className="h-5 w-5 animate-pulse" />
-                            AI ile İlan Ekle
-                        </DialogTitle>
-                        <DialogDescription>
-                            İş ilanının URL bağlantısını veya ilan detay metnini yapıştırın. Yapay zeka şirket, pozisyon ve konum bilgilerini otomatik çıkarıp panonuza ekleyecektir.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleAiSubmit} className="space-y-4 py-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="urlOrText">İlan URL veya Detay Metni</Label>
-                            <Textarea
-                                id="urlOrText"
-                                value={aiForm.urlOrText}
-                                onChange={(e) => setAiForm({ ...aiForm, urlOrText: e.target.value })}
-                                placeholder="Örn: linkedin.com/jobs/view/... veya ilan açıklaması..."
-                                rows={6}
-                                required
-                            />
-                        </div>
-                        <DialogFooter className="pt-2">
-                            <Button type="button" variant="ghost" onClick={() => setIsAiModalOpen(false)}>İptal</Button>
-                            <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700 text-white">
-                                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                                AI ile Analiz Et & Ekle
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
-
-            {/* Manual Add Modal */}
-            <Dialog open={isManualModalOpen} onOpenChange={setIsManualModalOpen}>
-                <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                            <Plus className="h-5 w-5 text-blue-600" />
-                            Manuel İlan Ekle
-                        </DialogTitle>
-                        <DialogDescription>
-                            Başvurmak istediğiniz veya takip ettiğiniz iş ilanının detaylarını girin.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleManualSubmit} className="space-y-4 py-2">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="company">Şirket Adı *</Label>
-                                <Input
-                                    id="company"
-                                    value={manualForm.company}
-                                    onChange={(e) => setManualForm({ ...manualForm, company: e.target.value })}
-                                    placeholder="Örn: Google"
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="position">Pozisyon / Rol *</Label>
-                                <Input
-                                    id="position"
-                                    value={manualForm.position}
-                                    onChange={(e) => setManualForm({ ...manualForm, position: e.target.value })}
-                                    placeholder="Örn: Frontend Developer"
-                                    required
-                                />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="location">Lokasyon</Label>
-                                <Input
-                                    id="location"
-                                    value={manualForm.location}
-                                    onChange={(e) => setManualForm({ ...manualForm, location: e.target.value })}
-                                    placeholder="Örn: İstanbul / Uzaktan"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="appliedDate">Uygulama Tarihi</Label>
-                                <Input
-                                    id="appliedDate"
-                                    type="date"
-                                    value={manualForm.appliedDate}
-                                    onChange={(e) => setManualForm({ ...manualForm, appliedDate: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="notes">Notlar</Label>
-                            <Textarea
-                                id="notes"
-                                value={manualForm.notes}
-                                onChange={(e) => setManualForm({ ...manualForm, notes: e.target.value })}
-                                placeholder="İlan detayları, mülakat notları veya önemli detaylar..."
-                                rows={3}
-                            />
-                        </div>
-                        <DialogFooter className="pt-2">
-                            <Button type="button" variant="ghost" onClick={() => setIsManualModalOpen(false)}>İptal</Button>
-                            <Button type="submit" disabled={isSubmitting} className="gradient-brand text-white border-0">
-                                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                                İlanı Kaydet
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
-
-            <div className="flex-1 overflow-x-auto pb-4 mt-6">
+            <div className="kanban-board">
                 <DragDropContext onDragEnd={onDragEnd}>
-                    <div className="flex gap-6 h-full min-h-[60rem] lg:min-h-[auto] items-start">
-                        {COLUMNS.map(status => {
-                            const columnJobs = getJobsByStatus(status);
-                            return (
-                                <div key={status} className="flex-shrink-0 w-80 flex flex-col bg-zinc-100/50 dark:bg-zinc-900/30 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 h-full min-h-[500px]">
-                                    <div className="p-4 flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800/50">
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="outline" className={`${statusColors[status]}`}>
-                                                {t(`columns.${status}`)}
-                                            </Badge>
-                                            <span className="text-xs font-semibold text-muted-foreground bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
-                                                {columnJobs.length}
-                                            </span>
-                                        </div>
-                                    </div>
+                    {COLUMNS.map(status => {
+                        const columnJobs = getJobsByStatus(status);
+                        
+                        // Pick color scheme based on status
+                        let tagBg = 'rgba(111,214,232,.1)', tagColor = 'var(--dashboard-cyan)';
+                        if (status === 'Applied') { tagBg = 'rgba(167,139,250,.12)'; tagColor = 'var(--dashboard-purple)'; }
+                        if (status === 'Interviewing') { tagBg = 'rgba(232,184,94,.12)'; tagColor = 'var(--dashboard-amber)'; }
+                        if (status === 'Offer') { tagBg = 'rgba(111,232,168,.12)'; tagColor = 'var(--dashboard-green)'; }
+                        if (status === 'Rejected') { tagBg = 'rgba(232,84,60,.12)'; tagColor = 'var(--dashboard-stamp)'; }
 
-                                    <Droppable droppableId={status}>
-                                        {(provided, snapshot) => (
-                                            <div
-                                                ref={provided.innerRef}
-                                                {...provided.droppableProps}
-                                                className={`flex-1 p-3 overflow-y-auto min-h-[150px] transition-colors rounded-b-xl ${snapshot.isDraggingOver ? "bg-zinc-200/50 dark:bg-zinc-800/50" : ""}`}
-                                            >
-                                                {columnJobs.map((job, index) => (
-                                                    <Draggable key={job.id} draggableId={job.id} index={index}>
-                                                        {(provided, snapshot) => (
-                                                            <Card
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                style={{...provided.draggableProps.style}}
-                                                                className={`mb-3 shadow-sm border-zinc-200 dark:border-zinc-800 transition-all ${snapshot.isDragging ? "shadow-xl rotate-2 scale-105 z-50 cursor-grabbing border-blue-400 dark:border-blue-600 ring-2 ring-blue-500/20" : "cursor-grab hover:border-blue-300 dark:hover:border-blue-700"}`}
-                                                            >
-                                                                <CardContent className="p-4">
-                                                                    <div className="flex justify-between items-start mb-2">
-                                                                        <div className="font-semibold text-sm leading-tight text-zinc-900 dark:text-zinc-100 flex items-start" {...provided.dragHandleProps}>
-                                                                            <GripVertical className="inline-block h-4 w-4 text-zinc-400 mr-1.5 -ml-1 mt-0.5 cursor-grab hover:text-zinc-600" />
-                                                                            {job.position}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="text-xs font-medium text-muted-foreground flex items-center mb-4 pl-5">
-                                                                        <Building2 className="h-3 w-3 mr-1.5" /> {job.company}
-                                                                    </div>
-                                                                    <div className="flex items-center justify-between mt-4 border-t border-zinc-100 dark:border-zinc-800/60 pt-3">
-                                                                        <div className="text-[10px] text-muted-foreground flex items-center bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-md">
-                                                                            <Calendar className="h-3 w-3 mr-1" /> {job.appliedDate}
-                                                                        </div>
-                                                                        <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 px-2.5 py-1 rounded-md border border-green-100 dark:border-green-900/50">
-                                                                            <Sparkles className="h-3 w-3 text-green-600 dark:text-green-500" />
-                                                                            <span className="text-[10px] font-bold text-green-700 dark:text-green-400">{job.matchScore}%</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </CardContent>
-                                                            </Card>
-                                                        )}
-                                                    </Draggable>
-                                                ))}
-                                                {provided.placeholder}
-                                            </div>
-                                        )}
-                                    </Droppable>
+                        return (
+                            <div key={status} className="kcol">
+                                <div className="kcol-head">
+                                    <span className="kcol-tag" style={{ background: tagBg, color: tagColor }}>
+                                        {t(`columns.${status}`).toUpperCase()}
+                                    </span>
+                                    <span className="kcol-count">{columnJobs.length}</span>
                                 </div>
-                            );
-                        })}
-                    </div>
+                                <Droppable droppableId={status}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                            style={{ flex: 1, minHeight: '150px' }}
+                                        >
+                                            {columnJobs.map((job, index) => (
+                                                <Draggable key={job.id} draggableId={job.id} index={index}>
+                                                    {(provided, snapshot) => (
+                                                        <div
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            className="kcard"
+                                                            style={{
+                                                                ...provided.draggableProps.style,
+                                                                borderColor: snapshot.isDragging ? 'var(--dashboard-cyan)' : 'var(--dashboard-paper-border)',
+                                                                zIndex: snapshot.isDragging ? 50 : 1,
+                                                                boxShadow: snapshot.isDragging ? '0 10px 25px rgba(0,0,0,0.5)' : 'none',
+                                                            }}
+                                                        >
+                                                            <div {...provided.dragHandleProps} style={{ position: 'absolute', top: 12, left: 10, cursor: 'grab', width: 13, height: 13, zIndex: 2 }}>
+                                                                <svg className="icon kgrip" viewBox="0 0 24 24" style={{ top: 0, left: 0 }}><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg>
+                                                            </div>
+                                                            <div className="kcard-title">{job.position}</div>
+                                                            <div className="kcard-co"><svg className="icon" viewBox="0 0 24 24" style={{ width: '12px', height: '12px' }}><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>{job.company}</div>
+                                                            <div className="kcard-foot">
+                                                                <span className="kcard-date"><svg className="icon" viewBox="0 0 24 24" style={{ width: '11px', height: '11px' }}><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{job.appliedDate}</span>
+                                                                <span className="kcard-match">✦ {job.matchScore}%</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            </div>
+                        );
+                    })}
                 </DragDropContext>
             </div>
-        </div>
+
+            {/* MANUAL ADD MODAL */}
+            {isManualModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal animate-in zoom-in-95 duration-200">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <div className="modal-head">
+                            <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 5v14M5 12h14"/></svg>Manuel İlan Ekle</h3>
+                            <button type="button" className="modal-close" onClick={() => setIsManualModalOpen(false)}>
+                                <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" style={{ width: '16px', height: '16px' }}><path d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <p className="sub">Başvurmak istediğin veya takip ettiğin iş ilanının detaylarını gir.</p>
+                        <form onSubmit={handleManualSubmit}>
+                            <div className="field-row">
+                                <div className="field">
+                                    <label>Şirket Adı *</label>
+                                    <input type="text" placeholder="Örn: Google" value={manualForm.company} onChange={(e) => setManualForm({ ...manualForm, company: e.target.value })} required />
+                                </div>
+                                <div className="field">
+                                    <label>Pozisyon / Rol *</label>
+                                    <input type="text" placeholder="Örn: Frontend Developer" value={manualForm.position} onChange={(e) => setManualForm({ ...manualForm, position: e.target.value })} required />
+                                </div>
+                            </div>
+                            <div className="field-row">
+                                <div className="field">
+                                    <label>Lokasyon</label>
+                                    <input type="text" placeholder="Örn: İstanbul / Uzaktan" value={manualForm.location} onChange={(e) => setManualForm({ ...manualForm, location: e.target.value })} />
+                                </div>
+                                <div className="field">
+                                    <label>Uygulama Tarihi</label>
+                                    <input type="date" value={manualForm.appliedDate} onChange={(e) => setManualForm({ ...manualForm, appliedDate: e.target.value })} />
+                                </div>
+                            </div>
+                            <div className="field">
+                                <label>Notlar</label>
+                                <textarea rows={3} placeholder="İlan detayları, mülakat notları veya önemli detaylar..." value={manualForm.notes} onChange={(e) => setManualForm({ ...manualForm, notes: e.target.value })}></textarea>
+                            </div>
+                            <div className="modal-actions">
+                                <button type="button" className="btn-outline" onClick={() => setIsManualModalOpen(false)}>İptal</button>
+                                <button type="submit" className="btn-stamp" disabled={isSubmitting}>
+                                    {isSubmitting ? <><Loader2 className="w-[14px] h-[14px] animate-spin" /> KAYDEDİLİYOR...</> : "+ İlanı Kaydet"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* AI ADD MODAL */}
+            {isAiModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal ai animate-in zoom-in-95 duration-200">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <div className="modal-head">
+                            <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>AI ile İlan Ekle</h3>
+                            <button type="button" className="modal-close" onClick={() => setIsAiModalOpen(false)}>
+                                <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" style={{ width: '16px', height: '16px' }}><path d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <p className="sub">İş ilanının URL bağlantısını veya ilan detay metnini yapıştır. Yapay zeka şirket, pozisyon ve konum bilgilerini otomatik çıkarıp panonuza ekleyecek.</p>
+                        <form onSubmit={handleAiSubmit}>
+                            <div className="field">
+                                <label>İlan URL veya Detay Metni</label>
+                                <textarea rows={4} placeholder="Örn: linkedin.com/jobs/view/... veya ilan açıklaması..." value={aiForm.urlOrText} onChange={(e) => setAiForm({ ...aiForm, urlOrText: e.target.value })} required></textarea>
+                            </div>
+                            <div className="modal-actions">
+                                <button type="button" className="btn-outline" onClick={() => setIsAiModalOpen(false)}>İptal</button>
+                                <button type="submit" className="btn-ai-solid" disabled={isSubmitting}>
+                                    {isSubmitting ? <><Loader2 className="w-[14px] h-[14px] animate-spin" /> ANALİZ EDİLİYOR...</> : "✦ AI ile Analiz Et & Ekle"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

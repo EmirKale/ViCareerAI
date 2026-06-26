@@ -1,0 +1,92 @@
+.topnav {
+    --bg: #0A1628;
+    --cyan: #6FD6E8;
+    --cyan-dim: rgba(111,214,232,0.55);
+    --paper-border: rgba(111,214,232,0.16);
+    --text-dim: rgba(234,243,247,0.62);
+    --radius: 2px;
+    --font-jetbrains-mono: 'JetBrains Mono', monospace;
+    --font-space-grotesk: 'Space Grotesk', sans-serif;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px clamp(20px, 5vw, 64px);
+    transition: background .3s ease, border-color .3s ease, padding .3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.topnav.scrolled {
+    background: rgba(10, 22, 40, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--paper-border);
+    padding: 14px clamp(20px, 5vw, 64px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-space-grotesk), sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: #EAF3F7;
+    text-decoration: none;
+}
+
+.logoMark {
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid var(--cyan);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    flex-shrink: 0;
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.navLinks a {
+    font-size: 14px;
+    color: var(--text-dim);
+    transition: color .2s;
+    text-decoration: none;
+}
+
+.navLinks a:hover {
+    color: var(--cyan);
+}
+
+.navCta {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--bg);
+    background: var(--cyan);
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    transition: transform .2s, box-shadow .2s;
+    text-decoration: none;
+}
+
+.navCta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(111, 214, 232, .25);
+}
+
+@media(max-width: 760px) {
+    .navLinks { display: none; }
+}

@@ -96,215 +96,225 @@ export default function JobDiscoverPage() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto p-4 md:p-8">
-            {/* Live Job Search Section */}
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
-                <p className="text-muted-foreground mt-1">
-                    {t("desc")}
-                </p>
+        <>
+            <style dangerouslySetInnerHTML={{__html: `
+                .search-bar{display:flex;gap:10px;margin-bottom:48px;flex-wrap:wrap;}
+                .search-bar input{
+                    flex:1;min-width:240px;height:50px;padding:0 16px;background:rgba(255,255,255,0.02);
+                    border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;
+                }
+                .search-bar select{
+                    height:50px;padding:0 34px 0 14px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
+                    border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-family:'JetBrains Mono',monospace;font-size:12.5px;
+                    appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236FD6E8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+                    background-repeat:no-repeat;background-position:right 13px top 50%;background-size:10px auto;
+                }
+                .search-bar select option{background:var(--dashboard-bg-2);color:var(--dashboard-text);}
+                .search-bar input:focus, .search-bar select:focus{outline:none;border-color:var(--dashboard-cyan);}
+                .search-bar button{height:50px;padding:0 24px;background:var(--dashboard-cyan);color:var(--dashboard-bg);border:none;border-radius:var(--dashboard-radius);font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;}
+                .search-bar button:disabled{opacity:0.7;}
+
+                .divider-label{display:flex;align-items:center;gap:16px;margin:48px 0 20px;}
+                .divider-label .dline{flex:1;height:1px;background:var(--dashboard-paper-border);}
+                .divider-label h2{font-size:18px;white-space:nowrap;margin:0;}
+
+                .analyze-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+                .field{margin-bottom:18px;}
+                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-mono-label);margin-bottom:9px;}
+                .field input, .field textarea{width:100%;padding:0 13px;height:46px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;}
+                .field textarea{height:auto;padding:11px 13px;resize:vertical;}
+                .field input:focus, .field textarea:focus{outline:none;border-color:var(--dashboard-cyan);}
+                .field input::placeholder, .field textarea::placeholder{color:rgba(234,243,247,0.25);}
+                .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+                .result-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:320px;color:var(--dashboard-text-dim);gap:14px;}
+                .result-empty svg{width:38px;height:38px;color:var(--dashboard-cyan-dim);}
+                
+                .job-item{position:relative;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:22px;margin-bottom:16px;}
+                .job-item svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+                .job-item svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
+                .job-title{font-size:16px;font-weight:600;color:var(--dashboard-text);margin-bottom:4px;}
+                .job-meta{display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dashboard-mono-label);margin-bottom:12px;flex-wrap:wrap;}
+                .job-meta span{display:flex;align-items:center;gap:4px;}
+                .job-desc{font-size:13px;color:var(--dashboard-text-dim);margin-bottom:16px;line-height:1.5;}
+                .job-skills{display:flex;gap:6px;flex-wrap:wrap;}
+                .job-skill{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 8px;border-radius:var(--dashboard-radius);background:rgba(111,214,232,0.1);color:var(--dashboard-cyan);}
+                .job-score{display:flex;flex-direction:column;align-items:center;background:rgba(111,232,168,0.1);border:1px solid rgba(111,232,168,0.2);padding:10px 14px;border-radius:var(--dashboard-radius);margin-left:auto;}
+                .job-score-val{font-size:18px;font-weight:700;color:var(--dashboard-green);line-height:1;}
+                .job-score-lbl{font-size:9px;color:var(--dashboard-green);opacity:0.8;margin-top:4px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+                .job-top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+                
+                @media(max-width:900px){.analyze-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}}
+            `}} />
+
+            <div className="page-head">
+                <div className="peyebrow">İŞ İLANLARI</div>
+                <h1>İlanları Keşfet</h1>
+                <p>Pozisyon veya beceri adı girerek sana uygun ilanları bul.</p>
             </div>
 
-            <Card className="shadow-sm">
-                <CardContent className="p-5">
-                    <div className="flex flex-col md:flex-row gap-3">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder={t("searchPlaceholder")}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
-                                className="pl-10 h-11"
-                            />
-                        </div>
-                        <div className="relative w-full md:w-48">
-                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <select
-                                value={searchLocation}
-                                onChange={(e) => setSearchLocation(e.target.value)}
-                                className="w-full h-11 pl-10 pr-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                                <option value="Turkey">{t("locationTurkey")}</option>
-                                <option value="Remote">{t("locationRemote")}</option>
-                                <option value="United States">{t("locationUS")}</option>
-                                <option value="United Kingdom">{t("locationUK")}</option>
-                                <option value="Germany">{t("locationGermany")}</option>
-                                <option value="Netherlands">{t("locationNetherlands")}</option>
-                            </select>
-                        </div>
-                        <Button onClick={handleJobSearch} disabled={isSearching} className="gradient-brand text-white h-11 px-6">
-                            {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : t("searchButton")}
-                        </Button>
-                    </div>
-                    {apiSource && (
-                        <div className="mt-3 text-xs text-muted-foreground flex items-center gap-2">
-                            {apiSource === "jsearch" ? (
-                                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20">
-                                    {t("apiSourceReal")}
-                                </Badge>
-                            ) : (
-                                <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-900/20">
-                                    {t("apiSourceDemo")}
-                                </Badge>
-                            )}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+            <div className="search-bar">
+                <input 
+                    type="text" 
+                    placeholder="Örn: React Developer, Next.js, Frontend..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
+                />
+                <select value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)}>
+                    <option value="Turkey">📍 Türkiye</option>
+                    <option value="Remote">🌐 Uzaktan</option>
+                    <option value="United States">🇺🇸 ABD</option>
+                    <option value="United Kingdom">🇬🇧 Birleşik Krallık</option>
+                    <option value="Germany">🇩🇪 Almanya</option>
+                    <option value="Netherlands">🇳🇱 Hollanda</option>
+                </select>
+                <button onClick={handleJobSearch} disabled={isSearching}>
+                    {isSearching ? "Aranıyor..." : "Ara"}
+                </button>
+            </div>
 
-            {/* Job Results */}
             {hasSearched && (
-                <div className="space-y-4 animate-in fade-in duration-300">
+                <div style={{ marginBottom: '48px' }}>
                     {isSearching ? (
-                        <div className="py-10 text-center text-muted-foreground">
-                            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3 text-blue-500" />
-                            <p>{t("searching")}</p>
+                        <div className="result-empty" style={{ minHeight: '160px' }}>
+                            <Loader2 className="w-[38px] h-[38px] animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
+                            <div style={{ color: 'var(--dashboard-text)' }}>İlanlar aranıyor...</div>
                         </div>
                     ) : jobs.length === 0 ? (
-                        <Card className="py-10 text-center border-dashed bg-zinc-50/50 dark:bg-zinc-900/50">
-                            <Target className="h-12 w-12 mx-auto text-muted-foreground opacity-30 mb-3" />
-                            <p className="text-muted-foreground">{t("noResults")}</p>
-                        </Card>
+                        <div className="result-empty" style={{ minHeight: '160px', border: '1px dashed var(--dashboard-paper-border)', borderRadius: 'var(--dashboard-radius)' }}>
+                            <Search className="w-[38px] h-[38px]" style={{ color: 'var(--dashboard-text-dim)', opacity: 0.5 }} />
+                            <div style={{ color: 'var(--dashboard-text)' }}>Sonuç bulunamadı</div>
+                        </div>
                     ) : (
-                        <>
-                            <p className="text-sm text-muted-foreground font-medium">{t("resultsFound", { count: jobs.length })}</p>
-                            <div className="grid grid-cols-1 gap-4">
+                        <div>
+                            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)', marginBottom: '16px' }}>
+                                {jobs.length} İLAN BULUNDU {apiSource === "jsearch" ? "(GERÇEK VERİ)" : "(DEMO VERİ)"}
+                            </div>
+                            <div>
                                 {jobs.map(job => (
-                                    <Card key={job.id} className="shadow-sm hover:shadow-md transition-shadow group border-zinc-200 dark:border-zinc-800">
-                                        <CardContent className="p-5">
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                        <h3 className="font-semibold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
-                                                            {job.title}
-                                                        </h3>
-                                                        <Badge variant="outline" className="text-[10px] shrink-0 border-zinc-200 dark:border-zinc-700">{job.type}</Badge>
-                                                    </div>
-                                                    <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground flex-wrap">
-                                                        <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{job.company}</span>
-                                                        <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{job.location}</span>
-                                                        <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{job.postedAt}</span>
-                                                    </div>
-                                                    <p className="text-xs text-muted-foreground mt-2.5 line-clamp-2">{job.description}</p>
-                                                    <div className="flex flex-wrap gap-1.5 mt-3">
-                                                        {job.skills.map(skill => (
-                                                            <span key={skill} className="inline-flex items-center gap-1 text-[11px] font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-md">
-                                                                <Tag className="h-2.5 w-2.5" />{skill}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                                <div className="shrink-0 text-right flex flex-col items-end gap-3">
-                                                    <div className="flex flex-col items-center bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/50 rounded-xl px-3 py-2">
-                                                        <Sparkles className="h-3.5 w-3.5 text-green-600 dark:text-green-500 mb-0.5" />
-                                                        <span className="text-lg font-black text-green-700 dark:text-green-400 leading-none">{job.matchScore}%</span>
-                                                        <span className="text-[9px] text-green-600/70 dark:text-green-500/70 font-medium mt-0.5">{t("matchScore")}</span>
-                                                    </div>
-                                                    <Button 
-                                                        size="sm" 
-                                                        variant="outline" 
-                                                        className="h-8 text-xs group-hover:border-blue-400 group-hover:text-blue-600 dark:group-hover:border-blue-700 dark:group-hover:text-blue-400 transition-all"
-                                                        onClick={() => job.applyLink && job.applyLink !== "#" && window.open(job.applyLink, "_blank")}
-                                                        disabled={!job.applyLink || job.applyLink === "#"}
-                                                    >
-                                                        {job.applyLink && job.applyLink !== "#" ? t("applyButton") : t("analyzeButton")} <ArrowRight className="ml-1.5 h-3 w-3" />
-                                                    </Button>
+                                    <div key={job.id} className="job-item">
+                                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                        <div className="job-top-row">
+                                            <div>
+                                                <div className="job-title">{job.title} <span style={{ fontSize: '10px', color: 'var(--dashboard-text-dim)', border: '1px solid var(--dashboard-paper-border)', padding: '2px 6px', borderRadius: 'var(--dashboard-radius)', marginLeft: '8px', verticalAlign: 'middle', fontWeight: 'normal' }}>{job.type}</span></div>
+                                                <div className="job-meta">
+                                                    <span><Building2 className="w-[12px] h-[12px]" /> {job.company}</span>
+                                                    <span><MapPin className="w-[12px] h-[12px]" /> {job.location}</span>
+                                                    <span><Clock className="w-[12px] h-[12px]" /> {job.postedAt}</span>
                                                 </div>
                                             </div>
-                                        </CardContent>
-                                    </Card>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                                                <div className="job-score">
+                                                    <span className="job-score-val">{job.matchScore}%</span>
+                                                    <span className="job-score-lbl">EŞLEŞME</span>
+                                                </div>
+                                                <button 
+                                                    className="btn-outline" 
+                                                    style={{ padding: '6px 12px', fontSize: '11px' }}
+                                                    onClick={() => job.applyLink && job.applyLink !== "#" && window.open(job.applyLink, "_blank")}
+                                                    disabled={!job.applyLink || job.applyLink === "#"}
+                                                >
+                                                    {job.applyLink && job.applyLink !== "#" ? "BAŞVUR" : "ANALİZ ET"}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="job-desc">{job.description}</div>
+                                        <div className="job-skills">
+                                            {job.skills.map(skill => (
+                                                <span key={skill} className="job-skill">{skill}</span>
+                                            ))}
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
-                        </>
+                        </div>
                     )}
                 </div>
             )}
 
-            {/* Manual Analysis Section */}
-            <div className="border-t pt-8">
-                <h2 className="text-xl font-bold mb-1">{t("manualAnalysisTitle")}</h2>
-                <p className="text-muted-foreground text-sm mb-6">{t("manualAnalysisDesc")}</p>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <Card className="shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-lg">{t("jobInfoTitle")}</CardTitle>
-                            <CardDescription>{t("jobInfoDesc")}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>{t("companyLabel")}</Label>
-                                    <Input placeholder={t("companyPlaceholder")} value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>{t("positionLabel")}</Label>
-                                    <Input placeholder={t("positionPlaceholder")} value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>{t("descriptionLabel")}</Label>
-                                <Textarea rows={8} className="resize-none" placeholder={t("descriptionPlaceholder")} value={form.jobDescription} onChange={(e) => setForm({ ...form, jobDescription: e.target.value })} />
-                            </div>
-                            <Button className="w-full gradient-brand text-white mt-2" onClick={handleAnalyze} disabled={isLoading || !form.jobDescription}>
-                                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("analyzing")}</> : <><Sparkles className="mr-2 h-4 w-4" />{t("analyzeButtonAI")}</>}
-                            </Button>
-                        </CardContent>
-                    </Card>
+            <div className="divider-label"><div className="dline"></div><h2>İlan Metni ile Analiz</h2><div className="dline"></div></div>
 
-                    <div className="flex flex-col h-full">
-                        {!result && !isLoading ? (
-                            <Card className="flex-1 flex flex-col items-center justify-center border-dashed bg-zinc-50/50 dark:bg-zinc-900/50 shadow-none p-10">
-                                <Target className="h-12 w-12 text-muted-foreground opacity-30 mb-4" />
-                                <h3 className="text-lg font-medium text-muted-foreground">{t("resultWaiting")}</h3>
-                                <p className="text-sm text-center text-muted-foreground/70 mt-2 max-w-sm">{t("resultWaitingDesc")}</p>
-                            </Card>
-                        ) : isLoading ? (
-                            <Card className="flex-1 flex flex-col items-center justify-center bg-zinc-50/50 dark:bg-zinc-900/50 shadow-none p-10">
-                                <div className="h-16 w-16 rounded-full gradient-brand flex items-center justify-center animate-pulse">
-                                    <Sparkles className="h-7 w-7 text-white" />
-                                </div>
-                                <h3 className="text-lg font-medium mt-6">{t("aiWorking")}</h3>
-                            </Card>
-                        ) : (
-                            <div className="space-y-4 animate-in fade-in zoom-in-95 duration-400">
-                                <Card className="bg-linear-to-br from-blue-50 to-indigo-50 border-blue-100 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-900/50">
-                                    <CardContent className="p-6">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">{t("matchScoreTitle")}</p>
-                                                <h2 className="text-4xl font-black tracking-tight text-blue-900 dark:text-blue-100 mt-1">{result?.matchScore}<span className="text-2xl text-blue-700/50">%</span></h2>
-                                            </div>
-                                            <div className="h-20 w-20 flex items-center justify-center">
-                                                <svg className="h-full w-full -rotate-90" viewBox="0 0 36 36">
-                                                    <path className="text-blue-200 dark:text-blue-900/50" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                                    <path className="text-blue-600 dark:text-blue-400" strokeDasharray={`${result?.matchScore}, 100`} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardContent className="p-6 space-y-6">
-                                        <div>
-                                            <h4 className="text-sm font-semibold flex items-center text-green-700 dark:text-green-400 mb-3"><CheckCircle2 className="mr-2 h-4 w-4" />{t("matchedSkills")}</h4>
-                                            <div className="flex flex-wrap gap-2">{result?.matchedSkills.map((skill, i) => (<Badge key={i} className="bg-green-100 text-green-700 border-0 dark:bg-green-900/30 dark:text-green-400">{skill}</Badge>))}</div>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-sm font-semibold flex items-center text-red-700 dark:text-red-400 mb-3"><AlertTriangle className="mr-2 h-4 w-4" />{t("missingSkills")}</h4>
-                                            <div className="flex flex-wrap gap-2">{result?.missingSkills.map((skill, i) => (<Badge key={i} className="bg-red-100 text-red-700 border-0 dark:bg-red-900/30 dark:text-red-400">{skill}</Badge>))}</div>
-                                        </div>
-                                        <div className="pt-4 border-t">
-                                            <h4 className="text-sm font-semibold mb-3">{t("aiRecommendations")}</h4>
-                                            <ul className="space-y-2">{result?.recommendations.map((rec, i) => (<li key={i} className="flex gap-3 text-sm text-muted-foreground bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border"><BookOpen className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />{rec}</li>))}</ul>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        )}
+            <div className="analyze-grid">
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3 style={{ marginBottom: '8px' }}>İlan Bilgileri</h3>
+                    <p style={{ fontSize: '13px', color: 'var(--dashboard-text-dim)', marginBottom: '22px' }}>Analiz edilecek iş ilanının detaylarını gir.</p>
+                    <div className="field-row">
+                        <div className="field">
+                            <label>Şirket Adı</label>
+                            <input type="text" placeholder="Örn: Google" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                        </div>
+                        <div className="field">
+                            <label>Pozisyon</label>
+                            <input type="text" placeholder="Örn: Frontend Developer" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} />
+                        </div>
                     </div>
+                    <div className="field">
+                        <label>İlan Açıklaması</label>
+                        <textarea rows={4} placeholder="İlanın gereksinimlerini buraya yapıştırın..." value={form.jobDescription} onChange={(e) => setForm({ ...form, jobDescription: e.target.value })} />
+                    </div>
+                    <button className="btn-stamp" style={{ width: '100%', justifyContent: 'center' }} onClick={handleAnalyze} disabled={isLoading || !form.jobDescription}>
+                        {isLoading ? (
+                            <><Loader2 className="w-[14px] h-[14px] mr-2 animate-spin" /> ANALİZ EDİLİYOR...</>
+                        ) : (
+                            <>✦ AI İLE ANALİZ ET</>
+                        )}
+                    </button>
+                </div>
+
+                <div className="bp-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    {!result && !isLoading ? (
+                        <div className="result-empty" style={{ flex: 1 }}>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" fill="none"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+                            <div style={{ color: 'var(--dashboard-text)', fontSize: '15px', fontWeight: 500 }}>Analiz Sonucu Bekleniyor</div>
+                            <div style={{ fontSize: '13px', maxWidth: '230px' }}>İlan detaylarını doldurup analizi başlattığında eşleşme oranın burada görünecek.</div>
+                        </div>
+                    ) : isLoading ? (
+                        <div className="result-empty" style={{ flex: 1 }}>
+                            <Loader2 className="w-[38px] h-[38px] animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
+                            <div style={{ color: 'var(--dashboard-text)', fontSize: '15px', fontWeight: 500 }}>Yapay Zeka Çalışıyor...</div>
+                        </div>
+                    ) : (
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            <h3 style={{ marginBottom: '20px' }}>Analiz Sonucu</h3>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', padding: '16px', background: 'rgba(111,214,232,0.05)', borderRadius: 'var(--dashboard-radius)', border: '1px solid var(--dashboard-paper-border)' }}>
+                                <div>
+                                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)' }}>EŞLEŞME ORANI</div>
+                                    <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--dashboard-cyan)' }}>{result?.matchScore}%</div>
+                                </div>
+                                <Target className="w-[42px] h-[42px]" style={{ color: 'var(--dashboard-cyan)', opacity: 0.5 }} />
+                            </div>
+                            
+                            <div style={{ marginBottom: '20px' }}>
+                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-green)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><CheckCircle2 className="w-[12px] h-[12px]"/> EŞLEŞEN BECERİLER</div>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                    {result?.matchedSkills.map((s, i) => <span key={i} style={{ fontSize: '12px', background: 'rgba(111,232,168,0.1)', color: 'var(--dashboard-green)', padding: '4px 8px', borderRadius: 'var(--dashboard-radius)' }}>{s}</span>)}
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '24px' }}>
+                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-stamp)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><AlertTriangle className="w-[12px] h-[12px]"/> EKSİK BECERİLER</div>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                    {result?.missingSkills.map((s, i) => <span key={i} style={{ fontSize: '12px', background: 'rgba(232,84,60,0.1)', color: 'var(--dashboard-stamp)', padding: '4px 8px', borderRadius: 'var(--dashboard-radius)' }}>{s}</span>)}
+                                </div>
+                            </div>
+                            
+                            <div style={{ borderTop: '1px solid var(--dashboard-paper-border)', paddingTop: '20px' }}>
+                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)', marginBottom: '12px' }}>AI ÖNERİLERİ</div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {result?.recommendations.map((r, i) => (
+                                        <div key={i} style={{ display: 'flex', gap: '10px', fontSize: '13px', color: 'var(--dashboard-text-dim)', background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: 'var(--dashboard-radius)' }}>
+                                            <Sparkles className="w-[14px] h-[14px]" style={{ color: 'var(--dashboard-purple)', flexShrink: 0, marginTop: '2px' }} />
+                                            <span>{r}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
-        </div>
+        </>
     );
 }

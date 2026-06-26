@@ -64,29 +64,29 @@ export default function CVHistoryClient({ initialCvs }: { initialCvs: CVItem[] }
     }, []);
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Bu CV'yi silmek istediğinize emin misiniz?")) return;
+        if (!confirm(t("confirmDelete") || "Bu CV'yi silmek istediğinize emin misiniz?")) return;
 
         try {
             const res = await fetch(`/api/cv/${id}`, { method: "DELETE" });
             if (res.ok) {
                 setCvs(prev => prev.filter(c => c.id !== id));
-                toast.success("CV silindi");
+                toast.success(t("deleteSuccess") || "CV silindi");
             } else {
                 throw new Error();
             }
         } catch {
-            toast.error("Silme işlemi başarısız");
+            toast.error(t("deleteError") || "Silme işlemi başarısız");
         }
     };
 
     const handleDownloadPDF = async (cv: CVItem) => {
         if (!cv.data) {
-            toast.error("CV verisi bulunamadı.");
+            toast.error(t("noDataError") || "CV verisi bulunamadı.");
             return;
         }
         setDownloadingId(cv.id);
         try {
-            toast.info("PDF hazırlanıyor...");
+            toast.info(t("preparingPdf") || "PDF hazırlanıyor...");
             const TemplateComponent = 
                 cv.template === "modern" ? ModernTemplate : 
                 cv.template === "minimal" ? MinimalTemplate : 
@@ -101,84 +101,87 @@ export default function CVHistoryClient({ initialCvs }: { initialCvs: CVItem[] }
             a.download = `${cv.title}.pdf`;
             a.click();
             URL.revokeObjectURL(url);
-            toast.success("PDF indirildi!");
+            toast.success(t("pdfDownloaded") || "PDF indirildi!");
         } catch {
-            toast.error("PDF oluşturulamadı.");
+            toast.error(t("pdfError") || "PDF oluşturulamadı.");
         } finally {
             setDownloadingId(null);
         }
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto p-4 md:p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t("cvTitle")}</h1>
-                    <p className="text-muted-foreground mt-1">{t("cvDesc")}</p>
+        <>
+            <style dangerouslySetInnerHTML={{__html: `
+                .list-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:32px;}
+                .item-card{position:relative;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:22px;max-width:420px;width:100%;}
+                .item-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+                .item-card svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
+                .item-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+                .item-icon{width:38px;height:38px;border-radius:var(--dashboard-radius);background:rgba(111,214,232,.08);display:flex;align-items:center;justify-content:center;color:var(--dashboard-cyan);flex-shrink:0;}
+                .item-actions{display:flex;gap:6px;}
+                .item-actions button{width:30px;height:30px;border-radius:var(--dashboard-radius);border:1px solid var(--dashboard-paper-border);background:transparent;color:var(--dashboard-text-dim);display:flex;align-items:center;justify-content:center;}
+                .item-actions button:hover{border-color:var(--dashboard-cyan-dim);color:var(--dashboard-cyan);}
+                .item-actions button.danger:hover{border-color:var(--dashboard-stamp);color:var(--dashboard-stamp);}
+                .item-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;color:var(--dashboard-cyan);border:1px solid var(--dashboard-cyan-dim);padding:2px 7px;border-radius:var(--dashboard-radius);margin-left:10px;display:inline-block;vertical-align:middle;}
+                .item-title{font-size:15.5px;font-weight:500;margin-bottom:8px;}
+                .item-date{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dashboard-mono-label);}
+                .item-edit-btn{
+                    width:100%;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;
+                    font-family:'JetBrains Mono',monospace;font-size:12px;border:1px solid var(--dashboard-paper-border);
+                    padding:11px;border-radius:var(--dashboard-radius);color:var(--dashboard-text);
+                }
+                .item-edit-btn:hover{border-color:var(--dashboard-cyan-dim);}
+                .empty-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-mono-label);margin-top:40px;text-align:center;}
+            `}} />
+
+            <div className="list-head">
+                <div className="page-head" style={{ marginBottom: 0 }}>
+                    <div className="peyebrow">{t("cvTitle").toUpperCase()}</div>
+                    <h1>{t("cvTitle")}</h1>
+                    <p>{t("cvDesc")}</p>
                 </div>
-                <Link href="/cv/new">
-                    <Button className="gradient-brand text-white shadow-md shadow-blue-500/20">
-                        <Plus className="mr-2 h-4 w-4" /> {nav("register")}
-                    </Button>
-                </Link>
+                <Link className="btn-stamp" href="/cv/new">+ {t("newCv") || "YENİ CV OLUŞTUR"}</Link>
             </div>
 
             {cvs.length === 0 ? (
-                <Card className="py-16 border-dashed bg-zinc-50/50 dark:bg-zinc-900/50 shadow-none text-center">
-                    <FileText className="mx-auto h-12 w-12 text-muted-foreground opacity-30 mb-4" />
-                    <h3 className="text-lg font-medium text-muted-foreground">{t("empty")}</h3>
-                    <Link href="/cv/new" className="mt-6 inline-block">
-                        <Button className="gradient-brand text-white"><Plus className="mr-2 h-4 w-4" />Yeni CV</Button>
-                    </Link>
-                </Card>
+                <div className="empty-hint">{t("empty")}</div>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-2">
-                    {cvs.map((cv) => (
-                        <Card key={cv.id} className="group hover:shadow-md transition-all hover:border-blue-200 dark:hover:border-blue-800">
-                            <CardContent className="p-5">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                                            <h3 className="font-semibold text-[15px] truncate">{cv.title}</h3>
-                                            <Badge variant="secondary" className={`text-[10px] shrink-0 ${templateBadgeClass[cv.template] || ""}`}>
-                                                {templateLabel[cv.template] || cv.template}
-                                            </Badge>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                                            <Clock className="h-3 w-3" />
-                                            {mounted ? relativeTime(cv.updated_at) : ""}
-                                        </p>
+                <>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                        {cvs.map((cv) => (
+                            <div className="item-card" key={cv.id}>
+                                <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                <div className="item-top">
+                                    <div className="item-icon">
+                                        <svg className="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
                                     </div>
-                                    <div className="flex gap-2 shrink-0">
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
-                                            onClick={() => handleDelete(cv.id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-muted-foreground hover:text-blue-600 dark:hover:text-blue-400"
-                                            disabled={downloadingId === cv.id}
-                                            onClick={() => handleDownloadPDF(cv)}
-                                        >
-                                            {downloadingId === cv.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                                        </Button>
-                                        <Link href={`/cv/${cv.id}/edit`}>
-                                            <Button size="icon" variant="outline" className="h-8 w-8 group-hover:border-blue-300">
-                                                <Pencil className="h-3.5 w-3.5" />
-                                            </Button>
-                                        </Link>
+                                    <div className="item-actions">
+                                        <button title={t("actions.download")} onClick={() => handleDownloadPDF(cv)} disabled={downloadingId === cv.id}>
+                                            {downloadingId === cv.id ? <Loader2 className="w-[15px] h-[15px] animate-spin" /> : <svg className="icon" viewBox="0 0 24 24" style={{ width: '15px', height: '15px' }}><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>}
+                                        </button>
+                                        <button className="danger" title={t("actions.delete")} onClick={() => handleDelete(cv.id)}>
+                                            <svg className="icon" viewBox="0 0 24 24" style={{ width: '15px', height: '15px' }}><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m2 0l-1 14a2 2 0 01-2 2H9a2 2 0 01-2-2L6 6"/></svg>
+                                        </button>
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                                <div className="item-title">
+                                    {cv.title} <span className="item-tag">{(templateLabel[cv.template] || cv.template).toUpperCase()}</span>
+                                </div>
+                                <div className="item-date">
+                                    <svg className="icon" viewBox="0 0 24 24" style={{ width: '13px', height: '13px' }}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                                    {mounted ? relativeTime(cv.updated_at) : ""}
+                                </div>
+                                <Link className="item-edit-btn" href={`/cv/${cv.id}/edit`}>
+                                    <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg>
+                                    {t("actions.edit")}
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <div className="empty-hint" style={{ marginTop: '30px' }}>+ {t("moreHint") || "DAHA FAZLA CV OLUŞTURARAK BAŞVURU ŞANSINI ARTIR"}</div>
+                </>
             )}
-        </div>
+        </>
     );
 }

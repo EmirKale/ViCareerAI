@@ -193,230 +193,190 @@ export default function NewCoverLetterPage() {
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
-            <div className="flex items-start justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Motivasyon Mektubu</h1>
-                    <p className="text-muted-foreground mt-1">
-                        GPT-4o yapay zekası ile dakikalar içinde kişiselleştirilmiş ve ATS uyumlu mektup oluşturun.
-                    </p>
+        <>
+            <style dangerouslySetInnerHTML={{__html: `
+                .list-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:32px;}
+                .letter-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+                .quota-pill{
+                    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--dashboard-mono-label);
+                    border:1px dashed var(--dashboard-cyan-dim);border-radius:var(--dashboard-radius);padding:9px 14px;display:inline-flex;
+                    align-items:center;gap:10px;
+                }
+                .quota-pill .val{color:var(--dashboard-cyan);font-size:15px;font-weight:600;}
+                .field{margin-bottom:20px;}
+                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-mono-label);margin-bottom:9px;}
+                .field input, .field textarea, .field select{
+                    width:100%;height:46px;padding:0 13px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
+                    border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;
+                }
+                .field select{
+                    appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236FD6E8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+                    background-repeat:no-repeat;background-position:right 13px top 50%;background-size:10px auto;
+                }
+                .field select option{background:var(--dashboard-bg-2);color:var(--dashboard-text);}
+                .field textarea{height:auto;padding:11px 13px;resize:vertical;line-height:1.5;}
+                .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--dashboard-cyan);background:rgba(111,214,232,0.04);}
+                .field input::placeholder, .field textarea::placeholder{color:rgba(234,243,247,0.25);}
+                .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+                .output-empty{
+                    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+                    min-height:340px;color:var(--dashboard-text-dim);gap:14px;
+                }
+                .output-empty svg{width:38px;height:38px;color:var(--dashboard-cyan-dim);}
+                .output-empty .o-title{color:var(--dashboard-text);font-size:15px;font-weight:500;}
+                .output-empty .o-sub{font-size:13px;max-width:240px;}
+                .output-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+                .output-actions button{flex:1;justify-content:center;}
+                .generated-textarea{
+                    width:100%;height:340px;padding:16px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
+                    border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;resize:vertical;line-height:1.6;
+                }
+                .generated-textarea:focus{outline:none;border-color:var(--dashboard-cyan);background:rgba(111,214,232,0.04);}
+                @media(max-width:900px){.letter-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}}
+            `}} />
+
+            <div className="list-head">
+                <div className="page-head" style={{ marginBottom: 0 }}>
+                    <div className="peyebrow">MOTİVASYON MEKTUBU</div>
+                    <h1>GPT-4o ile dakikalar içinde mektup yaz</h1>
+                    <p>Kişiselleştirilmiş ve ATS uyumlu mektubunu oluştur.</p>
                 </div>
-                {!isLoadingQuota && quota && quota.plan === "free" && (
-                    <Card className="shadow-sm border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/20">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex-1">
-                                    <p className="text-xs font-medium text-blue-900 dark:text-blue-100">
-                                        Cover Letter Kotası
-                                    </p>
-                                    <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
-                                        {quota.cover_letter_count}/3
-                                    </p>
-                                </div>
-                                {quota.cover_letter_count >= 3 && (
-                                    <Button 
-                                        size="sm" 
-                                        className="gradient-brand text-white text-xs h-8"
-                                        onClick={() => window.location.href = "/tr/pricing"}
-                                    >
-                                        Pro&apos;ya Geç
-                                    </Button>
-                                )}
-                            </div>
-                            {quota.cover_letter_count >= 3 && (
-                                <p className="text-xs text-amber-700 dark:text-amber-400 mt-2">
-                                    ⚠ Limitinize ulaştınız. Pro plan ile sınırsız mektup oluşturun.
-                                </p>
-                            )}
-                        </CardContent>
-                    </Card>
+                {!isLoadingQuota && quota && (
+                    <div className="quota-pill">
+                        MEKTUP KOTASI <span className="val">{quota.cover_letter_count}/3</span>
+                        {quota.cover_letter_count >= 3 && quota.plan === "free" && (
+                            <button className="btn-stamp" style={{ padding: '4px 8px', fontSize: '10px' }} onClick={() => window.location.href = "/tr/pricing"}>
+                                PRO'YA GEÇ
+                            </button>
+                        )}
+                    </div>
                 )}
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="letter-grid">
                 {/* Left: Form */}
-                <Card className="shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Mektup Bilgileri</CardTitle>
-                        <CardDescription>Başvurmak istediğiniz pozisyon bilgilerini girin.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="position">Hedef Pozisyon *</Label>
-                            <Input
-                                id="position"
-                                placeholder="Örn: Senior Frontend Developer"
-                                value={form.position}
-                                onChange={(e) => handleChange("position", e.target.value)}
-                            />
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3 style={{ marginBottom: '22px' }}>Mektup Bilgileri</h3>
+                    
+                    <div className="field">
+                        <label>Hedef Pozisyon *</label>
+                        <input 
+                            type="text" 
+                            placeholder="Örn: Senior Frontend Developer" 
+                            value={form.position}
+                            onChange={(e) => handleChange("position", e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="field">
+                        <label>Şirket Adı *</label>
+                        <input 
+                            type="text" 
+                            placeholder="Örn: Google Türkiye" 
+                            value={form.company}
+                            onChange={(e) => handleChange("company", e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="field">
+                        <label>Sektör (isteğe bağlı)</label>
+                        <input 
+                            type="text" 
+                            placeholder="Örn: Teknoloji, Finans, E-ticaret" 
+                            value={form.industry}
+                            onChange={(e) => handleChange("industry", e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="field-row">
+                        <div className="field">
+                            <label>Dil</label>
+                            <select value={form.language} onChange={(e) => handleChange("language", e.target.value)}>
+                                <option value="tr">TR Türkçe</option>
+                                <option value="en">EN English</option>
+                            </select>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="company">Şirket Adı *</Label>
-                            <Input
-                                id="company"
-                                placeholder="Örn: Google Türkiye"
-                                value={form.company}
-                                onChange={(e) => handleChange("company", e.target.value)}
-                            />
+                        <div className="field">
+                            <label>Ton / Üslup</label>
+                            <select value={form.tone} onChange={(e) => handleChange("tone", e.target.value)}>
+                                <option value="professional">Profesyonel</option>
+                                <option value="friendly">Samimi</option>
+                                <option value="confident">Özgüvenli</option>
+                                <option value="creative">Yaratıcı</option>
+                            </select>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="industry">Sektör (isteğe bağlı)</Label>
-                            <Input
-                                id="industry"
-                                placeholder="Örn: Teknoloji, Finans, E-ticaret"
-                                value={form.industry}
-                                onChange={(e) => handleChange("industry", e.target.value)}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Dil</Label>
-                                <Select value={form.language} onValueChange={(v) => handleChange("language", v)}>
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="tr">🇹🇷 Türkçe</SelectItem>
-                                        <SelectItem value="en">🇬🇧 English</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Ton / Üslup</Label>
-                                <Select value={form.tone} onValueChange={(v) => handleChange("tone", v)}>
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="professional">Profesyonel</SelectItem>
-                                        <SelectItem value="friendly">Samimi</SelectItem>
-                                        <SelectItem value="confident">Özgüvenli</SelectItem>
-                                        <SelectItem value="creative">Yaratıcı</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="userSummary">
-                                Hakkınızda Notlar{" "}
-                                <span className="text-xs text-muted-foreground">(AI bu bilgileri kullanır)</span>
-                            </Label>
-                            <Textarea
-                                id="userSummary"
-                                rows={4}
-                                className="resize-none"
-                                placeholder="Örn: 5 yıl React deneyimi, startup çıkışlı, Agile ekiplerde çalıştım, TypeScript ve Node.js kullanıyorum..."
-                                value={form.userSummary}
-                                onChange={(e) => handleChange("userSummary", e.target.value)}
-                            />
-                        </div>
-
-                        <Button
-                            className="w-full gradient-brand text-white shadow-md shadow-blue-500/20 h-12"
-                            onClick={handleGenerate}
-                            disabled={isLoading || (quota?.plan === "free" && quota.cover_letter_count >= 3)}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Mektup Oluşturuluyor...
-                                </>
-                            ) : quota?.plan === "free" && quota.cover_letter_count >= 3 ? (
-                                <>
-                                    Limit Doldu - Pro&apos;ya Geçin
-                                </>
-                            ) : (
-                                <>
-                                    <Sparkles className="mr-2 h-4 w-4" />
-                                    Yapay Zeka ile Oluştur
-                                </>
-                            )}
-                        </Button>
-                    </CardContent>
-                </Card>
+                    </div>
+                    
+                    <div className="field">
+                        <label>Hakkında Notlar <span style={{ textTransform: 'none', color: 'var(--dashboard-text-dim)' }}>(AI bu bilgileri kullanır)</span></label>
+                        <textarea 
+                            rows={3} 
+                            placeholder="Örn: 5 yıl React deneyimi, startup çıkışlı, Agile ekiplerde çalıştım..."
+                            value={form.userSummary}
+                            onChange={(e) => handleChange("userSummary", e.target.value)}
+                        />
+                    </div>
+                    
+                    <button 
+                        className="btn-stamp" 
+                        style={{ width: '100%', justifyContent: 'center' }}
+                        onClick={handleGenerate}
+                        disabled={isLoading || (quota?.plan === "free" && quota.cover_letter_count >= 3)}
+                    >
+                        {isLoading ? (
+                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Mektup Oluşturuluyor...</>
+                        ) : quota?.plan === "free" && quota.cover_letter_count >= 3 ? (
+                            <>Limit Doldu - Pro'ya Geçin</>
+                        ) : (
+                            <>✦ YAPAY ZEKA İLE OLUŞTUR</>
+                        )}
+                    </button>
+                </div>
 
                 {/* Right: Generated Letter */}
-                <div className="flex flex-col gap-4">
-                    <Card className={`flex-1 flex flex-col shadow-sm transition-all ${generatedLetter ? "border-blue-200 dark:border-blue-900" : ""}`}>
-                        <CardHeader className="flex flex-row items-center justify-between pb-3">
-                            <div>
-                                <CardTitle className="text-lg">Oluşturulan Mektup</CardTitle>
-                                {generatedLetter && (
-                                    <CardDescription className="text-xs text-green-600 dark:text-green-400 mt-1">
-                                        ✓ GPT-4o tarafından oluşturuldu
-                                    </CardDescription>
-                                )}
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px' }}>
+                        <h3 style={{ margin: 0 }}>Oluşturulan Mektup</h3>
+                        {generatedLetter && (
+                            <div style={{ fontSize: '11px', color: 'var(--dashboard-green)', fontFamily: "'JetBrains Mono', monospace" }}>
+                                ✓ AI tarafından oluşturuldu
                             </div>
-                            {generatedLetter && (
-                                <div className="flex items-center gap-2">
-                                    <Button size="sm" variant="outline" onClick={handleCopy}>
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
-                                    <Button size="sm" variant="ghost" onClick={handleReset} className="text-muted-foreground">
-                                        <RotateCcw className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            )}
-                        </CardHeader>
-                        <CardContent className="flex-1">
-                            {!generatedLetter && !isLoading && (
-                                <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed bg-muted/20 text-center">
-                                    <Sparkles className="mb-3 h-10 w-10 text-blue-400 opacity-60" />
-                                    <p className="font-medium text-muted-foreground">Mektubunuz burada görünecek</p>
-                                    <p className="text-sm text-muted-foreground mt-1">
-                                        Bilgileri doldurup yapay zekayı çalıştırın.
-                                    </p>
-                                </div>
-                            )}
-
-                            {isLoading && (
-                                <div className="flex h-64 flex-col items-center justify-center gap-4">
-                                    <div className="relative">
-                                        <div className="h-14 w-14 rounded-full gradient-brand opacity-20 animate-ping absolute inset-0" />
-                                        <div className="h-14 w-14 rounded-full gradient-brand flex items-center justify-center">
-                                            <Sparkles className="h-6 w-6 text-white" />
-                                        </div>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="font-medium">AI mektubunuzu yazıyor...</p>
-                                        <p className="text-sm text-muted-foreground mt-1">Bu işlem 5-15 saniye sürebilir</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {generatedLetter && !isLoading && (
-                                <div className="space-y-3">
-                                    <Textarea
-                                        rows={18}
-                                        className="resize-none font-serif text-sm leading-relaxed border-0 shadow-none focus-visible:ring-0 p-0"
-                                        value={generatedLetter}
-                                        onChange={(e) => setGeneratedLetter(e.target.value)}
-                                    />
-                                    <div className="flex gap-2 pt-2 border-t">
-                                        <Button size="sm" variant="outline" onClick={handleCopy} className="flex-1">
-                                            <Copy className="mr-2 h-3.5 w-3.5" />
-                                            Kopyala
-                                        </Button>
-                                        <Button size="sm" variant="outline" onClick={handleSave} disabled={isSaving} className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-900 dark:text-blue-400 dark:hover:bg-blue-950">
-                                            {isSaving ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-2 h-3.5 w-3.5" />}
-                                            Kaydet
-                                        </Button>
-                                        <Button size="sm" className="flex-1 gradient-brand text-white border-0" onClick={handleDownloadPDF}>
-                                            <Download className="mr-2 h-3.5 w-3.5" />
-                                            PDF İndir
-                                        </Button>
-                                    </div>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                        )}
+                    </div>
+                    
+                    {!generatedLetter && !isLoading ? (
+                        <div className="output-empty">
+                            <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>
+                            <div className="o-title">Mektubun burada görünecek</div>
+                            <div className="o-sub">Bilgileri doldurup yapay zekayı çalıştır.</div>
+                        </div>
+                    ) : isLoading ? (
+                        <div className="output-empty">
+                            <Loader2 className="w-[38px] h-[38px] animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
+                            <div className="o-title">AI mektubunuzu yazıyor...</div>
+                            <div className="o-sub">Bu işlem 5-15 saniye sürebilir</div>
+                        </div>
+                    ) : (
+                        <div>
+                            <textarea 
+                                className="generated-textarea"
+                                value={generatedLetter}
+                                onChange={(e) => setGeneratedLetter(e.target.value)}
+                            />
+                            <div className="output-actions">
+                                <button className="btn-outline" onClick={handleCopy}><Copy className="w-[14px] h-[14px] mr-1"/> Kopyala</button>
+                                <button className="btn-outline" onClick={handleSave} disabled={isSaving}>
+                                    {isSaving ? <Loader2 className="w-[14px] h-[14px] mr-1 animate-spin" /> : <Save className="w-[14px] h-[14px] mr-1"/>}
+                                    Kaydet
+                                </button>
+                                <button className="btn-stamp" onClick={handleDownloadPDF}><Download className="w-[14px] h-[14px] mr-1"/> PDF İndir</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
-        </div>
+        </>
     );
 }

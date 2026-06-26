@@ -74,7 +74,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
             
-            toast.success("Analiz tamamlandı!");
+            toast.success(t("analysisSuccess") || "Analiz tamamlandı!");
             router.refresh();
             setShowUpload(false);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -87,96 +87,120 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
 
     if (showUpload || !analysisData) {
         return (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto mt-10">
-                <Card className="border-2 border-dashed border-zinc-200 dark:border-zinc-800">
-                    <CardHeader className="text-center pb-2">
-                        <CardTitle className="text-2xl">{t("title") || "Beceri Analizi"}</CardTitle>
-                        <CardDescription>
-                            Hedef pozisyonunuzu belirleyin ve yeteneklerinizi AI ile analiz edin.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col items-center p-8">
-                        {isAnalyzing ? (
-                            <div className="flex flex-col items-center gap-4 text-blue-600">
-                                <Loader2 className="w-12 h-12 animate-spin" />
-                                <p className="font-medium animate-pulse">Yapay zeka CV&apos;nizi analiz ediyor...</p>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col items-center gap-6 w-full max-w-md">
-                                <div className="w-full space-y-2 mb-2">
-                                    <Label htmlFor="role" className="font-bold">Hedef Pozisyon (Opsiyonel)</Label>
-                                    <Input 
-                                        id="role"
-                                        placeholder="Örn: Frontend Developer, Product Manager..." 
-                                        value={targetRole}
-                                        onChange={(e) => setTargetRole(e.target.value)}
-                                        className="h-12 border-zinc-300 dark:border-zinc-700 w-full text-base sm:text-sm"
-                                    />
-                                    <p className="text-[11px] text-muted-foreground">Belirtirseniz analiz tamamen bu role uygunluğunuz üzerinden yapılır.</p>
-                                </div>
+            <div className="select-wrap animate-in fade-in duration-500">
+                <style dangerouslySetInnerHTML={{__html: `
+                    .select-wrap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+                    .select-card{
+                        width:100%;max-width:540px;background:rgba(14,32,56,.6);backdrop-filter:blur(6px);
+                        border:1.5px dashed var(--dashboard-cyan-dim);border-radius:6px;padding:clamp(32px,5vw,48px) clamp(28px,5vw,44px);
+                        text-align:center;
+                    }
+                    .select-card h1{font-size:clamp(22px,3vw,27px);margin-bottom:10px;}
+                    .select-card .sub{font-size:14px;color:var(--dashboard-text-dim);max-width:400px;margin:0 auto 32px;line-height:1.55;}
 
-                                {cvs.length > 0 ? (
-                                    <div className="w-full space-y-4">
-                                        <h3 className="text-sm font-bold text-muted-foreground uppercase text-center">Mevcut CV&apos;niz ile analiz edin</h3>
-                                        {cvs.map(cv => (
-                                            <LiquidButton 
-                                                key={cv.id} 
-                                                className="w-full justify-between h-16 bg-white/60 dark:bg-zinc-900/40"
-                                                onClick={() => handleAnalyzeFromCV(cv.id)}
-                                                icon={<FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
-                                            >
-                                                <div className="flex items-center gap-2 flex-1">
-                                                    <span className="font-bold text-zinc-800 dark:text-zinc-200">{cv.title || "CV'm"}</span>
-                                                </div>
-                                                <ArrowRight className="w-5 h-5 text-zinc-400" />
-                                            </LiquidButton>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="w-full">
-                                        <LiquidButton 
-                                            className="w-full h-16 justify-center"
-                                            onClick={() => router.push("/cv/new")}
-                                            icon={<FileText className="w-5 h-5" />}
+                    .field-block{text-align:left;margin-bottom:26px;}
+                    .field-block .flabel{
+                        display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;
+                        letter-spacing:.06em;color:var(--dashboard-text);font-weight:600;margin-bottom:10px;
+                    }
+                    .field-block .flabel svg{width:14px;height:14px;color:var(--dashboard-cyan);}
+                    .field-block input{
+                        width:100%;height:48px;padding:0 14px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
+                        border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;
+                    }
+                    .field-block input:focus{outline:none;border-color:var(--dashboard-cyan);background:rgba(111,214,232,0.04);}
+                    .field-block input::placeholder{color:rgba(234,243,247,0.3);}
+                    .field-block .fhint{font-size:12px;color:var(--dashboard-mono-label);margin-top:9px;}
+
+                    .cv-pick{
+                        display:flex;align-items:center;gap:12px;width:100%;height:54px;padding:0 18px;
+                        background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);
+                        color:var(--dashboard-text);font-size:14.5px;font-weight:500;margin-bottom:10px;text-align:left;
+                    }
+                    .cv-pick:hover{border-color:var(--dashboard-cyan-dim);background:rgba(111,214,232,.04);cursor:pointer;}
+                    .cv-pick svg.cv-doc{width:17px;height:17px;color:var(--dashboard-cyan);flex-shrink:0;}
+                    .cv-pick .cv-name{flex:1;}
+                    .cv-pick svg.cv-go{width:15px;height:15px;color:var(--dashboard-mono-label);flex-shrink:0;}
+
+                    .divider{display:flex;align-items:center;gap:14px;margin:26px 0;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--dashboard-mono-label);}
+                    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--dashboard-paper-border);}
+
+                    .upload-btn{
+                        width:100%;height:50px;display:flex;align-items:center;justify-content:center;gap:10px;
+                        border:1px solid var(--dashboard-cyan-dim);border-radius:var(--dashboard-radius);background:rgba(111,214,232,.06);
+                        color:var(--dashboard-cyan);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.02em;
+                    }
+                    .upload-btn:hover{background:rgba(111,214,232,.12);cursor:pointer;}
+                    .upload-btn svg{width:16px;height:16px;}
+                    .upload-hint{font-size:11.5px;color:var(--dashboard-mono-label);margin-top:10px;font-family:'JetBrains Mono',monospace;}
+
+                    .cancel-link{display:block;margin-top:30px;font-size:13px;color:var(--dashboard-cyan-dim);cursor:pointer;background:transparent;border:none;margin-left:auto;margin-right:auto;}
+                    .cancel-link:hover{color:var(--dashboard-cyan);text-decoration:underline;}
+                `}} />
+                
+                <div className="select-card">
+                    <h1>{t("title") || "Beceri Analizi"}</h1>
+                    <p className="sub">{t("desc") || "Hedef pozisyonunuzu belirleyin ve yeteneklerinizi AI ile analiz edin."}</p>
+
+                    {isAnalyzing ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', margin: '40px 0' }}>
+                            <Loader2 className="w-12 h-12 animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
+                            <p style={{ color: 'var(--dashboard-cyan)' }} className="animate-pulse">{t("analyzing") || "Yapay zeka CV'nizi analiz ediyor..."}</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="field-block">
+                                <div className="flabel"><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> {t("targetRoleLabel") || "HEDEF POZİSYON (OPSİYONEL)"}</div>
+                                <input 
+                                    type="text" 
+                                    placeholder={t("targetRolePlaceholder") || "Örn: Frontend Developer, Product Manager..."} 
+                                    value={targetRole}
+                                    onChange={(e) => setTargetRole(e.target.value)}
+                                />
+                                <div className="fhint">{t("targetRoleHint") || "Belirtirseniz analiz tamamen bu role uygunluğunuz üzerinden yapılır."}</div>
+                            </div>
+
+                            {cvs.length > 0 ? (
+                                <>
+                                    {cvs.map(cv => (
+                                        <button 
+                                            key={cv.id} 
+                                            className="cv-pick"
+                                            onClick={() => handleAnalyzeFromCV(cv.id)}
                                         >
-                                            Yeni CV Oluştur
-                                        </LiquidButton>
-                                    </div>
-                                )}
+                                            <FileText className="cv-doc" />
+                                            <span className="cv-name">{cv.title || "CV'm"} {t("createWith") || "ile Oluştur"}</span>
+                                            <ChevronRight className="cv-go" />
+                                        </button>
+                                    ))}
+                                    
+                                    <div className="divider">{t("or") || "VEYA"}</div>
+                                </>
+                            ) : null}
 
-                                <div className="flex items-center w-full gap-4">
-                                    <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></div>
-                                    <span className="text-xs text-muted-foreground font-bold uppercase">VEYA</span>
-                                    <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></div>
-                                </div>
+                            <input 
+                                type="file" 
+                                accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+                                className="hidden" 
+                                ref={fileInputRef}
+                                onChange={handleFileUpload}
+                            />
+                            <button 
+                                className="upload-btn"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <Upload /> {t("uploadExt") || "Dışarıdan CV Yükle (PDF / DOCX)"}
+                            </button>
+                            <div className="upload-hint">{t("uploadHint") || "Maksimum 5MB dosya boyutu"}</div>
 
-                                <div className="w-full">
-                                    <input 
-                                        type="file" 
-                                        accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
-                                        className="hidden" 
-                                        ref={fileInputRef}
-                                        onChange={handleFileUpload}
-                                    />
-                                    <Button 
-                                        className="w-full h-14 flex items-center justify-center gap-2 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-                                        onClick={() => fileInputRef.current?.click()}
-                                    >
-                                        <Upload className="w-5 h-5 shrink-0" />
-                                        <span>Dışarıdan CV Yükle (PDF / DOCX)</span>
-                                    </Button>
-                                    <p className="text-xs text-center text-muted-foreground mt-2">Maksimum 5MB dosya boyutu</p>
-                                </div>
-                                
-                                {analysisData && (
-                                    <Button variant="link" onClick={() => setShowUpload(false)} className="mt-4">
-                                        İptal Et ve Analize Dön
-                                    </Button>
-                                )}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                            {analysisData && (
+                                <button className="cancel-link" onClick={() => setShowUpload(false)}>
+                                    {t("cancelAndReturn") || "İptal Et ve Analize Dön"}
+                                </button>
+                            )}
+                        </>
+                    )}
+                </div>
             </div>
         );
     }
@@ -192,286 +216,211 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
     const cvCorrections = scores?.cv_corrections || [];
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto pb-10">
-            <div className="flex justify-between items-end mb-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t("title") || "Beceri Analizi"}</h1>
-                    {targetRoleText && <p className="text-muted-foreground mt-2 flex items-center gap-1.5 font-medium"><Target className="w-4 h-4 text-blue-500"/> Hedef: <span className="text-zinc-900 dark:text-zinc-100 font-bold">{targetRoleText}</span></p>}
+        <>
+            <style dangerouslySetInnerHTML={{__html: `
+                .skills-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:28px;}
+                .target-line{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--dashboard-text-dim);margin-top:6px;}
+                .target-line b{color:var(--dashboard-text);}
+
+                .insight-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+                .insight-card{position:relative;border-radius:var(--dashboard-radius);padding:24px;}
+                .insight-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+                .insight-card svg.corners path{stroke-width:1.3;fill:none;}
+                .insight-card.std{background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);}
+                .insight-card.std svg.corners path{stroke:var(--dashboard-cyan);}
+                .insight-card.power{background:rgba(232,84,60,.06);border:1px solid var(--dashboard-stamp-dim);}
+                .insight-card.power svg.corners path{stroke:var(--dashboard-stamp);}
+                .insight-card h3{font-size:14px;display:flex;align-items:center;gap:9px;margin-bottom:14px;}
+                .insight-card h3 svg{width:16px;height:16px;}
+                .insight-card.power h3{color:var(--dashboard-stamp);}
+                .insight-card p{font-size:14px;line-height:1.65;color:var(--dashboard-text-dim);}
+                .insight-card.power p{color:var(--dashboard-text);}
+
+                .score-row{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;margin-bottom:16px;}
+                .score-stack{display:flex;flex-direction:column;gap:16px;}
+
+                .score-block{margin-bottom:0;}
+                .score-block .sb-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
+                .score-block .sb-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--dashboard-mono-label);}
+                .score-block .sb-val{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;}
+                .score-block .sb-val .of100{font-size:13px;color:var(--dashboard-text-dim);font-weight:400;}
+                .progress-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-bottom:16px;}
+                .progress-fill{height:100%;border-radius:4px;}
+                .flag-list{display:flex;flex-direction:column;gap:8px;}
+                .flag-item{font-size:12.5px;color:var(--dashboard-text-dim);display:flex;gap:8px;align-items:flex-start;}
+                .flag-item::before{content:'—';color:var(--dashboard-stamp);flex-shrink:0;}
+
+                .redflag-list{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+                .redflag-item{font-size:13.5px;color:var(--dashboard-text);display:flex;gap:10px;align-items:flex-start;}
+                .redflag-item .dot{width:7px;height:7px;border-radius:50%;background:var(--dashboard-stamp);flex-shrink:0;margin-top:5px;}
+
+                .radar-wrap{display:flex;flex-direction:column;align-items:center;}
+                .radar-wrap h3{align-self:flex-start;margin-bottom:4px;}
+                .radar-wrap .rsub{align-self:flex-start;font-size:12.5px;color:var(--dashboard-text-dim);margin-bottom:22px;}
+
+                .action-card{margin-top:8px;}
+                .action-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+                .action-head svg{width:18px;height:18px;color:var(--dashboard-green);}
+                .action-head h3{font-size:16px;}
+                .action-sub{font-size:13px;color:var(--dashboard-text-dim);margin-bottom:20px;}
+                .action-step{
+                    display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--dashboard-paper-border);
+                    border-radius:var(--dashboard-radius);margin-bottom:10px;background:rgba(255,255,255,.015);
+                }
+                .action-step .anum{
+                    width:26px;height:26px;border-radius:50%;background:rgba(111,214,232,.1);color:var(--dashboard-cyan);
+                    display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;flex-shrink:0;
+                }
+                @media(max-width:980px){.insight-row,.score-row{grid-template-columns:1fr;}}
+            `}} />
+
+            <div className="skills-head">
+                <div className="page-head" style={{ marginBottom: 0 }}>
+                    <div className="peyebrow">BECERİ ANALİZİ</div>
+                    <h1>Beceri Analizi</h1>
+                    {targetRoleText && <div className="target-line">HEDEF: <b>{targetRoleText}</b></div>}
                 </div>
-                <Button variant="outline" size="sm" onClick={() => setShowUpload(true)} className="gap-2">
-                    <RefreshCw className="w-4 h-4" />
-                    <span className="hidden sm:inline">Yeniden Analiz Et</span>
-                </Button>
+                <button className="btn-outline" onClick={() => setShowUpload(true)}>
+                    <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}><path d="M21 12a9 9 0 11-2.6-6.4M21 4v6h-6"/></svg>
+                    Yeniden Analiz Et
+                </button>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                
-                {/* AI Insight & Superpower */}
-                <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-blue-100 dark:border-blue-900/50 shadow-sm">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="flex items-center gap-2 text-lg text-blue-900 dark:text-blue-100">
-                                <Sparkles className="text-blue-500 w-5 h-5" />
-                                {t("aiInsights") || "Yapay Zeka Değerlendirmesi"}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-zinc-700 dark:text-zinc-300 font-medium leading-relaxed">{insight}</p>
-                        </CardContent>
-                    </Card>
 
-                    {superpower && (
-                    <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-amber-100 dark:border-amber-900/50 relative overflow-hidden shadow-sm">
-                        <div className="hidden md:block absolute -right-6 -top-6 opacity-10">
-                            <Zap className="w-32 h-32 text-amber-500" />
-                        </div>
-                        <CardHeader className="pb-2 relative z-10">
-                            <CardTitle className="flex items-center gap-2 text-lg text-amber-900 dark:text-amber-100">
-                                <Zap className="text-amber-500 w-5 h-5 fill-amber-500/20" />
-                                Süper Gücün
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="relative z-10">
-                            <p className="text-amber-800 dark:text-amber-200 font-bold text-lg leading-relaxed">{superpower}</p>
-                        </CardContent>
-                    </Card>
-                    )}
+            <div className="insight-row">
+                <div className="insight-card std">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>AI İçgörüleri</h3>
+                    <p>{insight}</p>
                 </div>
+                {superpower && (
+                    <div className="insight-card power">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-stamp)" strokeWidth="1.6" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>Süper Gücün</h3>
+                        <p>{superpower}</p>
+                    </div>
+                )}
+            </div>
 
-                {/* Left Column: Scores & Radar */}
-                <div className="md:col-span-4 flex flex-col gap-6">
-                    {/* Overall & ATS Score */}
-                    <Card className="shadow-sm">
-                        <CardContent className="p-6 space-y-8">
-                            <div className="w-full">
-                                <div className="flex justify-between items-end mb-2">
-                                    <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"><Activity className="w-4 h-4 text-blue-500"/>Genel Uygunluk</span>
-                                    <span className="text-blue-600 dark:text-blue-400 text-xl font-black">{overall_score}<span className="text-sm font-medium text-muted-foreground">/100</span></span>
+            <div className="score-row">
+                <div className="score-stack">
+                    <div className="bp-card">
+                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        <div className="score-block">
+                            <div className="sb-top"><span className="sb-label">GENEL UYGUNLUK</span><span className="sb-val">{overall_score}<span className="of100">/100</span></span></div>
+                            <div className="progress-track"><div className="progress-fill" style={{ width: `${overall_score}%`, background: 'var(--dashboard-cyan)' }}></div></div>
+                        </div>
+                        <div className="score-block" style={{ marginTop: '22px' }}>
+                            <div className="sb-top"><span className="sb-label">ATS SKORU</span><span className="sb-val">{atsScore}<span className="of100">/100</span></span></div>
+                            <div className="progress-track"><div className="progress-fill" style={{ width: `${atsScore}%`, background: 'var(--dashboard-stamp)' }}></div></div>
+                            {scores?.ats_feedback && scores.ats_feedback.length > 0 && (
+                                <div className="flag-list">
+                                    {scores.ats_feedback.map((fb: string, i: number) => (
+                                        <div key={i} className="flag-item">{fb}</div>
+                                    ))}
                                 </div>
-                                <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${overall_score}%` }}></div>
-                                </div>
-                            </div>
-                            
-                            <div className="w-full">
-                                <div className="flex justify-between items-end mb-2">
-                                    <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"><Terminal className="w-4 h-4 text-emerald-500"/>ATS Skoru</span>
-                                    <span className={`text-xl font-black ${atsScore >= 80 ? 'text-emerald-600' : atsScore >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
-                                        {atsScore}<span className="text-sm font-medium text-muted-foreground">/100</span>
-                                    </span>
-                                </div>
-                                <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                    <div className={`h-full rounded-full transition-all duration-1000 ${atsScore >= 80 ? 'bg-emerald-500' : atsScore >= 60 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${atsScore}%` }}></div>
-                                </div>
-                                {scores?.ats_feedback && scores.ats_feedback.length > 0 && (
-                                    <div className="mt-4 space-y-2 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg border border-amber-100 dark:border-amber-900/50">
-                                        {scores.ats_feedback.map((fb: string, i: number) => (
-                                            <p key={i} className="text-xs text-amber-800 dark:text-amber-300 font-medium flex items-start gap-1.5">
-                                                <span className="text-amber-500 mt-0.5">•</span> {fb}
-                                            </p>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                            )}
+                        </div>
+                    </div>
 
-                    {/* Red Flags */}
                     {redFlags.length > 0 && (
-                        <Card className="border-red-100 dark:border-red-900/50 bg-red-50/30 dark:bg-red-950/10 shadow-sm">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-red-600 dark:text-red-400 flex items-center gap-2 text-base">
-                                    <AlertTriangle className="w-5 h-5" />
-                                    Kırmızı Bayraklar
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <ul className="space-y-3">
-                                    {redFlags.map((flag: string, i: number) => (
-                                        <li key={i} className="flex items-start gap-2.5 text-sm font-medium text-red-800 dark:text-red-300">
-                                            <div className="min-w-2 h-2 rounded-full bg-red-500 mt-1.5 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
-                                            {flag}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </CardContent>
-                        </Card>
+                        <div className="bp-card">
+                            <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                            <h3 style={{ fontSize: '14px', color: 'var(--dashboard-stamp)', display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
+                                <svg viewBox="0 0 24 24" stroke="var(--dashboard-stamp)" strokeWidth="1.6" fill="none" style={{ width: '16px', height: '16px' }}><path d="M12 9v4M12 17h.01M10.3 3.86L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
+                                Kırmızı Bayraklar
+                            </h3>
+                            <div className="redflag-list">
+                                {redFlags.map((flag: string, i: number) => (
+                                    <div key={i} className="redflag-item"><span className="dot"></span>{flag}</div>
+                                ))}
+                            </div>
+                        </div>
                     )}
                 </div>
 
-                {/* Right Column: Radar Chart */}
-                <div className="md:col-span-8">
-                    <Card className="h-full min-h-[400px] flex flex-col overflow-hidden relative shadow-sm">
-                        <div className="absolute inset-0 bg-grid-zinc-100 dark:bg-grid-zinc-900/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] dark:[mask-image:linear-gradient(0deg,black,rgba(0,0,0,0.5))] pointer-events-none"></div>
-                        <CardHeader className="flex flex-row items-start justify-between relative z-10 pb-0">
-                            <div>
-                                <CardTitle className="text-xl font-bold">{t("competencyMatrix") || "Yetkinlik Matrisi"}</CardTitle>
-                                <CardDescription className="text-sm mt-1">{t("competencyDesc") || "Farklı beceri alanlarındaki dağılımınız"}</CardDescription>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="flex-grow flex items-center justify-center relative z-10 p-6">
-                            <div className="relative w-full max-w-[320px] aspect-square flex items-center justify-center mt-6 mb-6">
-                                {/* Background Circles */}
-                                <div className="absolute inset-0 border border-zinc-200 dark:border-zinc-800 rounded-full"></div>
-                                <div className="absolute inset-[15%] border border-zinc-200 dark:border-zinc-800 rounded-full"></div>
-                                <div className="absolute inset-[30%] border border-zinc-200 dark:border-zinc-800 rounded-full"></div>
-                                <div className="absolute inset-[45%] border border-zinc-200 dark:border-zinc-800 rounded-full"></div>
-                                
-                                {/* Axes */}
-                                <div className="absolute w-full h-px bg-zinc-200 dark:bg-zinc-800 rotate-0"></div>
-                                <div className="absolute w-full h-px bg-zinc-200 dark:bg-zinc-800 rotate-[60deg]"></div>
-                                <div className="absolute w-full h-px bg-zinc-200 dark:bg-zinc-800 rotate-[120deg]"></div>
-                                
-                                {/* Skill Labels */}
-                                <span className="absolute -top-6 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Teknik ({scores?.teknik || 0})</span>
-                                <span className="absolute -bottom-6 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Problem Çözme ({scores?.problemCozme || 0})</span>
-                                <span className="absolute -left-16 top-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Liderlik ({scores?.liderlik || 0})</span>
-                                <span className="absolute -right-16 top-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">İletişim ({scores?.iletisim || 0})</span>
-                                <span className="absolute -left-16 bottom-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">İşbirliği ({scores?.isbirligi || 0})</span>
-                                <span className="absolute -right-16 bottom-1/4 text-zinc-500 text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-zinc-950 px-1">Uyumluluk ({scores?.uyumluluk || 0})</span>
-                                
-                                {/* Calculating SVG Polygon Points */}
-                                {(() => {
-                                    const getPoint = (score: number, angleDeg: number) => {
-                                        const r = (score || 0) / 100 * 50; 
-                                        const a = (angleDeg - 90) * Math.PI / 180;
-                                        return `${50 + r * Math.cos(a)},${50 + r * Math.sin(a)}`;
-                                    };
-                                    
-                                    const p1 = getPoint(scores?.teknik, 0);
-                                    const p2 = getPoint(scores?.iletisim, 60);
-                                    const p3 = getPoint(scores?.uyumluluk, 120);
-                                    const p4 = getPoint(scores?.problemCozme, 180);
-                                    const p5 = getPoint(scores?.isbirligi, 240);
-                                    const p6 = getPoint(scores?.liderlik, 300);
-                                    
-                                    const points = `${p1} ${p2} ${p3} ${p4} ${p5} ${p6}`;
-                                    
-                                    return (
-                                        <svg className="absolute inset-0 w-full h-full drop-shadow-md overflow-visible" viewBox="0 0 100 100">
-                                            <polygon fill="rgba(37, 99, 235, 0.25)" points={points} stroke="#2563eb" strokeWidth="1.5"></polygon>
-                                            {[p1, p2, p3, p4, p5, p6].map((p, i) => {
-                                                const [cx, cy] = p.split(',');
-                                                return <circle key={i} cx={cx} cy={cy} fill="#2563eb" r="2" className="shadow-lg"></circle>
-                                            })}
-                                        </svg>
-                                    );
-                                })()}
-                            </div>
-                        </CardContent>
-                    </Card>
+                <div className="bp-card radar-wrap">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3>Yetkinlik Matrisi</h3>
+                    <div className="rsub">Profesyonel ayak izinin çok boyutlu analizi</div>
+                    
+                    {(() => {
+                        const getPoint = (score: number, angleDeg: number) => {
+                            const r = (score || 0) / 100 * 110; 
+                            const a = (angleDeg - 90) * Math.PI / 180;
+                            return `${140 + r * Math.cos(a)},${140 + r * Math.sin(a)}`;
+                        };
+                        
+                        const p1 = getPoint(scores?.teknik, 0);
+                        const p2 = getPoint(scores?.iletisim, 60);
+                        const p3 = getPoint(scores?.uyumluluk, 120);
+                        const p4 = getPoint(scores?.problemCozme, 180);
+                        const p5 = getPoint(scores?.isbirligi, 240);
+                        const p6 = getPoint(scores?.liderlik, 300);
+                        
+                        const points = `${p1} ${p2} ${p3} ${p4} ${p5} ${p6}`;
+                        
+                        return (
+                            <svg width="280" height="280" viewBox="0 0 280 280">
+                                <g stroke="var(--dashboard-paper-border)" strokeWidth="1" fill="none">
+                                    <polygon points="140,30 220,85 220,195 140,250 60,195 60,85"/>
+                                    <polygon points="140,58 192,93 192,187 140,222 88,187 88,93"/>
+                                    <polygon points="140,86 164,101 164,179 140,194 116,179 116,101"/>
+                                </g>
+                                <polygon points={points} fill="rgba(111,214,232,.18)" stroke="var(--dashboard-cyan)" strokeWidth="2"/>
+                                <g fontFamily="JetBrains Mono, monospace" fontSize="9" fill="var(--dashboard-mono-label)" textAnchor="middle">
+                                    <text x="140" y="18">TEKNİK ({scores?.teknik || 0})</text>
+                                    <text x="245" y="89">İLETİŞİM ({scores?.iletisim || 0})</text>
+                                    <text x="245" y="199">UYUMLULUK ({scores?.uyumluluk || 0})</text>
+                                    <text x="140" y="266">PROBLEM ÇÖZME ({scores?.problemCozme || 0})</text>
+                                    <text x="35" y="199">İŞBİRLİĞİ ({scores?.isbirligi || 0})</text>
+                                    <text x="35" y="89">LİDERLİK ({scores?.liderlik || 0})</text>
+                                </g>
+                            </svg>
+                        );
+                    })()}
                 </div>
-
-                {/* CV Corrections Before / After */}
-                {cvCorrections.length > 0 && (
-                    <div className="md:col-span-12 mt-4">
-                        <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4 px-2 flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-blue-500" />
-                            CV Cümle Düzeltme Önerileri
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {cvCorrections.map((corr: any, idx: number) => (
-                                <Card key={idx} className="border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex flex-col max-w-full">
-                                    <div className="flex flex-col md:flex-row flex-grow">
-                                        <div className="p-5 bg-red-50/40 dark:bg-red-950/20 md:border-r border-b md:border-b-0 border-zinc-200 dark:border-zinc-800 md:w-1/2 relative flex flex-col">
-                                            <div className="self-start text-[10px] font-bold text-red-500 uppercase mb-3 tracking-wider bg-red-100 dark:bg-red-900/30 inline-block px-2 py-0.5 rounded">Senin Yazdığın</div>
-                                            <p className="text-sm text-zinc-600 dark:text-zinc-400 line-through decoration-red-300 dark:decoration-red-800/60 break-words whitespace-pre-wrap">{corr.original}</p>
-                                            
-                                            {/* Mobile Arrow Divider */}
-                                            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 md:hidden z-10 bg-white dark:bg-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-800 p-1">
-                                                <ArrowRight className="w-3 h-3 text-zinc-400 rotate-90" />
-                                            </div>
-                                        </div>
-                                        <div className="p-5 bg-emerald-50/40 dark:bg-emerald-950/20 md:w-1/2 pt-8 md:pt-5">
-                                            <div className="self-start text-[10px] font-bold text-emerald-600 uppercase mb-3 tracking-wider bg-emerald-100 dark:bg-emerald-900/30 inline-flex items-center gap-1 px-2 py-0.5 rounded">
-                                                <span>AI Önerisi</span>
-                                                <Sparkles className="w-3 h-3"/>
-                                            </div>
-                                            <p className="text-sm text-zinc-900 dark:text-zinc-100 font-semibold break-words whitespace-pre-wrap">{corr.improved}</p>
-                                        </div>
-                                    </div>
-                                    <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3.5 text-xs text-muted-foreground border-t border-zinc-200 dark:border-zinc-800 flex items-start gap-2">
-                                        <div className="shrink-0 mt-0.5 w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                                        <span><strong className="text-zinc-700 dark:text-zinc-300">Neden Değiştirilmeli?</strong> {corr.reason}</span>
-                                    </div>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Action Plan */}
-                {actionPlan.length > 0 && (
-                    <div className="md:col-span-12 mt-6">
-                        <Card className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-md border-0">
-                            <CardHeader className="pb-5">
-                                <CardTitle className="flex items-center gap-2 text-xl">
-                                    <CheckCircle2 className="w-6 h-6 text-emerald-400 dark:text-emerald-600" />
-                                    Aksiyon Planı (Hemen Başla)
-                                </CardTitle>
-                                <CardDescription className="text-zinc-400 dark:text-zinc-600">CV&apos;ni ve kariyerini güçlendirmek için bugün atman gereken 3 adım.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {actionPlan.map((plan: string, i: number) => (
-                                        <div key={i} className="flex items-start gap-4 bg-white/10 dark:bg-black/5 p-5 rounded-xl transition-all hover:bg-white/15 dark:hover:bg-black/10 w-full max-w-full overflow-hidden">
-                                            <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-lg shadow-blue-500/30">{i+1}</div>
-                                            <p className="font-semibold text-zinc-100 dark:text-zinc-800 text-base leading-relaxed pt-1 break-words w-full">{plan}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
-
-                {/* AI Recommendations */}
-                {recommendations && recommendations.length > 0 && (
-                    <div className="md:col-span-12 mt-6">
-                        <div className="flex items-center justify-between mb-5 px-2">
-                            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                                <ArrowRightCircle className="w-5 h-5 text-blue-500" />
-                                {t("recommendedGrowth") || "Gelişim Önerileri"}
-                            </h3>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {recommendations.slice(0, 3).map((rec: any, idx: number) => {
-                                const colors = ["blue", "purple", "emerald"];
-                                const icons = [<Box key={1} className="w-6 h-6"/>, <Users key={2} className="w-6 h-6"/>, <Terminal key={3} className="w-6 h-6"/>];
-                                const c = colors[idx % 3];
-                                const Icon = icons[idx % 3];
-                                
-                                return (
-                                    <Card key={idx} className={`hover:border-${c}-300 dark:hover:border-${c}-700 transition-all flex flex-col shadow-sm hover:shadow-md h-full`}>
-                                        <CardContent className="p-6 flex-grow">
-                                            <div className="flex justify-between items-start mb-6">
-                                                <div className={`w-12 h-12 rounded-xl bg-${c}-100 dark:bg-${c}-900/30 flex items-center justify-center text-${c}-600 dark:text-${c}-400`}>
-                                                    {Icon}
-                                                </div>
-                                                <span className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-md">{rec.category || "Gelişim"}</span>
-                                            </div>
-                                            <h4 className={`text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-3`}>{rec.title}</h4>
-                                            <p className="text-muted-foreground text-sm mb-4 line-clamp-3 leading-relaxed">{rec.description}</p>
-                                        </CardContent>
-                                        <CardFooter className="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/50 mt-auto">
-                                            <Button 
-                                                variant="ghost" 
-                                                className={`w-full min-h-[44px] justify-between text-${c}-600 dark:text-${c}-400 hover:text-${c}-700 hover:bg-${c}-50 dark:hover:bg-${c}-900/20 font-semibold`}
-                                                onClick={() => router.push("/roadmap")}
-                                            >
-                                                Yol Haritasına Git
-                                                <ArrowRight className="w-4 h-4 ml-2" />
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
             </div>
-        </div>
+
+            {actionPlan.length > 0 && (
+                <div className="bp-card action-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <div className="action-head"><svg viewBox="0 0 24 24" stroke="var(--dashboard-green)" strokeWidth="1.8" fill="none"><path d="M20 6L9 17l-5-5"/></svg><h3>Aksiyon Planı (Hemen Başla)</h3></div>
+                    <div className="action-sub">CV&apos;ni ve kariyerini güçlendirmek için bugün atman gereken adım(lar).</div>
+                    {actionPlan.map((plan: string, i: number) => (
+                        <div key={i} className="action-step"><span className="anum">{i+1}</span>{plan}</div>
+                    ))}
+                </div>
+            )}
+            
+            {/* Kept out of standard design but useful for recommendations/cv Corrections if we want to display them in a matching style */}
+            {cvCorrections.length > 0 && (
+                <div className="bp-card action-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <div className="action-head">
+                        <svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.8" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>
+                        <h3>CV Cümle Düzeltme Önerileri</h3>
+                    </div>
+                    <div className="action-sub">Senin yazdığın cümleleri daha profesyonel hale getirmek için AI önerileri.</div>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {cvCorrections.map((corr: any, idx: number) => (
+                        <div key={idx} style={{ marginBottom: '16px', border: '1px solid var(--dashboard-paper-border)', borderRadius: 'var(--dashboard-radius)', background: 'rgba(255,255,255,.015)', padding: '14px' }}>
+                            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                                <div style={{ flex: 1, minWidth: '240px' }}>
+                                    <div style={{ fontSize: '10.5px', color: 'var(--dashboard-stamp)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '8px' }}>SENİN YAZDIĞIN</div>
+                                    <div style={{ fontSize: '13px', color: 'var(--dashboard-text-dim)', textDecoration: 'line-through' }}>{corr.original}</div>
+                                </div>
+                                <div style={{ flex: 1, minWidth: '240px' }}>
+                                    <div style={{ fontSize: '10.5px', color: 'var(--dashboard-green)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '8px' }}>AI ÖNERİSİ</div>
+                                    <div style={{ fontSize: '13px', color: 'var(--dashboard-text)' }}>{corr.improved}</div>
+                                </div>
+                            </div>
+                            <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--dashboard-paper-border)', fontSize: '12px', color: 'var(--dashboard-text-dim)' }}>
+                                <strong style={{ color: 'var(--dashboard-cyan)' }}>Neden?</strong> {corr.reason}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </>
     );
 }

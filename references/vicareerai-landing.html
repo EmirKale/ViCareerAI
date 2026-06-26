@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ViCareerAI — Kariyerini Yeniden Çiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1628;
+    --bg-2:#0E2038;
+    --grid-line:rgba(110,168,200,0.10);
+    --grid-line-major:rgba(110,168,200,0.18);
+    --cyan:#6FD6E8;
+    --cyan-dim:rgba(111,214,232,0.55);
+    --stamp:#E8543C;
+    --stamp-dim:rgba(232,84,60,0.18);
+    --paper:rgba(223,238,245,0.04);
+    --paper-border:rgba(111,214,232,0.16);
+    --text:#EAF3F7;
+    --text-dim:rgba(234,243,247,0.62);
+    --mono-label:#8FB9CC;
+    --radius:2px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--cyan-dim);color:#06121f;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--mono-label);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:18px;height:1px;
+    background:var(--cyan-dim);
+    display:inline-block;
+  }
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+
+  /* ---------- Blueprint grid background ---------- */
+  .grid-field{
+    position:fixed;
+    inset:-10% -10% -10% -10%;
+    background-image:
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(0deg, var(--grid-line-major) 0 1px, transparent 1px 200px),
+      repeating-linear-gradient(90deg, var(--grid-line-major) 0 1px, transparent 1px 200px);
+    z-index:0;
+    pointer-events:none;
+    will-change:transform;
+  }
+  .grid-vignette{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(ellipse at 50% 0%, transparent 0%, var(--bg) 78%);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* ---------- Progress bar ---------- */
+  .progress-bar{
+    position:fixed;top:0;left:0;height:2px;
+    background:var(--cyan);
+    width:0%;
+    z-index:100;
+    transition:width .08s linear;
+  }
+
+  /* ---------- Nav ---------- */
+  .topnav{
+    position:fixed;top:0;left:0;right:0;
+    z-index:90;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(20px,5vw,64px);
+    transition:background .3s ease, border-color .3s ease, padding .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  .topnav.scrolled{
+    background:rgba(10,22,40,0.85);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--paper-border);
+    padding:14px clamp(20px,5vw,64px);
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;
+  }
+  .logo-mark{
+    width:30px;height:30px;border:1.5px solid var(--cyan);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);
+    flex-shrink:0;
+  }
+  .nav-links{display:flex;align-items:center;gap:32px;}
+  .nav-links a{font-size:14px;color:var(--text-dim);transition:color .2s;}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-cta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;letter-spacing:.04em;
+    color:var(--bg);
+    background:var(--cyan);
+    padding:9px 18px;
+    border-radius:var(--radius);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(111,214,232,.25);}
+  .nav-mobile-toggle{display:none;}
+
+  @media(max-width:760px){
+    .nav-links{display:none;}
+  }
+
+  /* ---------- Ruler nav (right edge) ---------- */
+  .ruler-nav{
+    position:fixed;
+    right:28px;top:50%;
+    transform:translateY(-50%);
+    z-index:80;
+    display:flex;flex-direction:column;gap:22px;
+    align-items:flex-end;
+  }
+  .ruler-tick{
+    display:flex;align-items:center;gap:8px;
+    cursor:pointer;
+  }
+  .ruler-tick .tick-label{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;
+    color:var(--text-dim);opacity:0;transform:translateX(6px);
+    transition:opacity .2s, transform .2s;
+    white-space:nowrap;
+  }
+  .ruler-tick:hover .tick-label{opacity:1;transform:translateX(0);}
+  .ruler-tick .tick-mark{
+    width:10px;height:1.5px;background:var(--text-dim);
+    transition:all .25s ease;
+  }
+  .ruler-tick.active .tick-mark{width:22px;background:var(--stamp);}
+  .ruler-tick.active .tick-label{opacity:1;transform:translateX(0);color:var(--stamp);}
+
+  @media(max-width:900px){.ruler-nav{display:none;}}
+
+  /* ============ SECTIONS ============ */
+  section{position:relative;z-index:1;padding:0 clamp(20px,6vw,80px);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding-top:80px;
+  }
+  .hero-inner{max-width:880px;}
+  .hero h1{
+    font-size:clamp(40px,7vw,84px);
+    line-height:1.02;
+    margin:22px 0 24px;
+  }
+  .hero h1 .char{display:inline-block;opacity:0;transform:translateY(24px);}
+  .hero p.lede{
+    font-size:clamp(16px,2vw,19px);
+    color:var(--text-dim);
+    max-width:560px;
+    line-height:1.65;
+    margin-bottom:36px;
+  }
+  .hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .stamp-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;letter-spacing:.05em;
+    background:var(--stamp);
+    color:#0A1628;
+    padding:15px 28px;
+    border-radius:var(--radius);
+    display:inline-flex;align-items:center;gap:10px;
+    border:1px solid var(--stamp);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .stamp-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(232,84,60,.28);}
+  .hero-note{font-size:13px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+  .scroll-cue{
+    margin-top:64px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.12em;color:var(--mono-label);
+    display:flex;align-items:center;gap:10px;
+    opacity:.8;
+  }
+  .scroll-cue .line{width:1px;height:28px;background:var(--cyan-dim);
+    animation:scrollpulse 1.8s ease-in-out infinite;}
+  @keyframes scrollpulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+  /* ---------- Reveal / blueprint card system ---------- */
+  .bp-card{
+    position:relative;
+    background:var(--paper);
+    border:1px solid var(--paper-border);
+    padding:30px 26px;
+    border-radius:var(--radius);
+  }
+  .bp-card svg.corners{
+    position:absolute;inset:0;width:100%;height:100%;
+    pointer-events:none;overflow:visible;
+  }
+  .bp-card svg.corners path{
+    stroke:var(--cyan);
+    stroke-width:1.4;
+    fill:none;
+    stroke-dasharray:26;
+    stroke-dashoffset:26;
+    transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1);
+  }
+  .bp-card.revealed svg.corners path{stroke-dashoffset:0;}
+  .bp-card.revealed svg.corners path:nth-child(2){transition-delay:.08s;}
+  .bp-card.revealed svg.corners path:nth-child(3){transition-delay:.16s;}
+  .bp-card.revealed svg.corners path:nth-child(4){transition-delay:.24s;}
+
+  .fade-up{opacity:0;transform:translateY(28px);transition:opacity .7s ease, transform .7s ease;}
+  .fade-up.revealed{opacity:1;transform:translateY(0);}
+
+  /* ---------- FEATURES ---------- */
+  .features{padding-top:140px;padding-bottom:140px;}
+  .features-head{max-width:640px;margin-bottom:64px;}
+  .features-head h2{font-size:clamp(28px,4vw,42px);margin-top:18px;}
+  .features-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--paper-border);
+    border:1px solid var(--paper-border);
+  }
+  .feature-cell{
+    background:var(--bg);
+    padding:32px 24px;
+    position:relative;
+  }
+  .feature-cell .ficon{
+    width:34px;height:34px;margin-bottom:22px;
+    color:var(--cyan);
+  }
+  .feature-cell h3{font-size:17px;margin-bottom:10px;}
+  .feature-cell p{font-size:14px;line-height:1.6;color:var(--text-dim);}
+  @media(max-width:980px){.features-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.features-grid{grid-template-columns:1fr;}}
+
+  /* ---------- STATS ---------- */
+  .stats{padding-top:120px;padding-bottom:140px;background:var(--bg-2);}
+  .stats-head{margin-bottom:70px;max-width:600px;}
+  .stats-head h2{font-size:clamp(26px,4vw,38px);margin-top:18px;}
+  .stats-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:40px;
+  }
+  .stat-block{text-align:left;}
+  .dim-line{
+    display:flex;align-items:center;gap:8px;margin-bottom:18px;
+    color:var(--cyan-dim);
+  }
+  .dim-line .cap{width:1px;height:10px;background:var(--cyan-dim);}
+  .dim-line .bar{flex:1;height:1px;background:var(--cyan-dim);}
+  .stat-num{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:clamp(36px,5vw,52px);
+    color:var(--text);
+    line-height:1;
+  }
+  .stat-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;letter-spacing:.04em;
+    color:var(--text-dim);
+    margin-top:12px;
+  }
+  @media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);gap:48px 32px;}}
+
+  /* ---------- HOW IT WORKS / PROCESS ---------- */
+  .process{padding-top:140px;padding-bottom:140px;}
+  .process-head{max-width:600px;margin-bottom:70px;}
+  .process-head h2{font-size:clamp(28px,4vw,42px);margin-top:18px;}
+  .process-steps{
+    display:flex;flex-direction:column;
+    border-left:1px solid var(--paper-border);
+    max-width:760px;
+  }
+  .pstep{
+    position:relative;
+    padding:0 0 56px 44px;
+  }
+  .pstep:last-child{padding-bottom:0;}
+  .pstep::before{
+    content:'';
+    position:absolute;left:-5px;top:2px;
+    width:9px;height:9px;border-radius:50%;
+    background:var(--bg);border:1.5px solid var(--cyan);
+    transition:background .3s, border-color .3s;
+  }
+  .pstep.revealed::before{background:var(--cyan);}
+  .pstep .pnum{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mono-label);
+    margin-bottom:8px;display:block;
+  }
+  .pstep h3{font-size:21px;margin-bottom:10px;}
+  .pstep p{color:var(--text-dim);font-size:15px;line-height:1.65;max-width:520px;}
+
+  /* ---------- REVISION (before/after) ---------- */
+  .revision{padding-top:130px;padding-bottom:140px;background:var(--bg-2);}
+  .revision-head{max-width:620px;margin-bottom:64px;}
+  .revision-head h2{font-size:clamp(26px,4vw,38px);margin-top:18px;}
+  .rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--paper-border);border:1px solid var(--paper-border);}
+  .rev-panel{background:var(--bg);padding:34px 30px;}
+  .rev-panel .ptag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+    margin-bottom:20px;display:inline-block;padding:4px 9px;border-radius:2px;
+  }
+  .rev-panel.before .ptag{color:var(--text-dim);border:1px solid var(--paper-border);}
+  .rev-panel.after .ptag{color:var(--stamp);border:1px solid var(--stamp-dim);}
+  .rev-panel p{font-size:14.5px;line-height:1.85;color:var(--text-dim);}
+  .rev-panel.after p{color:var(--text);}
+  .rev-panel .wavy{
+    text-decoration:underline wavy rgba(232,84,60,.55);
+    text-decoration-thickness:1px;
+  }
+  .rev-panel .mark{
+    background:rgba(111,214,232,.13);
+    border-bottom:1px dashed var(--cyan);
+    padding:0 2px;
+  }
+  .mark sup{font-size:10px;color:var(--cyan);margin-left:1px;}
+  .rev-legend{
+    margin-top:28px;display:flex;flex-direction:column;gap:10px;
+  }
+  .rev-legend div{
+    font-size:13px;color:var(--text-dim);display:flex;gap:10px;
+  }
+  .rev-legend span.n{
+    font-family:'JetBrains Mono',monospace;color:var(--cyan);flex-shrink:0;
+  }
+  @media(max-width:760px){.rev-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CTA ---------- */
+  .cta-section{
+    padding-top:160px;padding-bottom:120px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    position:relative;
+  }
+  .stamp-graphic{
+    width:160px;height:160px;margin-bottom:40px;
+    opacity:0;transform:scale(2) rotate(-18deg);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.34,1.4,.4,1);
+  }
+  .stamp-graphic.revealed{opacity:1;transform:scale(1) rotate(-12deg);}
+  .cta-section h2{font-size:clamp(30px,5vw,52px);max-width:680px;margin-bottom:18px;}
+  .cta-section p{color:var(--text-dim);max-width:480px;margin-bottom:36px;font-size:16px;line-height:1.6;}
+  .trust-row{
+    margin-top:56px;display:flex;gap:28px;flex-wrap:wrap;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+    color:var(--mono-label);
+  }
+  .trust-row span::before{content:'· ';color:var(--cyan-dim);}
+  .trust-row span:first-child::before{content:'';}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:56px clamp(20px,6vw,80px) 40px;
+    border-top:1px solid var(--paper-border);
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:40px;
+    position:relative;z-index:1;
+  }
+  .footer-brand{max-width:280px;}
+  .footer-brand .logo{margin-bottom:14px;}
+  .footer-brand p{font-size:13.5px;color:var(--text-dim);line-height:1.6;}
+  .footer-cols{display:flex;gap:64px;flex-wrap:wrap;}
+  .footer-col h4{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+    color:var(--mono-label);margin-bottom:16px;text-transform:uppercase;
+  }
+  .footer-col a{display:block;font-size:14px;color:var(--text-dim);margin-bottom:10px;transition:color .2s;}
+  .footer-col a:hover{color:var(--cyan);}
+  .footer-bottom{
+    margin-top:48px;padding-top:24px;border-top:1px solid var(--paper-border);
+    font-size:12.5px;color:var(--mono-label);font-family:'JetBrains Mono',monospace;
+    width:100%;
+  }
+
+  @media(prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-field" id="gridField"></div>
+<div class="grid-vignette"></div>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="logo"><span class="logo-mark">Vi</span>ViCareerAI</div>
+  <div class="nav-links">
+    <a href="#features">Özellikler</a>
+    <a href="#process">Nasıl Çalışır</a>
+    <a href="https://vi-career-ai.vercel.app/pricing">Fiyatlandırma</a>
+    <a href="https://vi-career-ai.vercel.app/login">Giriş Yap</a>
+  </div>
+  <a class="nav-cta" href="https://vi-career-ai.vercel.app/register">ÜCRETSİZ DENE</a>
+</nav>
+
+<div class="ruler-nav" id="rulerNav">
+  <div class="ruler-tick" data-target="hero"><span class="tick-label">HERO</span><span class="tick-mark"></span></div>
+  <div class="ruler-tick" data-target="features"><span class="tick-label">ŞARTNAME</span><span class="tick-mark"></span></div>
+  <div class="ruler-tick" data-target="stats"><span class="tick-label">ÖLÇÜMLER</span><span class="tick-mark"></span></div>
+  <div class="ruler-tick" data-target="process"><span class="tick-label">İNŞA SÜRECİ</span><span class="tick-mark"></span></div>
+  <div class="ruler-tick" data-target="revision"><span class="tick-label">REVİZYON</span><span class="tick-mark"></span></div>
+  <div class="ruler-tick" data-target="cta"><span class="tick-label">ONAY</span><span class="tick-mark"></span></div>
+</div>
+
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">AI KARİYER PLATFORMU — REV. 2026</div>
+    <h1 id="heroTitle">Kariyerini yeniden çiz.</h1>
+    <p class="lede">ViCareerAI, özgeçmişini saniyeler içinde ATS onaylı, ölçüsünde biçilmiş bir belgeye dönüştürür. GPT-4o destekli motor; senin deneyimini, işe alımcının aradığı dile çevirir.</p>
+    <div class="hero-actions">
+      <a class="stamp-btn" href="https://vi-career-ai.vercel.app/register">ÜCRETSİZ DENE →</a>
+      <span class="hero-note">kredi kartı gerekmez</span>
+    </div>
+    <div class="scroll-cue"><span class="line"></span>AŞAĞI KAYDIR</div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="features-head fade-up">
+    <div class="eyebrow">ŞARTNAME</div>
+    <h2>CV'ni bu dört standarda göre üretiyoruz.</h2>
+  </div>
+  <div class="features-grid">
+
+    <div class="feature-cell bp-card fade-up">
+      <svg class="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M8,28 L8,8 L28,8"/><path d="M72,8 L92,8 L92,28"/>
+        <path d="M92,72 L92,92 L72,92"/><path d="M28,92 L8,92 L8,72"/>
+      </svg>
+      <svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4h18l-7 9v6l-4 2v-8L3 4z"/></svg>
+      <h3>ATS Geçiş Filtresi</h3>
+      <p>Workday, SAP, Taleo ve Lever'ın ayrıştırıcılarına göre test edilen şablonlar. Format hatası sıfır.</p>
+    </div>
+
+    <div class="feature-cell bp-card fade-up">
+      <svg class="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M8,28 L8,8 L28,8"/><path d="M72,8 L92,8 L92,28"/>
+        <path d="M92,72 L92,92 L72,92"/><path d="M28,92 L8,92 L8,72"/>
+      </svg>
+      <svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+      <h3>GPT-4o Motoru</h3>
+      <p>İşe alım standartlarına göre ince ayarlanmış model, deneyimini yüksek etkili bir dile çevirir.</p>
+    </div>
+
+    <div class="feature-cell bp-card fade-up">
+      <svg class="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M8,28 L8,8 L28,8"/><path d="M72,8 L92,8 L92,28"/>
+        <path d="M92,72 L92,92 L72,92"/><path d="M28,92 L8,92 L8,72"/>
+      </svg>
+      <svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6" stroke-dasharray="2 2"/></svg>
+      <h3>Skill Gap Analizi</h3>
+      <p>İlan ile özgeçmişin satır satır karşılaştırılır, eksik anahtar kelimeler tek tek işaretlenir.</p>
+    </div>
+
+    <div class="feature-cell bp-card fade-up">
+      <svg class="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M8,28 L8,8 L28,8"/><path d="M72,8 L92,8 L92,28"/>
+        <path d="M92,72 L92,92 L72,92"/><path d="M28,92 L8,92 L8,72"/>
+      </svg>
+      <svg class="ficon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg>
+      <h3>Şifreli Veri İşleme</h3>
+      <p>Bilgilerin yalnızca CV'ni üretmek için kullanılır, üçüncü taraflarla paylaşılmaz.</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="stats" id="stats">
+  <div class="stats-head fade-up">
+    <div class="eyebrow">ÖLÇÜMLER</div>
+    <h2>Sayılarla ViCareerAI</h2>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-block fade-up">
+      <div class="dim-line"><span class="cap"></span><span class="bar"></span></div>
+      <div class="stat-num"><span class="counter" data-target="85" data-suffix="%">0%</span></div>
+      <div class="stat-label">ORTALAMA ATS EŞLEŞMESİ</div>
+    </div>
+    <div class="stat-block fade-up">
+      <div class="dim-line"><span class="cap"></span><span class="bar"></span></div>
+      <div class="stat-num"><span class="counter" data-target="2" data-suffix=" dk">0 dk</span></div>
+      <div class="stat-label">CV'DEN PDF'E SÜRE</div>
+    </div>
+    <div class="stat-block fade-up">
+      <div class="dim-line"><span class="cap"></span><span class="bar"></span></div>
+      <div class="stat-num"><span class="counter" data-target="6" data-suffix="">0</span></div>
+      <div class="stat-label">FARKLI ŞABLON</div>
+    </div>
+    <div class="stat-block fade-up">
+      <div class="dim-line"><span class="cap"></span><span class="bar"></span></div>
+      <div class="stat-num"><span class="counter" data-target="100" data-suffix="%">0%</span></div>
+      <div class="stat-label">ŞİFRELİ VERİ İŞLEME</div>
+    </div>
+  </div>
+</section>
+
+<section class="process" id="process">
+  <div class="process-head fade-up">
+    <div class="eyebrow">İNŞA SÜRECİ</div>
+    <h2>Üç katlı bir süreç.</h2>
+  </div>
+  <div class="process-steps">
+    <div class="pstep fade-up">
+      <span class="pnum">01 — ZEMİN KAT</span>
+      <h3>Yükle</h3>
+      <p>Mevcut CV'ni yükle ya da sıfırdan başla. Yapay zeka yapıyı saniyeler içinde okur ve bölümlere ayırır.</p>
+    </div>
+    <div class="pstep fade-up">
+      <span class="pnum">02 — ORTA KAT</span>
+      <h3>Optimize Et</h3>
+      <p>GPT-4o motoru deneyimini ATS standartlarına uygun, yüksek etkili bir dile çevirir. Sen onaylarsın, o yeniden çizer.</p>
+    </div>
+    <div class="pstep fade-up">
+      <span class="pnum">03 — ÇATI KAT</span>
+      <h3>İndir &amp; Başvur</h3>
+      <p>Filigransız, ATS onaylı PDF'ini indir. Başvurunu dakikalar içinde, en doğru haliyle gönder.</p>
+    </div>
+  </div>
+</section>
+
+<section class="revision" id="revision">
+  <div class="revision-head fade-up">
+    <div class="eyebrow">REVİZYON</div>
+    <h2>Aynı deneyim, iki farklı çizim.</h2>
+  </div>
+  <div class="rev-grid fade-up">
+    <div class="rev-panel before">
+      <span class="ptag">HAM METİN</span>
+      <p>Altyapı ekibinde çalıştım. Sunucuları yönettim ve bazı projelerde <span class="wavy">yardımcı oldum</span>. Maliyetleri <span class="wavy">biraz düşürdük</span>.</p>
+    </div>
+    <div class="rev-panel after">
+      <span class="ptag">AI ÇIKIŞI</span>
+      <p>Terraform ve AWS Lambda kullanarak monolitik mimariden sunucusuz ortama geçişe <span class="mark">öncülük etti<sup>①</sup></span>. 15 mühendislik ekibini yönetti, altyapı maliyetlerini <span class="mark">%35 azalttı<sup>②</sup></span>, beceri setine <span class="mark">Cloud Architecture<sup>③</sup></span> eklendi.</p>
+    </div>
+  </div>
+  <div class="rev-legend fade-up">
+    <div><span class="n">①</span>Belirsiz fiil yerine ölçülebilir, aktif bir sonuç.</div>
+    <div><span class="n">②</span>Sayısal etki eklendi — ATS skorlamasında doğrudan ağırlık taşır.</div>
+    <div><span class="n">③</span>İlanla eşleşen anahtar kelime, eksik yetenek olarak tespit edildi.</div>
+  </div>
+</section>
+
+<section class="cta-section" id="cta">
+  <svg class="stamp-graphic" id="stampGraphic" viewBox="0 0 200 200">
+    <defs>
+      <path id="stampCircle" d="M 100,100 m -75,0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0"/>
+    </defs>
+    <circle cx="100" cy="100" r="92" fill="none" stroke="var(--stamp)" stroke-width="2"/>
+    <circle cx="100" cy="100" r="78" fill="none" stroke="var(--stamp)" stroke-width="1" stroke-dasharray="3 4"/>
+    <text font-family="JetBrains Mono, monospace" font-size="11" fill="var(--stamp)" letter-spacing="2">
+      <textPath href="#stampCircle" startOffset="0%">ATS ONAYLI · 2026 · ATS ONAYLI · 2026 ·</textPath>
+    </text>
+    <path d="M70,102 L92,124 L132,78" fill="none" stroke="var(--stamp)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <h2 class="fade-up">Kariyer yolculuğun bugün başlıyor.</h2>
+  <p class="fade-up">Dakikalar içinde oluşturacağın özgeçmişle başvurularında fark yarat.</p>
+  <a class="stamp-btn fade-up" href="https://vi-career-ai.vercel.app/register">HEMEN ÜCRETSİZ BAŞLA →</a>
+  <div class="trust-row">
+    <span>GÜVENLİ ÖDEME</span><span>%100 GİZLİLİK</span><span>YAPAY ZEKA DESTEKLİ</span>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <div class="logo"><span class="logo-mark">Vi</span>ViCareerAI</div>
+    <p>Yeni nesil kariyer hızlandırıcısı. Profesyonellerin hayallerindeki şirketlere yapay zeka ile ulaşmasını sağlıyoruz.</p>
+  </div>
+  <div class="footer-cols">
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="#features">Özellikler</a>
+      <a href="https://vi-career-ai.vercel.app/pricing">Fiyatlandırma</a>
+      <a href="https://vi-career-ai.vercel.app/templates">Şablonlar</a>
+    </div>
+    <div class="footer-col">
+      <h4>Yasal</h4>
+      <a href="https://vi-career-ai.vercel.app/privacy">Gizlilik Politikası</a>
+      <a href="https://vi-career-ai.vercel.app/terms">Hizmet Şartları</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 ViCareerAI Platformu. Tüm hakları saklıdır.</div>
+</footer>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Progress bar
+  var progressBar = document.getElementById('progressBar');
+  var gridField = document.getElementById('gridField');
+  function onScroll(){
+    var h = document.documentElement;
+    var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+
+    if(!reduceMotion){
+      gridField.style.transform = 'translateY(' + (h.scrollTop * -0.06) + 'px)';
+    }
+
+    var topnav = document.getElementById('topnav');
+    if(h.scrollTop > 40){ topnav.classList.add('scrolled'); }
+    else { topnav.classList.remove('scrolled'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // Letter-split hero title
+  var heroTitle = document.getElementById('heroTitle');
+  var text = heroTitle.textContent;
+  heroTitle.innerHTML = '';
+  text.split('').forEach(function(ch, i){
+    var span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = ch === ' ' ? '\u00A0' : ch;
+    span.style.transitionDelay = (i * 28) + 'ms';
+    span.style.transition = 'opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1)';
+    heroTitle.appendChild(span);
+  });
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.querySelectorAll('.char').forEach(function(s){
+        s.style.opacity = 1;
+        s.style.transform = 'translateY(0)';
+      });
+    });
+  });
+
+  // Reveal on scroll (fade-up + bp-card corners + stamp + steps)
+  var revealTargets = document.querySelectorAll('.fade-up, .bp-card, .stamp-graphic, .pstep');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('revealed');
+      }
+    });
+  }, {threshold:0.18, rootMargin:'0px 0px -60px 0px'});
+  revealTargets.forEach(function(t){ io.observe(t); });
+
+  // Counters
+  var counters = document.querySelectorAll('.counter');
+  var counted = new WeakSet();
+  var counterIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !counted.has(entry.target)){
+        counted.add(entry.target);
+        animateCounter(entry.target);
+      }
+    });
+  }, {threshold:0.5});
+  counters.forEach(function(c){ counterIO.observe(c); });
+
+  function animateCounter(el){
+    var target = parseFloat(el.dataset.target);
+    var suffix = el.dataset.suffix || '';
+    var dur = reduceMotion ? 0 : 1200;
+    var start = null;
+    function step(ts){
+      if(start === null) start = ts;
+      var progress = dur === 0 ? 1 : Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var val = Math.round(target * eased);
+      el.textContent = val + suffix;
+      if(progress < 1){ requestAnimationFrame(step); }
+      else { el.textContent = target + suffix; }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Ruler nav active state + click-to-scroll
+  var sections = ['hero','features','stats','process','revision','cta'].map(function(id){
+    return document.getElementById(id);
+  });
+  var ticks = document.querySelectorAll('.ruler-tick');
+  ticks.forEach(function(tick){
+    tick.addEventListener('click', function(){
+      var target = document.getElementById(tick.dataset.target);
+      if(target){ target.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'}); }
+    });
+  });
+  var navIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var tick = document.querySelector('.ruler-tick[data-target="' + entry.target.id + '"]');
+      if(!tick) return;
+      if(entry.isIntersecting){
+        ticks.forEach(function(t){ t.classList.remove('active'); });
+        tick.classList.add('active');
+      }
+    });
+  }, {threshold:0.5});
+  sections.forEach(function(s){ if(s) navIO.observe(s); });
+
+})();
+</script>
+</body>
+</html>

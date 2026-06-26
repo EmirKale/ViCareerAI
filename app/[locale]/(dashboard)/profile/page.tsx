@@ -105,113 +105,126 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-2xl mx-auto p-4 md:p-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
-                <p className="text-muted-foreground mt-1">{t("desc")}</p>
+        <div className="space-y-6 max-w-2xl mx-auto p-4 md:p-8">
+            <style dangerouslySetInnerHTML={{__html: `
+                .bp-card{position:relative;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:26px;}
+                .bp-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+                .bp-card svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
+                .bp-card h3{font-size:16px;display:flex;align-items:center;gap:9px;margin-bottom:20px;font-family:'Space Grotesk',sans-serif;font-weight:600;}
+                .bp-card h3 svg{width:18px;height:18px;color:var(--dashboard-cyan);}
+                .bp-card.danger svg.corners path{stroke:var(--dashboard-stamp);}
+                .bp-card.danger h3 svg{color:var(--dashboard-stamp);}
+                .bp-card.danger{background:rgba(232,84,60,.03);border:1px solid rgba(232,84,60,.18);}
+
+                .form-group{margin-bottom:16px;}
+                .form-group label{display:block;font-size:12px;color:var(--dashboard-mono-label);font-family:'JetBrains Mono',monospace;margin-bottom:6px;letter-spacing:.03em;}
+                .form-group input{width:100%;background:rgba(255,255,255,.02);border:1px solid var(--dashboard-paper-border);color:var(--dashboard-text);padding:11px 14px;border-radius:var(--dashboard-radius);font-family:'Inter',sans-serif;font-size:14px;outline:none;}
+                .form-group input:focus{border-color:var(--dashboard-cyan);}
+                .form-group input:disabled{opacity:.5;cursor:not-allowed;}
+
+                .btn-stamp{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.03em;background:var(--dashboard-cyan);color:#0A1628;padding:11px 18px;border-radius:var(--dashboard-radius);border:none;}
+                .btn-outline{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.03em;background:transparent;color:var(--dashboard-text);padding:11px 18px;border-radius:var(--dashboard-radius);border:1px solid var(--dashboard-paper-border);}
+                .btn-outline:hover{border-color:var(--dashboard-cyan);}
+                .btn-outline.danger{color:var(--dashboard-stamp);border-color:rgba(232,84,60,.3);}
+                .btn-outline.danger:hover{border-color:var(--dashboard-stamp);background:rgba(232,84,60,.05);}
+
+                .plan-box{display:flex;align-items:center;justify-content:space-between;padding:16px;border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);background:rgba(255,255,255,.015);margin-bottom:16px;}
+                .plan-box .pb-title{font-size:14.5px;font-weight:600;margin-bottom:4px;}
+                .plan-box .pb-desc{font-size:13px;color:var(--dashboard-text-dim);}
+                .plan-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:var(--dashboard-radius);}
+                .plan-badge.pro{background:rgba(232,184,94,.15);color:var(--dashboard-amber);border:1px solid rgba(232,184,94,.3);}
+                .plan-badge.free{background:rgba(255,255,255,.05);color:var(--dashboard-text-dim);border:1px solid var(--dashboard-paper-border);}
+            `}} />
+
+            <div className="page-head" style={{ marginBottom: '28px' }}>
+                <div className="peyebrow">HESAP AYARLARI</div>
+                <h1 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, letterSpacing: '-0.01em', marginBottom: '8px' }}>{t("title")}</h1>
+                <p style={{ color: 'var(--dashboard-text-dim)', fontSize: '14px' }}>{t("desc")}</p>
             </div>
 
-            {/* Profile Info */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <User className="h-4 w-4 text-blue-500" />
-                        {t("personalInfo")}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="fullName">{t("fullName")}</Label>
-                        <Input id="fullName" value={profile.fullName} onChange={(e) => setProfile({ ...profile, fullName: e.target.value })} />
+            <div className="space-y-6">
+                {/* Profile Info */}
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3><User /> {t("personalInfo")}</h3>
+                    <div className="form-group">
+                        <label>{t("fullName")}</label>
+                        <input value={profile.fullName} onChange={(e) => setProfile({ ...profile, fullName: e.target.value })} />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="email">{t("email")}</Label>
-                        <Input id="email" type="email" value={profile.email} disabled className="opacity-60" />
-                        <p className="text-xs text-muted-foreground">{t("emailNote")}</p>
+                    <div className="form-group" style={{ marginBottom: '24px' }}>
+                        <label>{t("email")}</label>
+                        <input value={profile.email} disabled />
+                        <p style={{ fontSize: '12px', color: 'var(--dashboard-text-dim)', marginTop: '6px' }}>{t("emailNote")}</p>
                     </div>
-                    <Button className="gradient-brand text-white border-0" onClick={handleSave} disabled={isSaving}>
-                        {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                    <button className="btn-stamp" onClick={handleSave} disabled={isSaving}>
+                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                         {t("saveButton")}
-                    </Button>
-                </CardContent>
-            </Card>
+                    </button>
+                </div>
 
-            {/* Plan Info */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <Crown className="h-4 w-4 text-yellow-500" />
+                {/* Plan Info */}
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3 style={{ color: 'var(--dashboard-amber)' }}>
+                        <Crown style={{ color: 'var(--dashboard-amber)', width: '18px', height: '18px' }} /> 
                         {t("planInfo")}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between rounded-lg border p-4">
+                    </h3>
+                    <div className="plan-box">
                         <div>
-                            <p className="font-semibold">{plan === "pro" ? t("proPlan") : t("freePlan")}</p>
-                            <p className="text-sm text-muted-foreground mt-0.5">
-                                {plan === "pro" ? t("proDesc") : t("freeDesc")}
-                            </p>
+                            <div className="pb-title">{plan === "pro" ? t("proPlan") : t("freePlan")}</div>
+                            <div className="pb-desc">{plan === "pro" ? t("proDesc") : t("freeDesc")}</div>
                         </div>
-                        <Badge variant={plan === "pro" ? "default" : "secondary"} className={plan === "pro" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-0" : ""}>
+                        <div className={`plan-badge ${plan === "pro" ? "pro" : "free"}`}>
                             {plan === "pro" ? t("proBadge") : t("freeBadge")}
-                        </Badge>
+                        </div>
                     </div>
                     {plan !== "pro" && (
-                        <Button className="w-full gradient-brand text-white border-0 h-11">
-                            <Crown className="mr-2 h-4 w-4" />
+                        <button className="btn-stamp" style={{ width: '100%', justifyContent: 'center', background: 'var(--dashboard-amber)', color: '#0A1628' }}>
+                            <Crown className="w-4 h-4" />
                             {t("upgradeToPro")} — {tIndex("proPrice")}{tIndex("perMonth")}
-                        </Button>
+                        </button>
                     )}
-                </CardContent>
-            </Card>
+                </div>
 
-            {/* Password */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <Lock className="h-4 w-4 text-zinc-500" />
-                        {t("passwordChange")}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Button variant="outline" onClick={handlePasswordReset}>
+                {/* Password */}
+                <div className="bp-card">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3 style={{ color: 'var(--dashboard-text)' }}><Lock /> {t("passwordChange")}</h3>
+                    <button className="btn-outline" onClick={handlePasswordReset}>
                         {t("sendResetEmail")}
-                    </Button>
-                </CardContent>
-            </Card>
+                    </button>
+                </div>
 
-            {/* Danger Zone */}
-            <Card className="border-destructive/30">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base text-destructive">
-                        <ShieldAlert className="h-4 w-4" />
+                {/* Danger Zone */}
+                <div className="bp-card danger">
+                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    <h3 style={{ color: 'var(--dashboard-stamp)' }}>
+                        <ShieldAlert style={{ color: 'var(--dashboard-stamp)' }} /> 
                         {t("dangerZone")}
-                    </CardTitle>
-                    <CardDescription>{t("dangerZoneDesc")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Button variant="destructive" className="w-full" onClick={() => setShowDeleteDialog(true)}>
+                    </h3>
+                    <p style={{ fontSize: '13.5px', color: 'var(--dashboard-text-dim)', marginBottom: '20px' }}>{t("dangerZoneDesc")}</p>
+                    <button className="btn-outline danger" onClick={() => setShowDeleteDialog(true)}>
                         {t("deleteAccount")}
-                    </Button>
-                </CardContent>
-            </Card>
+                    </button>
+                </div>
+            </div>
 
             <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <DialogContent>
+                <DialogContent className="border-red-900/50 bg-zinc-950 text-white">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-destructive">
+                        <DialogTitle className="flex items-center gap-2 text-red-500">
                             <AlertTriangle className="h-5 w-5" />
                             Hesabınızı silmek istediğinize emin misiniz?
                         </DialogTitle>
-                        <DialogDescription className="pt-2">
+                        <DialogDescription className="pt-2 text-zinc-400">
                             Bu işlem geri alınamaz. Tüm verileriniz (CV&apos;leriniz, motivasyon mektuplarınız ve ilan takipleriniz) <strong>kalıcı olarak silinecektir</strong>.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="mt-4 flex sm:justify-between gap-3">
-                        <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting}>
+                        <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting} className="border-zinc-800 hover:bg-zinc-900 text-zinc-300">
                             İptal
                         </Button>
-                        <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting}>
+                        <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting} className="bg-red-600 hover:bg-red-700 text-white">
                             {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                             Evet, Hesabımı Sil
                         </Button>

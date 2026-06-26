@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giriş Yap — ViCareerAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1628; --bg-2:#0E2038;
+    --grid-line:rgba(110,168,200,0.10); --grid-line-major:rgba(110,168,200,0.18);
+    --cyan:#6FD6E8; --cyan-dim:rgba(111,214,232,0.55);
+    --stamp:#E8543C; --stamp-dim:rgba(232,84,60,0.18);
+    --paper:rgba(223,238,245,0.04); --paper-border:rgba(111,214,232,0.16);
+    --text:#EAF3F7; --text-dim:rgba(234,243,247,0.62);
+    --mono-label:#8FB9CC; --radius:2px;
+    --error:#E8543C;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--cyan-dim);color:#06121f;}
+  h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .grid-field{
+    position:fixed; inset:-10%;
+    background-image:
+      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(0deg, var(--grid-line-major) 0 1px, transparent 1px 200px),
+      repeating-linear-gradient(90deg, var(--grid-line-major) 0 1px, transparent 1px 200px);
+    z-index:0; pointer-events:none;
+  }
+
+  .shell{
+    position:relative; z-index:1;
+    min-height:100vh;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ---------- LEFT: brand panel ---------- */
+  .brand-panel{
+    position:relative;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:clamp(28px,4vw,56px);
+    border-right:1px solid var(--paper-border);
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(111,214,232,0.07), transparent 55%),
+      var(--bg-2);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;}
+  .logo-mark{
+    width:30px;height:30px;border:1.5px solid var(--cyan);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);flex-shrink:0;
+  }
+  .brand-mid{max-width:420px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--mono-label);
+    display:flex;align-items:center;gap:10px;margin-bottom:20px;
+  }
+  .eyebrow::before{content:'';width:18px;height:1px;background:var(--cyan-dim);}
+  .brand-mid h1{font-size:clamp(28px,3.4vw,40px);line-height:1.12;margin-bottom:16px;}
+  .brand-mid p{color:var(--text-dim);font-size:15px;line-height:1.65;}
+
+  .mini-steps{display:flex;flex-direction:column;gap:0;margin-top:8px;}
+  .mstep{
+    display:flex;gap:16px;align-items:flex-start;
+    padding:16px 0;border-bottom:1px solid var(--paper-border);
+  }
+  .mstep:last-child{border-bottom:none;}
+  .mstep .mnum{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mono-label);
+    width:24px;flex-shrink:0;padding-top:2px;
+  }
+  .mstep.active .mnum{color:var(--stamp);}
+  .mstep h3{font-size:14.5px;font-weight:600;font-family:'Inter',sans-serif;margin-bottom:4px;color:var(--text);}
+  .mstep p{font-size:13px;color:var(--text-dim);line-height:1.5;}
+
+  .brand-footer{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:var(--mono-label);
+  }
+
+  /* ---------- RIGHT: form panel ---------- */
+  .form-panel{
+    display:flex; align-items:center; justify-content:center;
+    padding:clamp(24px,5vw,56px);
+  }
+  .form-card{
+    width:100%; max-width:400px;
+    position:relative;
+    background:var(--paper);
+    border:1px solid var(--paper-border);
+    border-radius:var(--radius);
+    padding:clamp(28px,4vw,40px) clamp(24px,4vw,36px);
+  }
+  .form-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .form-card svg.corners path{stroke:var(--cyan);stroke-width:1.4;fill:none;}
+
+  .form-head{margin-bottom:32px;}
+  .form-head h2{font-size:clamp(24px,3vw,30px);margin-bottom:8px;}
+  .form-head p{font-size:14px;color:var(--text-dim);}
+
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block; font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--mono-label);
+    margin-bottom:9px;
+  }
+  .field input{
+    width:100%; height:50px; padding:0 14px;
+    background:rgba(255,255,255,0.02);
+    border:1px solid var(--paper-border);
+    border-radius:var(--radius);
+    color:var(--text); font-family:'Inter',sans-serif; font-size:16px;
+    transition:border-color .2s, background .2s;
+  }
+  .field input::placeholder{color:rgba(234,243,247,0.28);}
+  .field input:focus{
+    outline:none; border-color:var(--cyan);
+    background:rgba(111,214,232,0.04);
+  }
+  .field-row-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;}
+  .field-row-label a{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan-dim);
+    transition:color .2s;
+  }
+  .field-row-label a:hover{color:var(--cyan);}
+
+  .submit-btn{
+    width:100%; height:52px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.05em;
+    background:var(--stamp); color:#0A1628; border:1px solid var(--stamp);
+    border-radius:var(--radius); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform .2s, box-shadow .2s;
+    margin-top:6px;
+  }
+  .submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(232,84,60,.25);}
+  .submit-btn:active{transform:translateY(0);}
+
+  .divider{
+    display:flex; align-items:center; gap:14px; margin:26px 0;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em;
+    color:var(--mono-label); text-transform:uppercase;
+  }
+  .divider::before, .divider::after{content:'';flex:1;height:1px;background:var(--paper-border);}
+
+  .oauth-btn{
+    width:100%; height:50px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:transparent; border:1px solid var(--paper-border);
+    border-radius:var(--radius); color:var(--text);
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:500;
+    cursor:pointer; transition:border-color .2s, background .2s;
+  }
+  .oauth-btn:hover{border-color:var(--cyan-dim);background:rgba(111,214,232,0.04);}
+  .oauth-btn svg{width:18px;height:18px;flex-shrink:0;}
+
+  .form-foot{
+    margin-top:28px; text-align:center;
+    font-size:13.5px; color:var(--text-dim);
+  }
+  .form-foot a{color:var(--cyan); font-weight:500;}
+  .form-foot a:hover{text-decoration:underline;}
+
+  .back-home{
+    position:absolute; top:clamp(24px,5vw,40px); left:clamp(24px,5vw,40px);
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--mono-label);
+    display:none; align-items:center; gap:6px;
+  }
+
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px;}
+
+  /* ---------- MOBILE ---------- */
+  @media(max-width:860px){
+    .shell{grid-template-columns:1fr;}
+    .brand-panel{
+      border-right:none; border-bottom:1px solid var(--paper-border);
+      padding:20px clamp(20px,5vw,32px);
+      flex-direction:row; align-items:center; justify-content:space-between;
+      min-height:auto;
+    }
+    .brand-mid{display:none;}
+    .brand-footer{display:none;}
+    .form-panel{padding:32px clamp(20px,5vw,32px) 56px;}
+    .form-card{max-width:100%;border:none;background:transparent;padding:0;}
+    .form-card svg.corners{display:none;}
+  }
+
+  @media(prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-field"></div>
+
+<div class="shell">
+
+  <div class="brand-panel">
+    <div class="logo"><span class="logo-mark">Vi</span>ViCareerAI</div>
+
+    <div class="brand-mid">
+      <div class="eyebrow">TEKRAR HOŞ GELDİN</div>
+      <h1>Çizim masan olduğun yerde duruyor.</h1>
+      <p>CV'lerin, taslakların ve eşleşme analizlerin seni bekliyor. Giriş yap ve devam et.</p>
+
+      <div class="mini-steps">
+        <div class="mstep">
+          <span class="mnum">＋</span>
+          <div><h3>Yeni Taslak</h3><p>Bir cümleyi düzeltmekten yeni bir şablona, her şey kaldığın yerde.</p></div>
+        </div>
+        <div class="mstep">
+          <span class="mnum">↻</span>
+          <div><h3>Senkronize Veri</h3><p>Tüm değişiklikler otomatik kaydedilir, cihazlar arası senkron çalışır.</p></div>
+        </div>
+        <div class="mstep">
+          <span class="mnum">⛨</span>
+          <div><h3>Şifreli Erişim</h3><p>Bilgilerin sadece sana özel, üçüncü tarafla paylaşılmaz.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-footer">© 2026 VICAREERAI · GÜVENLİ ÖDEME · %100 GİZLİLİK</div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-card">
+      <svg class="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M6,22 L6,6 L22,6"/><path d="M78,6 L94,6 L94,22"/>
+        <path d="M94,78 L94,94 L78,94"/><path d="M22,94 L6,94 L6,78"/>
+      </svg>
+
+      <div class="form-head">
+        <h2>Tekrar Hoş Geldin</h2>
+        <p>Hesabına giriş yapmak için e-posta bilgini gir.</p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">E-posta</label>
+          <input type="email" id="email" name="email" placeholder="ornek@eposta.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <div class="field-row-label">
+            <label for="password" style="margin-bottom:0;">Şifre</label>
+            <a href="#">Şifrenizi mi unuttunuz?</a>
+          </div>
+          <input type="password" id="password" name="password" placeholder="Şifren" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="submit-btn">GİRİŞ YAP →</button>
+      </form>
+
+      <div class="divider">veya</div>
+
+      <button type="button" class="oauth-btn">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.56c2.08-1.92 3.28-4.74 3.28-8.1z" opacity=".5"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.77c-.99.67-2.26 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z" opacity=".75"/><path fill="currentColor" d="M5.84 14.1A6.6 6.6 0 0 1 5.5 12c0-.73.12-1.43.34-2.1V7.06H2.18A10.99 10.99 0 0 0 1 12c0 1.77.43 3.45 1.18 4.94l3.66-2.84z" opacity=".6"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z"/></svg>
+        Google ile devam et
+      </button>
+
+      <div class="form-foot">Hesabınız yok mu? <a href="vicareerai-register.html">Kayıt Ol</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  // NOT: Bu statik bir tasarım referansıdır. Gerçek giriş mantığı
+  // (Supabase Auth çağrısı, validasyon, hata mesajları) mevcut
+  // login sayfanızdaki implementasyondan taşınmalı.
+  alert('Tasarım önizlemesi — gerçek giriş mantığı bağlı değil.');
+});
+</script>
+</body>
+</html>
