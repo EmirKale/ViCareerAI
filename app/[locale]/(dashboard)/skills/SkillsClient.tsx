@@ -32,7 +32,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
             
-            toast.success("Analiz tamamlandı!");
+            toast.success(t("analysisSuccess") || "Analiz tamamlandı!");
             router.refresh();
             setShowUpload(false);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +48,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            toast.error("Dosya boyutu 5MB'dan küçük olmalıdır.");
+            toast.error(t("fileTooLarge") || "Dosya boyutu 5MB'dan küçük olmalıdır.");
             return;
         }
 
@@ -64,7 +64,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
             });
             const parseData = await parseRes.json();
             
-            if (!parseRes.ok) throw new Error(parseData.error || "Dosya okunamadı");
+            if (!parseRes.ok) throw new Error(parseData.error || t("fileReadError") || "Dosya okunamadı");
 
             const res = await fetch("/api/skills/analyze", {
                 method: "POST",
@@ -276,26 +276,26 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
 
             <div className="skills-head">
                 <div className="page-head" style={{ marginBottom: 0 }}>
-                    <div className="peyebrow">BECERİ ANALİZİ</div>
-                    <h1>Beceri Analizi</h1>
-                    {targetRoleText && <div className="target-line">HEDEF: <b>{targetRoleText}</b></div>}
+                    <div className="peyebrow">{t("title").toUpperCase()}</div>
+                    <h1>{t("title")}</h1>
+                    {targetRoleText && <div className="target-line">{t("targetRoleDisplay")}: <b>{targetRoleText}</b></div>}
                 </div>
                 <button className="btn-outline" onClick={() => setShowUpload(true)}>
                     <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}><path d="M21 12a9 9 0 11-2.6-6.4M21 4v6h-6"/></svg>
-                    Yeniden Analiz Et
+                    {t("reanalyze")}
                 </button>
             </div>
 
             <div className="insight-row">
                 <div className="insight-card std">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>AI İçgörüleri</h3>
+                    <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>{t("aiInsights")}</h3>
                     <p>{insight}</p>
                 </div>
                 {superpower && (
                     <div className="insight-card power">
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                        <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-stamp)" strokeWidth="1.6" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>Süper Gücün</h3>
+                        <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-stamp)" strokeWidth="1.6" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>{t("superpower")}</h3>
                         <p>{superpower}</p>
                     </div>
                 )}
@@ -306,11 +306,11 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                     <div className="bp-card">
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <div className="score-block">
-                            <div className="sb-top"><span className="sb-label">GENEL UYGUNLUK</span><span className="sb-val">{overall_score}<span className="of100">/100</span></span></div>
+                            <div className="sb-top"><span className="sb-label">{t("overallMatch")}</span><span className="sb-val">{overall_score}<span className="of100">/100</span></span></div>
                             <div className="progress-track"><div className="progress-fill" style={{ width: `${overall_score}%`, background: 'var(--dashboard-cyan)' }}></div></div>
                         </div>
                         <div className="score-block" style={{ marginTop: '22px' }}>
-                            <div className="sb-top"><span className="sb-label">ATS SKORU</span><span className="sb-val">{atsScore}<span className="of100">/100</span></span></div>
+                            <div className="sb-top"><span className="sb-label">{t("atsScore")}</span><span className="sb-val">{atsScore}<span className="of100">/100</span></span></div>
                             <div className="progress-track"><div className="progress-fill" style={{ width: `${atsScore}%`, background: 'var(--dashboard-stamp)' }}></div></div>
                             {scores?.ats_feedback && scores.ats_feedback.length > 0 && (
                                 <div className="flag-list">
@@ -327,7 +327,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                             <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                             <h3 style={{ fontSize: '14px', color: 'var(--dashboard-stamp)', display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
                                 <svg viewBox="0 0 24 24" stroke="var(--dashboard-stamp)" strokeWidth="1.6" fill="none" style={{ width: '16px', height: '16px' }}><path d="M12 9v4M12 17h.01M10.3 3.86L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
-                                Kırmızı Bayraklar
+                                {t("redFlags")}
                             </h3>
                             <div className="redflag-list">
                                 {redFlags.map((flag: string, i: number) => (
@@ -340,8 +340,8 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
 
                 <div className="bp-card radar-wrap">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <h3>Yetkinlik Matrisi</h3>
-                    <div className="rsub">Profesyonel ayak izinin çok boyutlu analizi</div>
+                    <h3>{t("competencyMatrix")}</h3>
+                    <div className="rsub">{t("competencyDesc")}</div>
                     
                     {(() => {
                         const getPoint = (score: number, angleDeg: number) => {
@@ -368,12 +368,12 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                                 </g>
                                 <polygon points={points} fill="rgba(111,214,232,.18)" stroke="var(--dashboard-cyan)" strokeWidth="2"/>
                                 <g fontFamily="JetBrains Mono, monospace" fontSize="9" fill="var(--dashboard-mono-label)" textAnchor="middle">
-                                    <text x="140" y="18">TEKNİK ({scores?.teknik || 0})</text>
-                                    <text x="245" y="89">İLETİŞİM ({scores?.iletisim || 0})</text>
-                                    <text x="245" y="199">UYUMLULUK ({scores?.uyumluluk || 0})</text>
-                                    <text x="140" y="266">PROBLEM ÇÖZME ({scores?.problemCozme || 0})</text>
-                                    <text x="35" y="199">İŞBİRLİĞİ ({scores?.isbirligi || 0})</text>
-                                    <text x="35" y="89">LİDERLİK ({scores?.liderlik || 0})</text>
+                                    <text x="140" y="18">{t("techSkills").toUpperCase()} ({scores?.teknik || 0})</text>
+                                    <text x="245" y="89">{t("communication").toUpperCase()} ({scores?.iletisim || 0})</text>
+                                    <text x="245" y="199">{t("adaptability").toUpperCase()} ({scores?.uyumluluk || 0})</text>
+                                    <text x="140" y="266">{t("problemSolving").toUpperCase()} ({scores?.problemCozme || 0})</text>
+                                    <text x="35" y="199">{t("collaboration").toUpperCase()} ({scores?.isbirligi || 0})</text>
+                                    <text x="35" y="89">{t("leadership").toUpperCase()} ({scores?.liderlik || 0})</text>
                                 </g>
                             </svg>
                         );
@@ -384,8 +384,8 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
             {actionPlan.length > 0 && (
                 <div className="bp-card action-card">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <div className="action-head"><svg viewBox="0 0 24 24" stroke="var(--dashboard-green)" strokeWidth="1.8" fill="none"><path d="M20 6L9 17l-5-5"/></svg><h3>Aksiyon Planı (Hemen Başla)</h3></div>
-                    <div className="action-sub">CV&apos;ni ve kariyerini güçlendirmek için bugün atman gereken adım(lar).</div>
+                    <div className="action-head"><svg viewBox="0 0 24 24" stroke="var(--dashboard-green)" strokeWidth="1.8" fill="none"><path d="M20 6L9 17l-5-5"/></svg><h3>{t("actionPlanTitle")}</h3></div>
+                    <div className="action-sub">{t("actionPlanDesc")}</div>
                     {actionPlan.map((plan: string, i: number) => (
                         <div key={i} className="action-step"><span className="anum">{i+1}</span>{plan}</div>
                     ))}
@@ -398,24 +398,24 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                     <div className="action-head">
                         <svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.8" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>
-                        <h3>CV Cümle Düzeltme Önerileri</h3>
+                        <h3>{t("cvCorrectionsTitle")}</h3>
                     </div>
-                    <div className="action-sub">Senin yazdığın cümleleri daha profesyonel hale getirmek için AI önerileri.</div>
+                    <div className="action-sub">{t("cvCorrectionsDesc")}</div>
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {cvCorrections.map((corr: any, idx: number) => (
                         <div key={idx} style={{ marginBottom: '16px', border: '1px solid var(--dashboard-paper-border)', borderRadius: 'var(--dashboard-radius)', background: 'rgba(255,255,255,.015)', padding: '14px' }}>
                             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                                 <div style={{ flex: 1, minWidth: '240px' }}>
-                                    <div style={{ fontSize: '10.5px', color: 'var(--dashboard-stamp)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '8px' }}>SENİN YAZDIĞIN</div>
+                                    <div style={{ fontSize: '10.5px', color: 'var(--dashboard-stamp)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '8px' }}>{t("yourWriting")}</div>
                                     <div style={{ fontSize: '13px', color: 'var(--dashboard-text-dim)', textDecoration: 'line-through' }}>{corr.original}</div>
                                 </div>
                                 <div style={{ flex: 1, minWidth: '240px' }}>
-                                    <div style={{ fontSize: '10.5px', color: 'var(--dashboard-green)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '8px' }}>AI ÖNERİSİ</div>
+                                    <div style={{ fontSize: '10.5px', color: 'var(--dashboard-green)', fontFamily: '"JetBrains Mono", monospace', marginBottom: '8px' }}>{t("aiSuggestion")}</div>
                                     <div style={{ fontSize: '13px', color: 'var(--dashboard-text)' }}>{corr.improved}</div>
                                 </div>
                             </div>
                             <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--dashboard-paper-border)', fontSize: '12px', color: 'var(--dashboard-text-dim)' }}>
-                                <strong style={{ color: 'var(--dashboard-cyan)' }}>Neden?</strong> {corr.reason}
+                                <strong style={{ color: 'var(--dashboard-cyan)' }}>{t("reason")}</strong> {corr.reason}
                             </div>
                         </div>
                     ))}

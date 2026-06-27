@@ -451,7 +451,22 @@
         "accessWorkshop": "Access Workshop",
         "s3Title": "Advanced Rust",
         "s3Desc": "Leverage memory safety for high-performance backend tooling.",
-        "quickLearning": "Quick Learning"
+        "quickLearning": "Quick Learning",
+        "reanalyze": "Reanalyze",
+        "targetRoleDisplay": "TARGET",
+        "superpower": "Your Superpower",
+        "overallMatch": "OVERALL MATCH",
+        "atsScore": "ATS SCORE",
+        "redFlags": "Red Flags",
+        "actionPlanTitle": "Action Plan (Start Now)",
+        "actionPlanDesc": "Step(s) you need to take today to strengthen your CV and career.",
+        "cvCorrectionsTitle": "CV Sentence Correction Suggestions",
+        "cvCorrectionsDesc": "AI suggestions to make your sentences more professional.",
+        "yourWriting": "YOUR WRITING",
+        "aiSuggestion": "AI SUGGESTION",
+        "reason": "Why?",
+        "fileTooLarge": "File size must be under 5MB.",
+        "fileReadError": "Could not read file"
     },
     "Interview": {
         "questionCount": "QUESTION 03 / 10",

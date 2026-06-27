@@ -63,30 +63,20 @@ export async function POST(request: NextRequest) {
         // Limit text length
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
-        const languageInstruction = locale === 'tr' 
-            ? 'CRITICAL: TÜM çıktıyı (başlıklar, açıklamalar, içgörüler, vb.) TÜRKÇE olarak üret. İngilizce kelime kullanma.'
-            : 'CRITICAL: Generate ALL output (titles, descriptions, insights, etc.) in ENGLISH.';
+        const isTr = locale === 'tr';
+        const languageOutput = isTr ? 'TURKISH' : 'ENGLISH';
 
-        const prompt = `${languageInstruction}
+        const prompt = `You are an expert Career Advisor.
+CRITICAL REQUIREMENT: You MUST generate all human-readable text in the final JSON (insight, superpower descriptions, red_flags, corrections, recommendations, action_plan) in ${languageOutput}.
+DO NOT output in any other language.
 
-Kullanıcının özgeçmişi:
+User's CV:
 ${textToAnalyze}
 
-Hedeflenen Rol/Pozisyon: ${targetRole || "Belirtilmemiş, CV'den tahmin et"}
+Target Role/Position: ${targetRole || "Not specified, guess from CV"}
 
-Sen uzman bir Kariyer Danışmanısın. Kullanıcının özgeçmişini, hedeflediği pozisyona ne kadar uygun olduğu açısından değerlendireceksin. 
-Aşağıdaki metrikleri ve alanları JSON olarak döndür:
-1. overall_score (0-100)
-2. scores nesnesi (technical_skills, problem_solving, leadership, communication, adaptability, target_role) (her biri 0-100)
-3. ats_score (0-100) - Özgeçmişin ATS sistemleri (Applicant Tracking System) okunabilirliği
-4. insight (1 cümlelik temel analiz sonucu)
-5. superpower nesnesi (title, description) - adayın en güçlü yanı
-6. red_flags dizisi - her biri string uyarı (Örn: "Eksik tarih formatı", "Sektör dışı jargon")
-7. corrections dizisi - (original_text, improved_text, reason)
-8. action_plan dizisi - hemen yapılması gereken 3 şey (her biri string)
-9. recommendations dizisi (her biri: title, description, id(s1/s2 vb.))
-
-SADECE şu JSON formatında dön, başka hiçbir metin ekleme:
+Evaluate the user's CV based on their suitability for the target position.
+Return ONLY in this JSON format, exactly matching these keys (values should be translated to ${languageOutput}):
 {
   "scores": {
     "technical_skills": 85, "communication": 70, "adaptability": 75, "problem_solving": 90, "leadership": 60
@@ -95,23 +85,20 @@ SADECE şu JSON formatında dön, başka hiçbir metin ekleme:
   "insight": "...",
   "superpower": {"title": "...", "description": "..."},
   "ats_score": 85,
-  "action_plan": ["Hemen bugün React yeteneklerini GitHub'da sergile", "Özgeçmişindeki x projesini daha detaylandır", "A firmasına uygun bir ön yazı hazırla"],
+  "action_plan": ["...", "...", "..."],
   "cv_corrections": [
     {
-      "original": "Projeyi yönettim",
-      "improved": "10 kişilik ekibi Agile metodolojisiyle yöneterek ürünün teslim süresini %20 hızlandırdım",
-      "reason": "Etki ve metrik eksikliği"
+      "original": "...",
+      "improved": "...",
+      "reason": "..."
     }
   ],
   "recommendations": [
-    {"title": "Docker Öğren", "description": "Mikroservis mimarisini anlamak için Docker öğren.", "category": "Teknik"}
+    {"title": "...", "description": "...", "category": "..."}
   ]
 }
 
-CV Verisi:
-${textToAnalyze}
-
-${languageInstruction}
+REMEMBER: All human-readable text content (inside the placeholders "...") MUST be in ${languageOutput}.
 `;
 
         const completion = await openai.chat.completions.create({

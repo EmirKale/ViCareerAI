@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Sparkles, Loader2, Target, CheckCircle2, AlertTriangle, ArrowRight, BookOpen, Search, Building2, MapPin, Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface JobListing {
     id: string;
@@ -33,6 +33,7 @@ interface AnalysisResult {
 
 export default function JobDiscoverPage() {
     const t = useTranslations("JobsDiscover");
+    const locale = useLocale();
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -77,7 +78,8 @@ export default function JobDiscoverPage() {
                 body: JSON.stringify({ 
                     query: searchQuery || "developer",
                     location: searchLocation,
-                    page: 1 
+                    page: 1,
+                    locale
                 }),
             });
             const data = await res.json();
@@ -147,29 +149,29 @@ export default function JobDiscoverPage() {
             `}} />
 
             <div className="page-head">
-                <div className="peyebrow">İŞ İLANLARI</div>
-                <h1>İlanları Keşfet</h1>
-                <p>Pozisyon veya beceri adı girerek sana uygun ilanları bul.</p>
+                <div className="peyebrow">{t('title').toUpperCase()}</div>
+                <h1>{t('title')}</h1>
+                <p>{t('desc')}</p>
             </div>
 
             <div className="search-bar">
                 <input 
                     type="text" 
-                    placeholder="Örn: React Developer, Next.js, Frontend..." 
+                    placeholder={t('searchPlaceholder')} 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
                 />
                 <select value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)}>
-                    <option value="Turkey">📍 Türkiye</option>
-                    <option value="Remote">🌐 Uzaktan</option>
-                    <option value="United States">🇺🇸 ABD</option>
-                    <option value="United Kingdom">🇬🇧 Birleşik Krallık</option>
-                    <option value="Germany">🇩🇪 Almanya</option>
-                    <option value="Netherlands">🇳🇱 Hollanda</option>
+                    <option value="Turkey">📍 {t('locationTurkey')}</option>
+                    <option value="Remote">🌐 {t('locationRemote')}</option>
+                    <option value="United States">🇺🇸 {t('locationUS')}</option>
+                    <option value="United Kingdom">🇬🇧 {t('locationUK')}</option>
+                    <option value="Germany">🇩🇪 {t('locationGermany')}</option>
+                    <option value="Netherlands">🇳🇱 {t('locationNetherlands')}</option>
                 </select>
                 <button onClick={handleJobSearch} disabled={isSearching}>
-                    {isSearching ? "Aranıyor..." : "Ara"}
+                    {isSearching ? t('searching') : t('searchButton')}
                 </button>
             </div>
 
@@ -178,17 +180,17 @@ export default function JobDiscoverPage() {
                     {isSearching ? (
                         <div className="result-empty" style={{ minHeight: '160px' }}>
                             <Loader2 className="w-[38px] h-[38px] animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
-                            <div style={{ color: 'var(--dashboard-text)' }}>İlanlar aranıyor...</div>
+                            <div style={{ color: 'var(--dashboard-text)' }}>{t('searching')}</div>
                         </div>
                     ) : jobs.length === 0 ? (
                         <div className="result-empty" style={{ minHeight: '160px', border: '1px dashed var(--dashboard-paper-border)', borderRadius: 'var(--dashboard-radius)' }}>
                             <Search className="w-[38px] h-[38px]" style={{ color: 'var(--dashboard-text-dim)', opacity: 0.5 }} />
-                            <div style={{ color: 'var(--dashboard-text)' }}>Sonuç bulunamadı</div>
+                            <div style={{ color: 'var(--dashboard-text)' }}>{t('noResults')}</div>
                         </div>
                     ) : (
                         <div>
                             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)', marginBottom: '16px' }}>
-                                {jobs.length} İLAN BULUNDU {apiSource === "jsearch" ? "(GERÇEK VERİ)" : "(DEMO VERİ)"}
+                                {t('resultsFound', { count: jobs.length }).toUpperCase()} {apiSource === "jsearch" ? t('apiSourceReal') : t('apiSourceDemo')}
                             </div>
                             <div>
                                 {jobs.map(job => (
@@ -206,7 +208,7 @@ export default function JobDiscoverPage() {
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
                                                 <div className="job-score">
                                                     <span className="job-score-val">{job.matchScore}%</span>
-                                                    <span className="job-score-lbl">EŞLEŞME</span>
+                                                    <span className="job-score-lbl">{t('matchScore').toUpperCase()}</span>
                                                 </div>
                                                 <button 
                                                     className="btn-outline" 
@@ -214,7 +216,7 @@ export default function JobDiscoverPage() {
                                                     onClick={() => job.applyLink && job.applyLink !== "#" && window.open(job.applyLink, "_blank")}
                                                     disabled={!job.applyLink || job.applyLink === "#"}
                                                 >
-                                                    {job.applyLink && job.applyLink !== "#" ? "BAŞVUR" : "ANALİZ ET"}
+                                                    {job.applyLink && job.applyLink !== "#" ? t('applyButton').toUpperCase() : t('analyzeButton').toUpperCase()}
                                                 </button>
                                             </div>
                                         </div>
@@ -232,32 +234,32 @@ export default function JobDiscoverPage() {
                 </div>
             )}
 
-            <div className="divider-label"><div className="dline"></div><h2>İlan Metni ile Analiz</h2><div className="dline"></div></div>
+            <div className="divider-label"><div className="dline"></div><h2>{t('manualAnalysisTitle')}</h2><div className="dline"></div></div>
 
             <div className="analyze-grid">
                 <div className="bp-card">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <h3 style={{ marginBottom: '8px' }}>İlan Bilgileri</h3>
-                    <p style={{ fontSize: '13px', color: 'var(--dashboard-text-dim)', marginBottom: '22px' }}>Analiz edilecek iş ilanının detaylarını gir.</p>
+                    <h3 style={{ marginBottom: '8px' }}>{t('jobInfoTitle')}</h3>
+                    <p style={{ fontSize: '13px', color: 'var(--dashboard-text-dim)', marginBottom: '22px' }}>{t('jobInfoDesc')}</p>
                     <div className="field-row">
                         <div className="field">
-                            <label>Şirket Adı</label>
-                            <input type="text" placeholder="Örn: Google" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+                            <label>{t('companyLabel')}</label>
+                            <input type="text" placeholder={t('companyPlaceholder')} value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
                         </div>
                         <div className="field">
-                            <label>Pozisyon</label>
-                            <input type="text" placeholder="Örn: Frontend Developer" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} />
+                            <label>{t('positionLabel')}</label>
+                            <input type="text" placeholder={t('positionPlaceholder')} value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} />
                         </div>
                     </div>
                     <div className="field">
-                        <label>İlan Açıklaması</label>
-                        <textarea rows={4} placeholder="İlanın gereksinimlerini buraya yapıştırın..." value={form.jobDescription} onChange={(e) => setForm({ ...form, jobDescription: e.target.value })} />
+                        <label>{t('descriptionLabel')}</label>
+                        <textarea rows={4} placeholder={t('descriptionPlaceholder')} value={form.jobDescription} onChange={(e) => setForm({ ...form, jobDescription: e.target.value })} />
                     </div>
                     <button className="btn-stamp" style={{ width: '100%', justifyContent: 'center' }} onClick={handleAnalyze} disabled={isLoading || !form.jobDescription}>
                         {isLoading ? (
-                            <><Loader2 className="w-[14px] h-[14px] mr-2 animate-spin" /> ANALİZ EDİLİYOR...</>
+                            <><Loader2 className="w-[14px] h-[14px] mr-2 animate-spin" /> {t('analyzing').toUpperCase()}</>
                         ) : (
-                            <>✦ AI İLE ANALİZ ET</>
+                            <>✦ {t('analyzeButtonAI').toUpperCase()}</>
                         )}
                     </button>
                 </div>
@@ -267,41 +269,41 @@ export default function JobDiscoverPage() {
                     {!result && !isLoading ? (
                         <div className="result-empty" style={{ flex: 1 }}>
                             <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" fill="none"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
-                            <div style={{ color: 'var(--dashboard-text)', fontSize: '15px', fontWeight: 500 }}>Analiz Sonucu Bekleniyor</div>
-                            <div style={{ fontSize: '13px', maxWidth: '230px' }}>İlan detaylarını doldurup analizi başlattığında eşleşme oranın burada görünecek.</div>
+                            <div style={{ color: 'var(--dashboard-text)', fontSize: '15px', fontWeight: 500 }}>{t('resultWaiting')}</div>
+                            <div style={{ fontSize: '13px', maxWidth: '230px' }}>{t('resultWaitingDesc')}</div>
                         </div>
                     ) : isLoading ? (
                         <div className="result-empty" style={{ flex: 1 }}>
                             <Loader2 className="w-[38px] h-[38px] animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
-                            <div style={{ color: 'var(--dashboard-text)', fontSize: '15px', fontWeight: 500 }}>Yapay Zeka Çalışıyor...</div>
+                            <div style={{ color: 'var(--dashboard-text)', fontSize: '15px', fontWeight: 500 }}>{t('aiWorking')}</div>
                         </div>
                     ) : (
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                            <h3 style={{ marginBottom: '20px' }}>Analiz Sonucu</h3>
+                            <h3 style={{ marginBottom: '20px' }}>{t('manualAnalysisTitle').replace(' İle Analiz', '')}</h3>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', padding: '16px', background: 'rgba(111,214,232,0.05)', borderRadius: 'var(--dashboard-radius)', border: '1px solid var(--dashboard-paper-border)' }}>
                                 <div>
-                                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)' }}>EŞLEŞME ORANI</div>
+                                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)' }}>{t('matchScoreTitle').toUpperCase()}</div>
                                     <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--dashboard-cyan)' }}>{result?.matchScore}%</div>
                                 </div>
                                 <Target className="w-[42px] h-[42px]" style={{ color: 'var(--dashboard-cyan)', opacity: 0.5 }} />
                             </div>
                             
                             <div style={{ marginBottom: '20px' }}>
-                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-green)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><CheckCircle2 className="w-[12px] h-[12px]"/> EŞLEŞEN BECERİLER</div>
+                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-green)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><CheckCircle2 className="w-[12px] h-[12px]"/> {t('matchedSkills').toUpperCase()}</div>
                                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                                     {result?.matchedSkills.map((s, i) => <span key={i} style={{ fontSize: '12px', background: 'rgba(111,232,168,0.1)', color: 'var(--dashboard-green)', padding: '4px 8px', borderRadius: 'var(--dashboard-radius)' }}>{s}</span>)}
                                 </div>
                             </div>
                             
                             <div style={{ marginBottom: '24px' }}>
-                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-stamp)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><AlertTriangle className="w-[12px] h-[12px]"/> EKSİK BECERİLER</div>
+                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-stamp)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><AlertTriangle className="w-[12px] h-[12px]"/> {t('missingSkills').toUpperCase()}</div>
                                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                                     {result?.missingSkills.map((s, i) => <span key={i} style={{ fontSize: '12px', background: 'rgba(232,84,60,0.1)', color: 'var(--dashboard-stamp)', padding: '4px 8px', borderRadius: 'var(--dashboard-radius)' }}>{s}</span>)}
                                 </div>
                             </div>
                             
                             <div style={{ borderTop: '1px solid var(--dashboard-paper-border)', paddingTop: '20px' }}>
-                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)', marginBottom: '12px' }}>AI ÖNERİLERİ</div>
+                                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: 'var(--dashboard-mono-label)', marginBottom: '12px' }}>{t('aiRecommendations').toUpperCase()}</div>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                     {result?.recommendations.map((r, i) => (
                                         <div key={i} style={{ display: 'flex', gap: '10px', fontSize: '13px', color: 'var(--dashboard-text-dim)', background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: 'var(--dashboard-radius)' }}>

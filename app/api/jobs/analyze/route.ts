@@ -19,11 +19,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { jobText } = await request.json();
+        const { jobText, locale } = await request.json();
 
         if (!jobText || jobText.length < 30) {
             return NextResponse.json(
-                { error: "İlan metni çok kısa veya boş." },
+                { error: "İlan metni çok kısa veya boş. / Job description is too short or empty." },
                 { status: 400 }
             );
         }
@@ -35,25 +35,31 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const prompt = `Aşağıdaki iş ilanını analiz et ve JSON formatında döndür.
+        const isTr = locale === 'tr';
+        const languageOutput = isTr ? 'TURKISH' : 'ENGLISH';
 
-İlan Metni:
+        const prompt = `You are an expert recruitment analyst. Analyze the following job description and return the result in JSON format.
+CRITICAL REQUIREMENT: You MUST generate all human-readable text (summary, responsibilities, string lists) in ${languageOutput}.
+DO NOT output in any other language.
+
+Job Description:
 ${jobText}
 
-Yanıtı SADECE geçerli JSON olarak döndür, başka açıklama ekleme:
+Return ONLY valid JSON in this exact structure, with no markdown formatting:
 {
-  "title": "pozisyon adı",
-  "company": "şirket adı veya null",
-  "location": "konum veya null",
-  "type": "tam zamanlı / yarı zamanlı / uzaktan / hibrit",
-  "requiredSkills": ["beceri1", "beceri2"],
-  "niceToHaveSkills": ["beceri1"],
-  "experience": "deneyim süresi",
-  "education": "eğitim gereksinimi veya null",
-  "responsibilities": ["Sorumluluk 1", "Sorumluluk 2"],
-  "summary": "İlanın 2-3 cümlelik kısa özeti",
-  "atsKeywords": ["anahtar1", "anahtar2", "anahtar3"]
-}`;
+  "title": "...",
+  "company": "...",
+  "location": "...",
+  "type": "...",
+  "requiredSkills": ["...", "..."],
+  "niceToHaveSkills": ["..."],
+  "experience": "...",
+  "education": "...",
+  "responsibilities": ["...", "..."],
+  "summary": "...",
+  "atsKeywords": ["...", "..."]
+}
+REMEMBER: All human-readable text content inside the placeholders "..." MUST be in ${languageOutput}.`;
 
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",

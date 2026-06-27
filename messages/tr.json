@@ -451,7 +451,22 @@
         "accessWorkshop": "Atölyeye Eriş",
         "s3Title": "İleri Rust",
         "s3Desc": "Yüksek performanslı arka uç araçları için bellek güvenliğinden yararlanın.",
-        "quickLearning": "Hızlı Öğrenme"
+        "quickLearning": "Hızlı Öğrenme",
+        "reanalyze": "Yeniden Analiz Et",
+        "targetRoleDisplay": "HEDEF",
+        "superpower": "Süper Gücün",
+        "overallMatch": "GENEL UYGUNLUK",
+        "atsScore": "ATS SKORU",
+        "redFlags": "Kırmızı Bayraklar",
+        "actionPlanTitle": "Aksiyon Planı (Hemen Başla)",
+        "actionPlanDesc": "CV'ni ve kariyerini güçlendirmek için bugün atman gereken adım(lar).",
+        "cvCorrectionsTitle": "CV Cümle Düzeltme Önerileri",
+        "cvCorrectionsDesc": "Senin yazdığın cümleleri daha profesyonel hale getirmek için AI önerileri.",
+        "yourWriting": "SENİN YAZDIĞIN",
+        "aiSuggestion": "AI ÖNERİSİ",
+        "reason": "Neden?",
+        "fileTooLarge": "Dosya boyutu 5MB'dan küçük olmalıdır.",
+        "fileReadError": "Dosya okunamadı"
     },
     "Interview": {
         "questionCount": "SORU 03 / 10",

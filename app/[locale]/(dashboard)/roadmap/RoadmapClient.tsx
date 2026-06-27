@@ -32,7 +32,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Analysis failed");
             
-            toast.success("Yol haritası oluşturuldu!");
+            toast.success(t("roadmapCreated") || "Yol haritası oluşturuldu!");
             router.refresh();
             setShowUpload(false);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +48,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            toast.error("Dosya boyutu 5MB'dan küçük olmalıdır.");
+            toast.error(t("fileTooLarge") || "Dosya boyutu 5MB'dan küçük olmalıdır.");
             return;
         }
 
@@ -64,7 +64,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
             });
             const parseData = await parseRes.json();
             
-            if (!parseRes.ok) throw new Error(parseData.error || "Dosya okunamadı");
+            if (!parseRes.ok) throw new Error(parseData.error || t("fileReadError") || "Dosya okunamadı");
 
             const res = await fetch("/api/roadmap/generate", {
                 method: "POST",
@@ -275,15 +275,15 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
 
             <div className="rm-head">
                 <div className="page-head" style={{ marginBottom: 0 }}>
-                    <div className="peyebrow">KARİYER YOL HARİTASI</div>
-                    <h1>{target_position || "Kariyer Yol Haritası"}</h1>
-                    <p>{target_position} pozisyonu için özel hazırlanmış gelişim planınız.</p>
+                    <div className="peyebrow">{t("title").toUpperCase()}</div>
+                    <h1>{target_position || t("title")}</h1>
+                    <p>{target_position ? `${target_position} pozisyonu için özel hazırlanmış gelişim planınız.` : t("desc")}</p>
                 </div>
                 <button className="btn-outline" onClick={() => setShowUpload(true)}>
                     <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}>
                         <path d="M21 12a9 9 0 11-2.6-6.4M21 4v6h-6"/>
                     </svg>
-                    Yeniden Analiz Et
+                    {t("reanalyze") || "Yeniden Analiz Et"}
                 </button>
             </div>
 
@@ -292,17 +292,17 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
                     <div className="score-gauge-card">
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <div className="sg-top">
-                            <span className="sg-label">YETENEK PUANI</span>
+                            <span className="sg-label">{t("skillsScore").toUpperCase()}</span>
                             <svg className="icon" viewBox="0 0 24 24" style={{ color: 'var(--dashboard-green)', width: '18px', height: '18px' }}><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>
                         </div>
                         <div className="sg-val">{overall_score}<span className="of100">/100</span></div>
                         <div className="sg-track"><div className="sg-fill" style={{ width: `${overall_score}%` }}></div></div>
-                        <div className="sg-delta">Hedefe ulaşmak için harika bir temel</div>
+                        <div className="sg-delta">{t("scoreDelta") || "Hedefe ulaşmak için harika bir temel"}</div>
                     </div>
 
                     <div className="bp-card prep-card">
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                        <div className="pc-title">HAZIRLIK TAHMİNİ</div>
+                        <div className="pc-title">{t("readinessForecast").toUpperCase()}</div>
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {Object.entries(readiness || {}).map(([category, value]: [string, any], idx) => (
                             <div className="prep-row" key={idx}>
@@ -316,7 +316,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <h3 style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '16px' }}>
                             <svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.6" fill="none" style={{ width: '16px', height: '16px' }}><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>
-                            AI İçgörüleri
+                            {t("aiInsights")}
                         </h3>
                         <div className="insight-mini">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -332,7 +332,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
 
                 <div className="bp-card journey-card">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <div className="jc-title">Öğrenme Yolculuğu <span className="plan-tag-mini">PLAN</span></div>
+                    <div className="jc-title">{t("learningJourney")} <span className="plan-tag-mini">PLAN</span></div>
 
                     <div className="journey">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -350,9 +350,9 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
                                     <div className="jbody">
                                         <div className="jtitle-row">
                                             <span className="jtitle">{step.title}</span>
-                                            {isCompleted && <span className="jtag done">TAMAMLANDI</span>}
-                                            {isInProgress && <button className="jbtn">Devam Et</button>}
-                                            {isLocked && <span className="jtag locked">KİLİTLİ</span>}
+                                            {isCompleted && <span className="jtag done">{t("completed").toUpperCase()}</span>}
+                                            {isInProgress && <button className="jbtn">{t("continue")}</button>}
+                                            {isLocked && <span className="jtag locked">{t("locked").toUpperCase()}</span>}
                                         </div>
                                         <p>{step.description}</p>
                                         {isInProgress && step.progress !== undefined && (

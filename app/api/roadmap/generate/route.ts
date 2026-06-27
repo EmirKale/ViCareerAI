@@ -63,24 +63,25 @@ export async function POST(request: NextRequest) {
         // Limit text length
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
-        const languageInstruction = locale === 'tr' 
-            ? 'CRITICAL: TÜM çıktıyı (başlıklar, açıklamalar, içgörüler) TÜRKÇE olarak üret. İngilizce kelime kullanma.'
-            : 'CRITICAL: Generate ALL output (titles, descriptions, insights) in ENGLISH.';
+        const isTr = locale === 'tr';
+        const languageOutput = isTr ? 'TURKISH' : 'ENGLISH';
 
-        const prompt = `${languageInstruction}
+        const prompt = `You are an expert Career Advisor.
+CRITICAL REQUIREMENT: You MUST generate all human-readable text in the final JSON (titles, descriptions, categories, insights) in ${languageOutput}.
+DO NOT output in any other language.
 
-Kullanıcının mevcut durumu:
+User's current profile/CV:
 ${textToAnalyze}
 
-Hedef pozisyonu: ${targetPosition || "Belirtilmemiş (CV'ye göre tahmin et)"}
+Target position: ${targetPosition || "Not specified (guess based on CV)"}
 
-Bu kullanıcı için 4 adımlık bir kariyer gelişim yol haritası oluştur. Her adım: başlık, 1 cümle açıklama, durum (tamamlandı/devam ediyor/kilitli), devam ediyorsa ilerleme yüzdesi.
-Ayrıca: genel yetenek puanı (0-100), 3 alt kategori için hazırlık yüzdesi (pozisyona göre uyarla), 2 AI içgörüsü (1 kritik öncelik, 1 büyüme fırsatı).
+Create a 4-step career development roadmap for this user. Each step: title, 1 sentence description, status (completed/in_progress/locked), and progress percentage if in progress.
+Also provide: an overall skill score (0-100), readiness percentage for 3 sub-categories tailored to the role, and 2 AI insights (1 critical priority, 1 growth opportunity).
 
-SADECE JSON formatında dön:
+Return ONLY in this JSON format:
 {
   "overallScore": 84,
-  "readiness": {"Kategori 1": 92, "Kategori 2": 68, "Kategori 3": 45},
+  "readiness": {"<Category 1>": 92, "<Category 2>": 68, "<Category 3>": 45},
   "steps": [
     {"title": "...", "description": "...", "status": "completed", "progress": 100},
     {"title": "...", "description": "...", "status": "in_progress", "progress": 65},
@@ -93,7 +94,7 @@ SADECE JSON formatında dön:
   ]
 }
 
-${languageInstruction}
+REMEMBER: All text content (inside the placeholders "..." and "<Category N>") MUST be in ${languageOutput}.
 `;
 
         const completion = await openai.chat.completions.create({
