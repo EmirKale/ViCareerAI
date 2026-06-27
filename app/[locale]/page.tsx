@@ -158,8 +158,41 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'ViCareerAI',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description:
+      'GPT-4o destekli AI ile ATS onaylı CV, motivasyon mektubu, skill gap analizi ve kariyer yol haritası oluşturan platform.',
+    url: 'https://vi-career-ai.vercel.app',
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Başlangıç',
+        price: '0',
+        priceCurrency: 'TRY',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Sınırsız Pro',
+        price: '299',
+        priceCurrency: 'TRY',
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          billingDuration: 'P1M',
+        },
+      },
+    ],
+  };
+
   return (
     <div className={styles.blueprintWrapper}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className={styles.gridField} ref={gridFieldRef}></div>
       <div className={styles.gridVignette}></div>
       <div className={styles.progressBar} ref={progressBarRef}></div>

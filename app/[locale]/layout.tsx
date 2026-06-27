@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -9,26 +9,25 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+  variable: "--font-display",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
 });
 
 export async function generateMetadata(props: {
@@ -39,9 +38,9 @@ export async function generateMetadata(props: {
 
   const metadata = {
     tr: {
-      title: "ViCareerAI - Yapay Zeka ile CV Oluştur",
-      description: "GPT-4o ile ATS uyumlu CV oluştur, motivasyon mektubu yaz, iş ilanlarını analiz et. Türkiye'nin en akıllı kariyer platformu.",
-      keywords: "cv oluştur, yapay zeka cv, ats cv, motivasyon mektubu, iş başvurusu, kariyer, özgeçmiş oluştur, ai cv",
+      title: "ViCareerAI — Kariyerini Yeniden Çiz | AI Destekli CV ve Kariyer Platformu",
+      description: "ViCareerAI, özgeçmişini GPT-4o ile saniyeler içinde ATS onaylı bir belgeye dönüştürür. AI destekli CV oluşturma, motivasyon mektubu, skill gap analizi ve kariyer yol haritası — ücretsiz başla.",
+      keywords: "ATS uyumlu CV, yapay zeka CV oluşturucu, AI özgeçmiş, kariyer platformu, motivasyon mektubu AI",
     },
     en: {
       title: "ViCareerAI - Build Your CV with AI",
@@ -134,7 +133,7 @@ export default async function RootLayout(props: Readonly<{
   return (
     <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-200`}
+        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-200`}
       >
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
