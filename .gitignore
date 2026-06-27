@@ -63,3 +63,8 @@ test-plan.json
 upgrade_to_pro.js
 resetQuota.js
 translate_missing.js
+
+# temp scripts and reference dirs
+fix_*.js
+/seo-kit/
+/loop-kit/

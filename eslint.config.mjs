@@ -37,10 +37,7 @@ const eslintConfig = [
       "components/layout/LanguageSwitcher.tsx",
       "components/layout/Sidebar.tsx",
       "components/ui/electric-card.tsx",
-      "fix_corners.js",
-      "i18n/request.ts",
-      "next-env.d.ts",
-      "seo-kit/reference-snippets.tsx"
+      "i18n/request.ts"
     ],
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
@@ -55,7 +52,7 @@ const eslintConfig = [
     }
   },
   {
-    ignores: [".next/**", "node_modules/**"]
+    ignores: [".next/**", "node_modules/**", "next-env.d.ts"]
   }
 ];
 
