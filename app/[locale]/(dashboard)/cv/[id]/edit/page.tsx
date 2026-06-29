@@ -261,14 +261,6 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
     const [mobileTab, setMobileTab] = useState<"sections" | "edit" | "preview">("sections");
     const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional'>('classic');
     const [isSaving, setIsSaving] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
     
     const [aiModalState, setAiModalState] = useState<{
         isOpen: boolean;
@@ -1071,17 +1063,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 <div className="sheet bg-[#0e1626] border border-[var(--dashboard-paper-border)] rounded-[2px] p-0 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
                     {/* Render actual React PDF viewer */}
                     <div className="w-full h-[600px] overflow-y-auto custom-scrollbar bg-white">
-                        {isMobile ? (
-                            <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-black">
-                                <FileText className="w-16 h-16 opacity-50" />
-                                <p className="text-center font-medium">
-                                    Mobil cihazlarda PDF önizlemesi desteklenmemektedir.<br/>
-                                    Sonucu görmek için PDF olarak indirebilirsiniz.
-                                </p>
-                            </div>
-                        ) : (
-                            <CVPreview data={cvData} template={template} />
-                        )}
+                        <CVPreview data={cvData} template={template} />
                     </div>
                 </div>
             </aside>
