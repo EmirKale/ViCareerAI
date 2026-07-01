@@ -107,19 +107,39 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                         }
                     >
                         {Array.from(new Array(numPages), (el, index) => (
-                            <div key={`page_${index + 1}`} className="mb-4 shadow-md bg-white">
-                                <Page
-                                    pageNumber={index + 1}
-                                    scale={scale}
-                                    devicePixelRatio={3}
-                                    renderAnnotationLayer={false}
-                                    renderTextLayer={false}
-                                    className="max-w-full"
-                                />
-                            </div>
+                            <CVPage key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
                         ))}
                     </Document>
                 )}
+            </div>
+        </div>
+    );
+}
+
+function CVPage({ pageNumber, scale }: { pageNumber: number, scale: number }) {
+    const HD_SCALE = 3;
+    const [pageDim, setPageDim] = useState({ width: 595.28, height: 841.89 });
+    
+    return (
+        <div 
+            className="mb-4 shadow-md bg-white overflow-hidden relative"
+            style={{
+                width: pageDim.width * scale,
+                height: pageDim.height * scale
+            }}
+        >
+            <div style={{ transform: `scale(${1 / HD_SCALE})`, transformOrigin: 'top left', width: 'max-content' }}>
+                <Page
+                    pageNumber={pageNumber}
+                    scale={scale * HD_SCALE}
+                    renderAnnotationLayer={false}
+                    renderTextLayer={false}
+                    onLoadSuccess={(page) => {
+                        if (page.originalWidth && page.originalHeight) {
+                            setPageDim({ width: page.originalWidth, height: page.originalHeight });
+                        }
+                    }}
+                />
             </div>
         </div>
     );
