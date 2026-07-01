@@ -111,6 +111,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                                 <Page
                                     pageNumber={index + 1}
                                     scale={scale}
+                                    devicePixelRatio={3}
                                     renderAnnotationLayer={false}
                                     renderTextLayer={false}
                                     className="max-w-full"
