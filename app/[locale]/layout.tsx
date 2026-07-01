@@ -8,6 +8,8 @@ import BlueprintNavbar from "@/components/layout/BlueprintNavbar";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import "./globals.css";
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-display",
