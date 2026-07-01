@@ -1,7 +1,6 @@
 "use client";
 
 import { usePDF } from '@react-pdf/renderer';
-import { Document, Page, pdfjs } from 'react-pdf';
 import { ClassicTemplate, CVData } from './templates/ClassicTemplate';
 import { ModernTemplate } from './templates/ModernTemplate';
 import { MinimalTemplate } from './templates/MinimalTemplate';
@@ -9,11 +8,7 @@ import { ExecutiveTemplate } from './templates/ExecutiveTemplate';
 import { CreativeTemplate } from './templates/CreativeTemplate';
 import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
 import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
-import { useState, useEffect } from 'react';
-
-
-// Set up worker for react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+import { useState, useEffect, useMemo } from 'react';
 
 interface CVPreviewProps {
     data: CVData;
@@ -23,7 +18,6 @@ interface CVPreviewProps {
 export default function CVPreview({ data, template = 'classic' }: CVPreviewProps) {
     const [isClient, setIsClient] = useState(false);
     const [debouncedData, setDebouncedData] = useState<CVData>(data);
-    const [numPages, setNumPages] = useState<number>();
     const [scale, setScale] = useState(1.0);
 
     useEffect(() => {
@@ -37,15 +31,25 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
         return () => clearTimeout(timer);
     }, [data]);
 
-    const TemplateComponent =
-        template === 'modern' ? ModernTemplate :
-            template === 'minimal' ? MinimalTemplate :
-                template === 'executive' ? ExecutiveTemplate :
-                    template === 'creative' ? CreativeTemplate :
-                        template === 'professional' ? ProfessionalTemplate :
-                            ClassicTemplate;
+    const TemplateComponent = useMemo(() => {
+        switch (template) {
+            case 'modern': return ModernTemplate;
+            case 'minimal': return MinimalTemplate;
+            case 'executive': return ExecutiveTemplate;
+            case 'creative': return CreativeTemplate;
+            case 'professional': return ProfessionalTemplate;
+            default: return ClassicTemplate;
+        }
+    }, [template]);
 
     const [instance] = usePDF({ document: <TemplateComponent data={debouncedData} /> });
+
+    // Build iframe src with zoom fragment for browsers that support it
+    const iframeSrc = useMemo(() => {
+        if (!instance.url) return '';
+        // #zoom=X tells the browser PDF viewer to set initial zoom
+        return `${instance.url}#zoom=${Math.round(scale * 100)}`;
+    }, [instance.url, scale]);
 
     if (!isClient) {
         return (
@@ -67,14 +71,14 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
             {/* Toolbar */}
             <div className="flex items-center justify-center gap-4 py-2 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 z-10">
                 <button 
-                    onClick={() => setScale(s => Math.max(0.5, s - 0.1))}
+                    onClick={() => setScale(s => Math.max(0.5, +(s - 0.1).toFixed(1)))}
                     className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
                 >
                     <ZoomOut className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
                 </button>
                 <span className="text-xs font-mono text-zinc-600 dark:text-zinc-400">{Math.round(scale * 100)}%</span>
                 <button 
-                    onClick={() => setScale(s => Math.min(2.0, s + 0.1))}
+                    onClick={() => setScale(s => Math.min(2.0, +(s + 0.1).toFixed(1)))}
                     className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
                 >
                     <ZoomIn className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
@@ -82,7 +86,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
             </div>
 
             {/* Document Viewer */}
-            <div className="flex-1 overflow-auto w-full custom-scrollbar flex flex-col items-center p-4 gap-4 bg-zinc-100/50 dark:bg-zinc-950/50">
+            <div className="flex-1 overflow-hidden w-full bg-zinc-100/50 dark:bg-zinc-950/50">
                 {instance.loading && !instance.url ? (
                     <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
@@ -91,29 +95,15 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                     <div className="flex h-full items-center justify-center text-red-500 text-sm">
                         PDF oluşturulurken bir hata oluştu.
                     </div>
-                ) : (
-                    <Document
-                        file={instance.url}
-                        onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-                        loading={
-                            <div className="flex items-center justify-center p-12">
-                                <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
-                            </div>
-                        }
-                    >
-                        {Array.from(new Array(numPages), (el, index) => (
-                            <div key={`page_${index + 1}`} className="mb-4 shadow-md bg-white">
-                                <Page
-                                    pageNumber={index + 1}
-                                    scale={scale}
-                                    renderAnnotationLayer={false}
-                                    renderTextLayer={false}
-                                    className="max-w-full"
-                                />
-                            </div>
-                        ))}
-                    </Document>
-                )}
+                ) : instance.url ? (
+                    <iframe
+                        key={iframeSrc}
+                        src={iframeSrc}
+                        title="CV Preview"
+                        className="w-full h-full border-0"
+                        style={{ background: '#fff' }}
+                    />
+                ) : null}
             </div>
         </div>
     );

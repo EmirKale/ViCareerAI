@@ -4,13 +4,14 @@ const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['react-pdf', 'pdfjs-dist'],
+
   typescript: {
     ignoreBuildErrors: false,
   },
   experimental: {
     optimizeCss: false,
   },
+  serverExternalPackages: ['@react-pdf/renderer'],
   eslint: {
     ignoreDuringBuilds: false,
   },
