@@ -46,7 +46,11 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                         template === 'professional' ? ProfessionalTemplate :
                             ClassicTemplate;
 
-    const [instance] = usePDF({ document: <TemplateComponent data={debouncedData} /> });
+    const [instance, updateInstance] = usePDF({ document: <TemplateComponent data={debouncedData} /> });
+
+    useEffect(() => {
+        updateInstance(<TemplateComponent data={debouncedData} />);
+    }, [debouncedData, template, updateInstance]);
 
     if (!isClient) {
         return (
