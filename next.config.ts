@@ -11,7 +11,7 @@ const nextConfig = {
   experimental: {
     optimizeCss: false,
   },
-  serverExternalPackages: ['@react-pdf/renderer'],
+  serverExternalPackages: ['@react-pdf/renderer', 'react-pdf', 'pdfjs-dist'],
   eslint: {
     ignoreDuringBuilds: false,
   },

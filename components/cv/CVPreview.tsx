@@ -1,6 +1,9 @@
 "use client";
 
 import { usePDF } from '@react-pdf/renderer';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 import { ClassicTemplate, CVData } from './templates/ClassicTemplate';
 import { ModernTemplate } from './templates/ModernTemplate';
 import { MinimalTemplate } from './templates/MinimalTemplate';
@@ -8,7 +11,10 @@ import { ExecutiveTemplate } from './templates/ExecutiveTemplate';
 import { CreativeTemplate } from './templates/CreativeTemplate';
 import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
 import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+
+// Set up worker for react-pdf
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface CVPreviewProps {
     data: CVData;
@@ -18,6 +24,7 @@ interface CVPreviewProps {
 export default function CVPreview({ data, template = 'classic' }: CVPreviewProps) {
     const [isClient, setIsClient] = useState(false);
     const [debouncedData, setDebouncedData] = useState<CVData>(data);
+    const [numPages, setNumPages] = useState<number>();
     const [scale, setScale] = useState(1.0);
 
     useEffect(() => {
@@ -27,29 +34,19 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedData(data);
-        }, 300); // 300ms'ye düşürüldü, daha anlık hissettirecek
+        }, 300); // Wait 300ms after typing stops before generating PDF
         return () => clearTimeout(timer);
     }, [data]);
 
-    const TemplateComponent = useMemo(() => {
-        switch (template) {
-            case 'modern': return ModernTemplate;
-            case 'minimal': return MinimalTemplate;
-            case 'executive': return ExecutiveTemplate;
-            case 'creative': return CreativeTemplate;
-            case 'professional': return ProfessionalTemplate;
-            default: return ClassicTemplate;
-        }
-    }, [template]);
+    const TemplateComponent =
+        template === 'modern' ? ModernTemplate :
+            template === 'minimal' ? MinimalTemplate :
+                template === 'executive' ? ExecutiveTemplate :
+                    template === 'creative' ? CreativeTemplate :
+                        template === 'professional' ? ProfessionalTemplate :
+                            ClassicTemplate;
 
     const [instance] = usePDF({ document: <TemplateComponent data={debouncedData} /> });
-
-    // Build iframe src with zoom fragment for browsers that support it
-    const iframeSrc = useMemo(() => {
-        if (!instance.url) return '';
-        // #zoom=X tells the browser PDF viewer to set initial zoom
-        return `${instance.url}#zoom=${Math.round(scale * 100)}`;
-    }, [instance.url, scale]);
 
     if (!isClient) {
         return (
@@ -86,7 +83,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
             </div>
 
             {/* Document Viewer */}
-            <div className="flex-1 overflow-hidden w-full bg-zinc-100/50 dark:bg-zinc-950/50">
+            <div className="flex-1 overflow-auto w-full custom-scrollbar flex flex-col items-center p-4 gap-4 bg-zinc-100/50 dark:bg-zinc-950/50">
                 {instance.loading && !instance.url ? (
                     <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
@@ -95,14 +92,29 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                     <div className="flex h-full items-center justify-center text-red-500 text-sm">
                         PDF oluşturulurken bir hata oluştu.
                     </div>
-                ) : instance.url ? (
-                    <iframe
-                        src={iframeSrc}
-                        title="CV Preview"
-                        className="w-full h-full border-0"
-                        style={{ background: '#fff' }}
-                    />
-                ) : null}
+                ) : (
+                    <Document
+                        file={instance.url}
+                        onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                        loading={
+                            <div className="flex items-center justify-center p-12">
+                                <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
+                            </div>
+                        }
+                    >
+                        {Array.from(new Array(numPages), (el, index) => (
+                            <div key={`page_${index + 1}`} className="mb-4 shadow-md bg-white">
+                                <Page
+                                    pageNumber={index + 1}
+                                    scale={scale}
+                                    renderAnnotationLayer={false}
+                                    renderTextLayer={false}
+                                    className="max-w-full"
+                                />
+                            </div>
+                        ))}
+                    </Document>
+                )}
             </div>
         </div>
     );
