@@ -1,5 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { CVData, getSummaryText } from './ClassicTemplate';
+import { CVData, getSummaryText, breakLongWords } from './ClassicTemplate';
 
 const styles = StyleSheet.create({
     page: {
@@ -120,7 +120,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                                 <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Devam" : (exp.endDate || '')}</Text>
                             </View>
                             <Text style={styles.itemSub}>{exp.company || ''}{exp.location ? `, ${exp.location}` : ''}</Text>
-                            {exp.description ? <Text style={styles.text}>{exp.description}</Text> : null}
+                            {exp.description ? <Text style={styles.text}>{breakLongWords(exp.description)}</Text> : null}
                         </View>
                     ))}
                 </View>
