@@ -297,14 +297,9 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
     useEffect(() => {
         if (id === "new") {
-            const localData = getStoredData(`cvData_${id}`);
-            const localTemplate = getStoredData(`selectedTemplate_${id}`);
-            if (localData) {
-                try { setCvData(JSON.parse(localData)); } catch {}
-            }
-            if (localTemplate) {
-                setTemplate(localTemplate as 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional');
-            }
+            // Yeni CV sayfasında localStorage'dan eski veriyi yükleme,
+            // tamamen sıfırdan başlasın.
+            removeStoredData(`cvData_${id}`);
             return;
         }
 
