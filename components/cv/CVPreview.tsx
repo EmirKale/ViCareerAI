@@ -27,7 +27,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedData(data);
-        }, 1000); // Wait 1 second after typing stops before generating PDF
+        }, 300); // 300ms'ye düşürüldü, daha anlık hissettirecek
         return () => clearTimeout(timer);
     }, [data]);
 
@@ -71,7 +71,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
             {/* Toolbar */}
             <div className="flex items-center justify-center gap-4 py-2 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 z-10">
                 <button 
-                    onClick={() => setScale(s => Math.max(0.5, +(s - 0.1).toFixed(1)))}
+                    onClick={() => setScale(s => Math.max(0.1, +(s - 0.1).toFixed(1)))}
                     className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
                 >
                     <ZoomOut className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
