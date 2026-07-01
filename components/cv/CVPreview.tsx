@@ -1,6 +1,6 @@
 "use client";
 
-import { usePDF } from '@react-pdf/renderer';
+import { usePDF, Document, Page } from '@react-pdf/renderer';
 import { ClassicTemplate, CVData } from './templates/ClassicTemplate';
 import { ModernTemplate } from './templates/ModernTemplate';
 import { MinimalTemplate } from './templates/MinimalTemplate';
@@ -9,65 +9,18 @@ import { CreativeTemplate } from './templates/CreativeTemplate';
 import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
 import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { pdfjs } from 'react-pdf';
 
 interface CVPreviewProps {
     data: CVData;
     template?: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional';
 }
 
-function DoubleBufferedIframe({ src, scale }: { src: string, scale: number }) {
-    const [activeUrl, setActiveUrl] = useState<string>('');
-    const [nextUrl, setNextUrl] = useState<string>('');
-
-    // Construct the actual URL to load in the iframe, appending the zoom parameter
-    const targetUrl = src ? `${src}#zoom=${Math.round(scale * 100)}&toolbar=0&navpanes=0&scrollbar=0` : '';
-
-    useEffect(() => {
-        if (!targetUrl) return;
-        
-        if (activeUrl === '') {
-            setActiveUrl(targetUrl);
-        } else if (targetUrl !== activeUrl && targetUrl !== nextUrl) {
-            setNextUrl(targetUrl);
-        }
-    }, [targetUrl, activeUrl, nextUrl]);
-
-    return (
-        <div className="relative w-full h-full bg-zinc-100 dark:bg-zinc-950 flex justify-center items-center overflow-hidden">
-            {!activeUrl && (
-                <div className="absolute inset-0 flex items-center justify-center z-50 bg-zinc-100 dark:bg-zinc-950">
-                    <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
-                </div>
-            )}
-            
-            {activeUrl && (
-                <iframe
-                    src={activeUrl}
-                    className="absolute top-0 left-0 w-full h-full border-0 transition-opacity duration-200"
-                    style={{ opacity: nextUrl ? 0.4 : 1, zIndex: 1 }}
-                />
-            )}
-            
-            {nextUrl && (
-                <iframe
-                    src={nextUrl}
-                    className="absolute top-0 left-0 w-full h-full border-0"
-                    style={{ zIndex: 0, opacity: 0 }}
-                    onLoad={() => {
-                        // When the new iframe finishes rendering the PDF, swap it to the front
-                        setActiveUrl(nextUrl);
-                        setNextUrl('');
-                    }}
-                />
-            )}
-        </div>
-    );
-}
-
 export default function CVPreview({ data, template = 'classic' }: CVPreviewProps) {
     const [isClient, setIsClient] = useState(false);
     const [debouncedData, setDebouncedData] = useState<CVData>(data);
     const [scale, setScale] = useState(1.0);
+    const [numPages, setNumPages] = useState<number>();
 
     useEffect(() => {
         setIsClient(true);
@@ -102,6 +55,9 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
         );
     }
 
+    // PDF Canvas çözünürlüğünü (HD) maksimum yapmak için devicePixelRatio'yu çok yüksek tutuyoruz
+    const HD_RATIO = typeof window !== 'undefined' ? Math.max(window.devicePixelRatio || 1, 4) : 4;
+
     return (
         <div className="w-full h-[calc(100vh-150px)] flex flex-col rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm bg-zinc-100 dark:bg-zinc-950 relative">
             {/* Show a subtle loading indicator when data is out of sync */}
@@ -129,7 +85,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
             </div>
 
             {/* Document Viewer */}
-            <div className="flex-1 overflow-auto w-full custom-scrollbar flex flex-col items-center bg-zinc-100/50 dark:bg-zinc-950/50 relative">
+            <div className="flex-1 overflow-auto w-full custom-scrollbar flex flex-col items-center bg-zinc-100/50 dark:bg-zinc-950/50 py-8">
                 {instance.loading && !instance.url ? (
                     <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
@@ -139,7 +95,30 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                         PDF oluşturulurken bir hata oluştu.
                     </div>
                 ) : (
-                    instance.url && <DoubleBufferedIframe src={instance.url} scale={scale} />
+                    instance.url && (
+                        <Document
+                            file={instance.url}
+                            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                            loading={
+                                <div className="flex items-center justify-center p-12">
+                                    <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
+                                </div>
+                            }
+                        >
+                            {Array.from(new Array(numPages || 0), (el, index) => (
+                                <div key={`page_${index + 1}`} className="mb-4 shadow-md bg-white">
+                                    <Page
+                                        pageNumber={index + 1}
+                                        scale={scale}
+                                        devicePixelRatio={HD_RATIO}
+                                        renderAnnotationLayer={false}
+                                        renderTextLayer={true} // Textleri vektörel olarak canvas'ın üzerine bindirir (En iyi kalite)
+                                        className="max-w-full"
+                                    />
+                                </div>
+                            ))}
+                        </Document>
+                    )
                 )}
             </div>
         </div>
