@@ -8,21 +8,33 @@ Font.register({
     ]
 });
 
+export const breakLongWords = (text: string | null | undefined, maxLength = 25): string => {
+    if (!text) return '';
+    // Araya görünmez boşluk (Zero-width space) ekleyerek uzun kelimelerin PDF'te taşmasını engeller
+    const regex = new RegExp(`([^\\s]{${maxLength}})`, 'g');
+    return text.replace(regex, '$1\u200B');
+};
+
 export const getSummaryText = (summary: string | Record<string, unknown> | undefined): string => {
     if (!summary) return '';
+    let text = '';
     if (typeof summary === 'string') {
         try {
             const parsed = JSON.parse(summary);
-            return parsed['Profesyonel Özet'] 
+            text = parsed['Profesyonel Özet'] 
                 || parsed['profesyonel_ozet'] 
                 || parsed.summary 
                 || summary;
         } catch {
-            return summary;
+            text = summary;
         }
+    } else {
+        text = (summary['Profesyonel Özet'] as string)
+            || (summary['profesyonel_ozet'] as string)
+            || (summary.summary as string)
+            || '';
     }
-    const obj = summary as Record<string, string>;
-    return obj?.['Profesyonel Özet'] || obj?.profesyonel_ozet || obj?.summary || String(summary);
+    return breakLongWords(text);
 };
 
 export interface CVData {
@@ -186,7 +198,7 @@ export const ClassicTemplate = ({ data }: { data: CVData }) => (
                                 <Text style={styles.itemDate}>{exp.startDate || ''} — {exp.isCurrent ? "Devam Ediyor" : (exp.endDate || '')}</Text>
                             </View>
                             <Text style={styles.itemSub}>{exp.company || ''}{exp.location ? `, ${exp.location}` : ''}</Text>
-                            {exp.description ? <Text style={styles.text}>{exp.description}</Text> : null}
+                            {exp.description ? <Text style={styles.text}>{breakLongWords(exp.description)}</Text> : null}
                         </View>
                     ))}
                 </View>
