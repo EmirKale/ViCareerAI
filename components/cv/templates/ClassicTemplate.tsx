@@ -10,9 +10,10 @@ Font.register({
 
 export const breakLongWords = (text: string | null | undefined, maxLength = 25): string => {
     if (!text) return '';
-    // Araya görünmez boşluk (Zero-width space) ekleyerek uzun kelimelerin PDF'te taşmasını engeller
+    // Araya boşluk ekleyerek uzun (boşluksuz) kelimelerin PDF'te taşmasını engeller.
+    // react-pdf görünmez boşlukları (\u200B) satır kırma için kullanamadığından normal boşluk ekliyoruz.
     const regex = new RegExp(`([^\\s]{${maxLength}})`, 'g');
-    return text.replace(regex, '$1\u200B');
+    return text.replace(regex, '$1 ');
 };
 
 export const getSummaryText = (summary: string | Record<string, unknown> | undefined): string => {
