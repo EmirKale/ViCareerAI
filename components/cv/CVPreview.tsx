@@ -97,7 +97,6 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                     </div>
                 ) : instance.url ? (
                     <iframe
-                        key={iframeSrc}
                         src={iframeSrc}
                         title="CV Preview"
                         className="w-full h-full border-0"

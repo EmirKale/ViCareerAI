@@ -605,7 +605,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 removeStoredData(`cvData_${id}`);
                 removeStoredData(`selectedTemplate_${id}`);
                 if (id === "new" && result.id) {
-                    // router.replace(`/cv/${result.id}/edit`);
+                    router.replace(`/cv/${result.id}/edit`);
                 }
             }
         } catch {
