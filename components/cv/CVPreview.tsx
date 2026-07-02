@@ -11,6 +11,9 @@ import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
 import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
 interface CVPreviewProps {
     data: CVData;
     template?: 'classic' | 'modern' | 'minimal' | 'executive' | 'creative' | 'professional';
