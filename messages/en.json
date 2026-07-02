@@ -413,7 +413,14 @@
         "step3Title": "System Design",
         "step3Desc": "Micro-frontends, module federation, and scalable infrastructure patterns.",
         "step4Title": "Technical Leadership",
-        "step4Desc": "Strategic decision making, team mentorship, and architectural reviews."
+        "step4Desc": "Strategic decision making, team mentorship, and architectural reviews.",
+        "reanalyze": "Re-analyze",
+        "scoreDelta": "Great foundation to reach your goal",
+        "fileTooLarge": "File size must be less than 5MB.",
+        "fileReadError": "File could not be read",
+        "positionDesc": "Development plan tailored for the {position} position.",
+        "estimatedDuration": "Estimated duration",
+        "resources": "Resources"
     },
     "Skills": {
         "title": "Skill Analysis",

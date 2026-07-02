@@ -413,7 +413,14 @@
         "step3Title": "Sistem Tasarımı",
         "step3Desc": "Micro-frontend'ler, modül federasyonu ve ölçeklenebilir altyapı kalıpları.",
         "step4Title": "Teknik Liderlik",
-        "step4Desc": "Stratejik karar alma, takım mentorluğu ve mimari incelemeler."
+        "step4Desc": "Stratejik karar alma, takım mentorluğu ve mimari incelemeler.",
+        "reanalyze": "Yeniden Analiz Et",
+        "scoreDelta": "Hedefe ulaşmak için harika bir temel",
+        "fileTooLarge": "Dosya boyutu 5MB'dan küçük olmalıdır.",
+        "fileReadError": "Dosya okunamadı",
+        "positionDesc": "{position} pozisyonu için özel hazırlanmış gelişim planınız.",
+        "estimatedDuration": "Tahmini süre",
+        "resources": "Kaynaklar"
     },
     "Skills": {
         "title": "Beceri Analizi",

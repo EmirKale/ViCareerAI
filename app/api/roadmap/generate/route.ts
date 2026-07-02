@@ -64,10 +64,15 @@ export async function POST(request: NextRequest) {
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
         const isTr = locale === 'tr';
+
+        const turkishEnforcement = isTr
+            ? `ÖNEMLİ: Bu yanıtın TAMAMINI (tüm başlıklar, açıklamalar, kategori isimleri, içgörüler, kaynak açıklamaları) SADECE TÜRKÇE olarak yaz. Tek bir İngilizce kelime bile kullanma. İngilizce teknoloji isimleri (React, Python, AWS, Docker gibi) hariç her şey Türkçe olsun.\n\n`
+            : '';
+
         const languageOutput = isTr ? 'TURKISH' : 'ENGLISH';
 
-        const prompt = `You are an expert Career Advisor.
-CRITICAL REQUIREMENT: You MUST generate all human-readable text in the final JSON (titles, descriptions, categories, insights) in ${languageOutput}.
+        const prompt = `${turkishEnforcement}You are an expert Career Advisor.
+CRITICAL REQUIREMENT: You MUST generate all human-readable text in the final JSON (titles, descriptions, categories, insights, resource names) in ${languageOutput}.
 DO NOT output in any other language.
 
 User's current profile/CV:
@@ -75,18 +80,30 @@ ${textToAnalyze}
 
 Target position: ${targetPosition || "Not specified (guess based on CV)"}
 
-Create a 4-step career development roadmap for this user. Each step: title, 1 sentence description, status (completed/in_progress/locked), and progress percentage if in progress.
-Also provide: an overall skill score (0-100), readiness percentage for 3 sub-categories tailored to the role, and 2 AI insights (1 critical priority, 1 growth opportunity).
+Create a detailed 6-8 step career development roadmap for this user. The first 1-2 steps should be marked as "completed", 1 step as "in_progress", and the rest as "locked". Each step must include:
+- title: A concise step title
+- description: A detailed 2-3 sentence description explaining what this step covers and why it matters
+- status: "completed", "in_progress", or "locked"
+- progress: percentage (100 for completed, 0-99 for in_progress, 0 for locked)
+- estimatedDuration: estimated time to complete (e.g. "2-3 ${isTr ? 'ay' : 'months'}" or "4-6 ${isTr ? 'hafta' : 'weeks'}")
+- resources: array of 2-3 recommended learning resources or platforms (e.g. ["Udemy", "freeCodeCamp", "MDN Web Docs"])
+
+Also provide:
+- An overall skill score (0-100)
+- Readiness percentage for 3-4 sub-categories tailored to the target role
+- 2-3 AI insights (at least 1 "critical" type priority and 1 "growth" type opportunity)
 
 Return ONLY in this JSON format:
 {
-  "overallScore": 84,
-  "readiness": {"<Category 1>": 92, "<Category 2>": 68, "<Category 3>": 45},
+  "overallScore": 72,
+  "readiness": {"<${isTr ? 'Kategori' : 'Category'} 1>": 85, "<${isTr ? 'Kategori' : 'Category'} 2>": 60, "<${isTr ? 'Kategori' : 'Category'} 3>": 40},
   "steps": [
-    {"title": "...", "description": "...", "status": "completed", "progress": 100},
-    {"title": "...", "description": "...", "status": "in_progress", "progress": 65},
-    {"title": "...", "description": "...", "status": "locked", "progress": 0},
-    {"title": "...", "description": "...", "status": "locked", "progress": 0}
+    {"title": "...", "description": "...", "status": "completed", "progress": 100, "estimatedDuration": "...", "resources": ["...", "..."]},
+    {"title": "...", "description": "...", "status": "completed", "progress": 100, "estimatedDuration": "...", "resources": ["...", "..."]},
+    {"title": "...", "description": "...", "status": "in_progress", "progress": 45, "estimatedDuration": "...", "resources": ["...", "..."]},
+    {"title": "...", "description": "...", "status": "locked", "progress": 0, "estimatedDuration": "...", "resources": ["...", "..."]},
+    {"title": "...", "description": "...", "status": "locked", "progress": 0, "estimatedDuration": "...", "resources": ["...", "..."]},
+    {"title": "...", "description": "...", "status": "locked", "progress": 0, "estimatedDuration": "...", "resources": ["...", "..."]}
   ],
   "insights": [
     {"type": "critical", "title": "...", "description": "..."},
@@ -94,7 +111,7 @@ Return ONLY in this JSON format:
   ]
 }
 
-REMEMBER: All text content (inside the placeholders "..." and "<Category N>") MUST be in ${languageOutput}.
+REMEMBER: All text content (inside the placeholders "..." and "<${isTr ? 'Kategori' : 'Category'} N>") MUST be in ${languageOutput}. Generate exactly 6 to 8 steps with realistic detail.
 `;
 
         const completion = await openai.chat.completions.create({
@@ -102,6 +119,7 @@ REMEMBER: All text content (inside the placeholders "..." and "<Category N>") MU
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.5,
+            max_tokens: 3000,
         });
 
         const resultContent = completion.choices[0]?.message?.content || "{}";

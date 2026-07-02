@@ -270,6 +270,11 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
                 .jprogress-fill{height:100%;background:var(--dashboard-purple, #A78BFA);border-radius:3px;}
                 .jpct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-purple, #A78BFA);}
                 .jbtn{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--dashboard-purple, #A78BFA);color:#0A1628;padding:7px 13px;border-radius:var(--dashboard-radius);border:none;white-space:nowrap;}
+                .jmeta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;}
+                .jduration{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-cyan);background:rgba(111,214,232,.08);border:1px solid rgba(111,214,232,.25);padding:4px 10px;border-radius:var(--dashboard-radius);}
+                .jduration svg{width:12px;height:12px;}
+                .jresources{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+                .jres-chip{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.03em;padding:3px 9px;border-radius:var(--dashboard-radius);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);color:var(--dashboard-purple, #A78BFA);}
                 @media(max-width:980px){.rm-grid{grid-template-columns:1fr;}}
             `}} />
 
@@ -277,7 +282,7 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
                 <div className="page-head" style={{ marginBottom: 0 }}>
                     <div className="peyebrow">{t("title").toUpperCase()}</div>
                     <h1>{target_position || t("title")}</h1>
-                    <p>{target_position ? `${target_position} pozisyonu için özel hazırlanmış gelişim planınız.` : t("desc")}</p>
+                    <p>{target_position ? t("positionDesc", { position: target_position }) : t("desc")}</p>
                 </div>
                 <button className="btn-outline" onClick={() => setShowUpload(true)}>
                     <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}>
@@ -359,6 +364,21 @@ export default function RoadmapClient({ analysisData, cvs: initialCvs }: { analy
                                             <div className="jprogress-row">
                                                 <div className="jprogress-track"><div className="jprogress-fill" style={{ width: `${step.progress}%` }}></div></div>
                                                 <span className="jpct">{step.progress}%</span>
+                                            </div>
+                                        )}
+                                        <div className="jmeta">
+                                            {step.estimatedDuration && (
+                                                <span className="jduration">
+                                                    <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" fill="none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                                    {t("estimatedDuration")}: {step.estimatedDuration}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {step.resources && step.resources.length > 0 && (
+                                            <div className="jresources">
+                                                {step.resources.map((res: string, rIdx: number) => (
+                                                    <span className="jres-chip" key={rIdx}>{res}</span>
+                                                ))}
                                             </div>
                                         )}
                                     </div>

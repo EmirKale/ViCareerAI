@@ -1,6 +1,7 @@
 "use client";
 
-import { usePDF, Document, Page } from '@react-pdf/renderer';
+import { usePDF } from '@react-pdf/renderer';
+import { Document as PdfDocument, Page as PdfPage, pdfjs } from 'react-pdf';
 import { ClassicTemplate, CVData } from './templates/ClassicTemplate';
 import { ModernTemplate } from './templates/ModernTemplate';
 import { MinimalTemplate } from './templates/MinimalTemplate';
@@ -9,7 +10,6 @@ import { CreativeTemplate } from './templates/CreativeTemplate';
 import { ProfessionalTemplate } from './templates/ProfessionalTemplate';
 import { Loader2, ZoomIn, ZoomOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { pdfjs } from 'react-pdf';
 
 interface CVPreviewProps {
     data: CVData;
@@ -96,7 +96,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                     </div>
                 ) : (
                     instance.url && (
-                        <Document
+                        <PdfDocument
                             file={instance.url}
                             onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                             loading={
@@ -107,7 +107,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                         >
                             {Array.from(new Array(numPages || 0), (el, index) => (
                                 <div key={`page_${index + 1}`} className="mb-4 shadow-md bg-white">
-                                    <Page
+                                    <PdfPage
                                         pageNumber={index + 1}
                                         scale={scale}
                                         devicePixelRatio={HD_RATIO}
@@ -117,7 +117,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                                     />
                                 </div>
                             ))}
-                        </Document>
+                        </PdfDocument>
                     )
                 )}
             </div>
