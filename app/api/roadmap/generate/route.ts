@@ -66,8 +66,8 @@ export async function POST(request: NextRequest) {
         const isTr = locale === 'tr';
 
         const turkishEnforcement = isTr
-            ? `ÖNEMLİ: Bu yanıtın TAMAMINI (tüm başlıklar, açıklamalar, kategori isimleri, içgörüler, kaynak açıklamaları) SADECE TÜRKÇE olarak yaz. Tek bir İngilizce kelime bile kullanma. İngilizce teknoloji isimleri (React, Python, AWS, Docker gibi) hariç her şey Türkçe olsun.\n\n`
-            : '';
+            ? `ÖNEMLİ: Bu yanıtın TAMAMINI (tüm başlıklar, açıklamalar, kategori isimleri, içgörüler, kaynak açıklamaları) SADECE TÜRKÇE olarak yaz. Tek bir İngilizce kelime bile kullanma. İngilizce teknoloji isimleri (React, Python, AWS, Docker gibi) ve platform/kurs isimlerini (Udemy, Coursera, freeCodeCamp vb.) özel isim olduğu için çevirmeden OLDUĞU GİBİ bırak, geri kalan her şey Türkçe olsun.\n\n`
+            : `NOTE: Keep platform/course names (Udemy, Coursera, freeCodeCamp etc.) and technology names in their original terms. Do not translate them.\n\n`;
 
         const languageOutput = isTr ? 'TURKISH' : 'ENGLISH';
 
