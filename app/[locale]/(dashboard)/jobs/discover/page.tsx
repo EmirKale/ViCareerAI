@@ -60,8 +60,8 @@ export default function JobDiscoverPage() {
                 matchedSkills: ["React", "TypeScript", "Tailwind CSS", "Next.js"],
                 missingSkills: ["GraphQL", "AWS", "Jest"],
                 recommendations: [
-                    "AWS S3 ve EC2 hakkında temel seviye bilgi edin.",
-                    "Frontend testing için Jest dökümantasyonunu incele.",
+                    t("mockRec1"),
+                    t("mockRec2"),
                 ]
             });
             setIsLoading(false);

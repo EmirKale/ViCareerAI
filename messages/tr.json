@@ -15,7 +15,6 @@
         "previewDesc": "Saniyeler içinde üretilen profesyonel standartlardaki CV örneğine göz atın.",
         "comparisonTitle": "Neden CareerAI?",
         "comparisonDesc": "Sıradan araçlarla vakit kaybetmeyin. İhtiyacınız olan her şey tek bir platformda.",
-
         "pricingTitle": "Sana uygun planı seç",
         "pricingDesc": "Basit, şeffaf ve her bütçeye uygun kariyer destek planları.",
         "faqTitle": "Sıkça Sorulan Sorular",
@@ -268,16 +267,45 @@
     },
     "Tracker": {
         "title": "Başvuru Board'u",
-        "desc": "Sürükle-bırak ile iş başvuru süreçlerinizi görsel olarak yönetin.",
+        "desc": "Sürükle-bırak ile iş başvuru süreçlerini görsel olarak yönet.",
         "aiAdd": "AI İlan Ekle",
         "manualAdd": "Manuel Ekle",
         "columns": {
-            "Saved": "Kaydedilen",
-            "Applied": "Başvurulan",
+            "Saved": "Kaydedilenler",
+            "Applied": "Başvurulanlar",
             "Interviewing": "Mülakat",
             "Offer": "Teklif",
             "Rejected": "Reddedildi"
-        }
+        },
+        "titleTop": "BAŞVURU TAKİBİ",
+        "addAi": "✦ AI İlan Ekle",
+        "addManual": "+ Manuel Ekle",
+        "modalManualTitle": "Manuel İlan Ekle",
+        "modalManualDesc": "Başvurmak istediğin veya takip ettiğin iş ilanının detaylarını gir.",
+        "companyLabel": "Şirket Adı *",
+        "companyPh": "Örn: Google",
+        "positionLabel": "Pozisyon / Rol *",
+        "positionPh": "Örn: Frontend Developer",
+        "locationLabel": "Lokasyon",
+        "locationPh": "Örn: İstanbul / Uzaktan",
+        "dateLabel": "Uygulama Tarihi",
+        "notesLabel": "Notlar",
+        "notesPh": "İlan detayları, mülakat notları veya önemli detaylar...",
+        "cancel": "İptal",
+        "saving": "KAYDEDİLİYOR...",
+        "saveBtn": "+ İlanı Kaydet",
+        "modalAiTitle": "AI ile İlan Ekle",
+        "modalAiDesc": "İş ilanının URL bağlantısını veya ilan detay metnini yapıştır. Yapay zeka şirket, pozisyon ve konum bilgilerini otomatik çıkarıp panonuza ekleyecek.",
+        "urlLabel": "İlan URL veya Detay Metni",
+        "urlPh": "Örn: linkedin.com/jobs/view/... veya ilan açıklaması...",
+        "analyzing": "ANALİZ EDİLİYOR...",
+        "analyzeBtn": "✦ AI ile Analiz Et & Ekle",
+        "toastErrManual": "Şirket adı ve Pozisyon alanları zorunludur.",
+        "toastErrAi": "Lütfen geçerli bir iş ilanı metni veya URL girin.",
+        "toastErrSave": "İlan kaydedilemedi.",
+        "toastErrAiFail": "AI analizi başarısız oldu.",
+        "toastSuccessManual": "İş ilanı başarıyla kaydedildi!",
+        "toastSuccessAi": "İlan AI tarafından başarıyla analiz edildi ve kaydedildi!"
     },
     "History": {
         "cvTitle": "CV Geçmişim",
@@ -286,7 +314,7 @@
         "letterDesc": "Daha önce oluşturduğunuz motivasyon mektupları.",
         "empty": "Henüz kayıt bulunamadı.",
         "confirmDelete": "Bu CV'yi silmek istediğinize emin misiniz?",
-        "deleteSuccess": "CV silindi",
+        "deleteSuccess": "Mektup silindi",
         "deleteError": "Silme işlemi başarısız",
         "noDataError": "CV verisi bulunamadı.",
         "preparingPdf": "PDF hazırlanıyor...",
@@ -297,10 +325,14 @@
         "confirmDeleteLetter": "Bu mektubu silmek istediğinize emin misiniz?",
         "newLetter": "YENİ MEKTUP YAZ",
         "actions": {
-            "edit": "Düzenle",
-            "download": "İndir",
-            "delete": "Sil"
-        }
+            "download": "PDF İndir",
+            "delete": "Sil",
+            "edit": "Düzenle"
+        },
+        "unnamedLetter": "İsimsiz Mektup",
+        "minsAgo": "dakika önce",
+        "hoursAgo": "saat önce",
+        "daysAgo": "gün önce"
     },
     "Templates": {
         "eyebrow": "YENİ CV OLUŞTUR",
@@ -334,7 +366,6 @@
             "desc": "Yazılımcılar için terminal estetiği. GitHub ve TechStack odaklı."
         }
     },
-
     "Preview": {
         "role": "Kıdemli Çözüm Mimarı",
         "tech": "Teknik Yetkinlikler",
@@ -530,7 +561,9 @@
         "matchScoreTitle": "Uygunluk Skoru",
         "matchedSkills": "Karşılanan Beceriler",
         "missingSkills": "Eksik Beceriler",
-        "aiRecommendations": "AI Öğrenme Önerileri"
+        "aiRecommendations": "AI Öğrenme Önerileri",
+        "mockRec1": "AWS S3 ve EC2 hakkında temel seviye bilgi edin.",
+        "mockRec2": "Frontend testing için Jest dökümantasyonunu incele."
     },
     "Profile": {
         "title": "Hesap Ayarları",
@@ -662,7 +695,6 @@
         "or": "veya",
         "haveAccount": "Zaten hesabınız var mı?",
         "loginLink": "Giriş Yap",
-        
         "logEyebrow": "TEKRAR HOŞ GELDİN",
         "logTitle": "Çizim masan olduğun yerde duruyor.",
         "logDesc": "CV'lerin, taslakların ve eşleşme analizlerin seni bekliyor. Giriş yap ve devam et.",
@@ -681,5 +713,52 @@
         "forgotPassword": "Şifrenizi mi unuttunuz?",
         "noAccount": "Hesabınız yok mu?",
         "registerLink": "Kayıt Ol"
+    },
+    "CoverLetter": {
+        "title": "MOTİVASYON MEKTUBU",
+        "heroTitle": "GPT-4o ile dakikalar içinde mektup yaz",
+        "heroDesc": "Kişiselleştirilmiş ve ATS uyumlu mektubunu oluştur.",
+        "letterInfo": "Mektup Bilgileri",
+        "position": "Hedef Pozisyon *",
+        "positionPh": "Örn: Senior Frontend Developer",
+        "company": "Şirket Adı *",
+        "companyPh": "Örn: Google Türkiye",
+        "industry": "Sektör (isteğe bağlı)",
+        "industryPh": "Örn: Teknoloji, Finans",
+        "language": "Dil",
+        "tone": "Ton / Üslup",
+        "professional": "Profesyonel",
+        "friendly": "Samimi",
+        "confident": "Özgüvenli",
+        "creative": "Yaratıcı",
+        "notes": "Hakkında Notlar",
+        "notesSub": "(AI bu bilgileri kullanır)",
+        "notesPh": "Örn: 5 yıl React deneyimi...",
+        "generateBtn": "✦ YAPAY ZEKA İLE OLUŞTUR",
+        "generating": "Mektup Oluşturuluyor...",
+        "limitReached": "Limit Doldu - Pro'ya Geçin",
+        "outputTitle": "Oluşturulan Mektup",
+        "generatedByAI": "✓ AI tarafından oluşturuldu",
+        "emptyOutputTitle": "Mektubun burada görünecek",
+        "emptyOutputDesc": "Bilgileri doldurup yapay zekayı çalıştır.",
+        "aiWorkingTitle": "AI mektubunuzu yazıyor...",
+        "aiWorkingDesc": "Bu işlem 5-15 saniye sürebilir",
+        "copy": "Kopyala",
+        "save": "Kaydet",
+        "downloadPDF": "PDF İndir",
+        "quotaLabel": "MEKTUP KOTASI",
+        "goPro": "PRO'YA GEÇ",
+        "toastErrFill": "Lütfen en azından pozisyon ve şirket adını girin.",
+        "toastErrQuota": "Cover letter limitinize ulaştınız.",
+        "toastErrGeneral": "Bir hata oluştu.",
+        "toastSuccess": "Mektup başarıyla oluşturuldu ve otomatik kaydedildi!",
+        "toastCopied": "Mektup panoya kopyalandı!",
+        "toastPdfPrep": "PDF hazırlanıyor, lütfen bekleyin...",
+        "toastPdfDone": "PDF başarıyla indirildi!",
+        "toastPdfErr": "PDF oluşturulurken hata oluştu.",
+        "toastSaveUnauth": "Giriş yapmadığınız için çalışmalarınız tarayıcıda geçici tutulmaktadır.",
+        "toastSaveErr": "Mektup kaydedilemedi.",
+        "toastSaveSuccess": "Mektup başarıyla güncellendi!",
+        "toastSaveFail": "Kaydetme işlemi sırasında hata oluştu."
     }
 }

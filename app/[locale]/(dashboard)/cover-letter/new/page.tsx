@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,8 @@ import { CoverLetterPDF } from "@/components/cover-letter/templates/CoverLetterP
 import { Sparkles, Loader2, Copy, Download, RotateCcw, Save } from "lucide-react";
 
 export default function NewCoverLetterPage() {
+    const t = useTranslations("CoverLetter");
+    const locale = useLocale();
     const searchParams = useSearchParams();
     const router = useRouter();
     const editId = searchParams.get("id");
@@ -22,7 +25,7 @@ export default function NewCoverLetterPage() {
         company: "",
         industry: "",
         tone: "professional",
-        language: "tr",
+        language: locale === "tr" ? "tr" : "en",
         userSummary: "",
     });
 
@@ -67,14 +70,14 @@ export default function NewCoverLetterPage() {
                     company: data.company || "",
                     industry: data.industry || "",
                     tone: data.tone || "professional",
-                    language: data.language || "tr",
+                    language: data.language || (locale === "tr" ? "tr" : "en"),
                     userSummary: data.user_summary || "",
                 });
                 setGeneratedLetter(data.content || "");
                 setLetterId(data.id);
             }
         } catch {
-            toast.error("Mektup yüklenemedi.");
+            toast.error(t("toastErrGeneral"));
         }
     };
 
@@ -84,7 +87,7 @@ export default function NewCoverLetterPage() {
 
     const handleGenerate = async () => {
         if (!form.position || !form.company) {
-            toast.error("Lütfen en azından pozisyon ve şirket adını girin.");
+            toast.error(t("toastErrFill"));
             return;
         }
 
@@ -102,9 +105,9 @@ export default function NewCoverLetterPage() {
 
             if (!res.ok) {
                 if (res.status === 429 && data.code === "QUOTA_EXCEEDED") {
-                    toast.error(data.error || "Cover letter limitinize ulaştınız.");
+                    toast.error(data.error || t("toastErrQuota"));
                 } else {
-                    toast.error(data.error || "Bir hata oluştu.");
+                    toast.error(data.error || t("toastErrGeneral"));
                 }
                 return;
             }
@@ -113,7 +116,7 @@ export default function NewCoverLetterPage() {
             if (data.id) {
                 setLetterId(data.id);
             }
-            toast.success("Mektup başarıyla oluşturuldu ve otomatik kaydedildi!");
+            toast.success(t("toastSuccess"));
             
             // Refresh quota after successful generation
             fetchQuota();
@@ -127,7 +130,7 @@ export default function NewCoverLetterPage() {
 
     const handleCopy = () => {
         navigator.clipboard.writeText(generatedLetter);
-        toast.success("Mektup panoya kopyalandı!");
+        toast.success(t("toastCopied"));
     };
 
     const handleReset = () => {
@@ -136,7 +139,7 @@ export default function NewCoverLetterPage() {
 
     const handleDownloadPDF = async () => {
         try {
-            toast.info("PDF hazırlanıyor, lütfen bekleyin...");
+            toast.info(t("toastPdfPrep"));
             const blob = await pdf(
                 <CoverLetterPDF
                     fullName="Başvuru Sahibi"
@@ -152,9 +155,9 @@ export default function NewCoverLetterPage() {
             a.download = `${form.company || 'Sirket'}_Motivasyon_Mektubu.pdf`;
             a.click();
             URL.revokeObjectURL(url);
-            toast.success("PDF başarıyla indirildi!");
+            toast.success(t("toastPdfDone"));
         } catch {
-            toast.error("PDF oluşturulurken hata oluştu.");
+            toast.error(t("toastPdfErr"));
         }
     };
 
@@ -177,16 +180,16 @@ export default function NewCoverLetterPage() {
             const data = await res.json();
             if (!res.ok) {
                 if (res.status === 503 || res.status === 401) {
-                    toast.info("Giriş yapmadığınız için çalışmalarınız tarayıcıda geçici tutulmaktadır.");
+                    toast.info(t("toastSaveUnauth"));
                 } else {
-                    toast.error(data.error || "Mektup kaydedilemedi.");
+                    toast.error(data.error || t("toastSaveErr"));
                 }
             } else {
-                toast.success("Mektup başarıyla güncellendi!");
+                toast.success(t("toastSaveSuccess"));
                 router.push("/cover-letter/history");
             }
         } catch {
-            toast.error("Kaydetme işlemi sırasında hata oluştu.");
+            toast.error(t("toastSaveFail"));
         } finally {
             setIsSaving(false);
         }
@@ -237,16 +240,16 @@ export default function NewCoverLetterPage() {
 
             <div className="list-head">
                 <div className="page-head" style={{ marginBottom: 0 }}>
-                    <div className="peyebrow">MOTİVASYON MEKTUBU</div>
-                    <h1>GPT-4o ile dakikalar içinde mektup yaz</h1>
-                    <p>Kişiselleştirilmiş ve ATS uyumlu mektubunu oluştur.</p>
+                    <div className="peyebrow">{t("title")}</div>
+                    <h1>{t("heroTitle")}</h1>
+                    <p>{t("heroDesc")}</p>
                 </div>
                 {!isLoadingQuota && quota && (
                     <div className="quota-pill">
-                        MEKTUP KOTASI <span className="val">{quota.cover_letter_count}/3</span>
+                        {t("quotaLabel")} <span className="val">{quota.cover_letter_count}/3</span>
                         {quota.cover_letter_count >= 3 && quota.plan === "free" && (
                             <button className="btn-stamp" style={{ padding: '4px 8px', fontSize: '10px' }} onClick={() => window.location.href = "/tr/pricing"}>
-                                PRO&apos;YA GEÇ
+                                {t("goPro")}
                             </button>
                         )}
                     </div>
@@ -257,33 +260,33 @@ export default function NewCoverLetterPage() {
                 {/* Left: Form */}
                 <div className="bp-card">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <h3 style={{ marginBottom: '22px' }}>Mektup Bilgileri</h3>
+                    <h3 style={{ marginBottom: '22px' }}>{t('letterInfo')}</h3>
                     
                     <div className="field">
-                        <label>Hedef Pozisyon *</label>
+                        <label>{t("position")}</label>
                         <input 
                             type="text" 
-                            placeholder="Örn: Senior Frontend Developer" 
+                            placeholder={t("positionPh")} 
                             value={form.position}
                             onChange={(e) => handleChange("position", e.target.value)}
                         />
                     </div>
                     
                     <div className="field">
-                        <label>Şirket Adı *</label>
+                        <label>{t("company")}</label>
                         <input 
                             type="text" 
-                            placeholder="Örn: Google Türkiye" 
+                            placeholder={t("companyPh")} 
                             value={form.company}
                             onChange={(e) => handleChange("company", e.target.value)}
                         />
                     </div>
                     
                     <div className="field">
-                        <label>Sektör (isteğe bağlı)</label>
+                        <label>{t("industry")}</label>
                         <input 
                             type="text" 
-                            placeholder="Örn: Teknoloji, Finans, E-ticaret" 
+                            placeholder={t("industryPh")} 
                             value={form.industry}
                             onChange={(e) => handleChange("industry", e.target.value)}
                         />
@@ -291,28 +294,28 @@ export default function NewCoverLetterPage() {
                     
                     <div className="field-row">
                         <div className="field">
-                            <label>Dil</label>
+                            <label>{t("language")}</label>
                             <select value={form.language} onChange={(e) => handleChange("language", e.target.value)}>
                                 <option value="tr">TR Türkçe</option>
                                 <option value="en">EN English</option>
                             </select>
                         </div>
                         <div className="field">
-                            <label>Ton / Üslup</label>
+                            <label>{t("tone")}</label>
                             <select value={form.tone} onChange={(e) => handleChange("tone", e.target.value)}>
-                                <option value="professional">Profesyonel</option>
-                                <option value="friendly">Samimi</option>
-                                <option value="confident">Özgüvenli</option>
-                                <option value="creative">Yaratıcı</option>
+                                <option value="professional">{t("professional")}</option>
+                                <option value="friendly">{t("friendly")}</option>
+                                <option value="confident">{t("confident")}</option>
+                                <option value="creative">{t("creative")}</option>
                             </select>
                         </div>
                     </div>
                     
                     <div className="field">
-                        <label>Hakkında Notlar <span style={{ textTransform: 'none', color: 'var(--dashboard-text-dim)' }}>(AI bu bilgileri kullanır)</span></label>
+                        <label>{t("notes")} <span style={{ textTransform: "none", color: "var(--dashboard-text-dim)" }}>{t("notesSub")}</span></label>
                         <textarea 
                             rows={3} 
-                            placeholder="Örn: 5 yıl React deneyimi, startup çıkışlı, Agile ekiplerde çalıştım..."
+                            placeholder={t("notesPh")}
                             value={form.userSummary}
                             onChange={(e) => handleChange("userSummary", e.target.value)}
                         />
@@ -325,11 +328,11 @@ export default function NewCoverLetterPage() {
                         disabled={isLoading || (quota?.plan === "free" && quota.cover_letter_count >= 3)}
                     >
                         {isLoading ? (
-                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Mektup Oluşturuluyor...</>
+                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("generating")}</>
                         ) : quota?.plan === "free" && quota.cover_letter_count >= 3 ? (
-                            <>Limit Doldu - Pro&apos;ya Geçin</>
+                            <>{t("limitReached")}</>
                         ) : (
-                            <>✦ YAPAY ZEKA İLE OLUŞTUR</>
+                            <>✦ {t("generateBtn")}</>
                         )}
                     </button>
                 </div>
@@ -338,10 +341,10 @@ export default function NewCoverLetterPage() {
                 <div className="bp-card">
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px' }}>
-                        <h3 style={{ margin: 0 }}>Oluşturulan Mektup</h3>
+                        <h3 style={{ margin: 0 }}>{t("outputTitle")}</h3>
                         {generatedLetter && (
                             <div style={{ fontSize: '11px', color: 'var(--dashboard-green)', fontFamily: "'JetBrains Mono', monospace" }}>
-                                ✓ AI tarafından oluşturuldu
+                                {t("generatedByAI")}
                             </div>
                         )}
                     </div>
@@ -349,14 +352,14 @@ export default function NewCoverLetterPage() {
                     {!generatedLetter && !isLoading ? (
                         <div className="output-empty">
                             <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>
-                            <div className="o-title">Mektubun burada görünecek</div>
-                            <div className="o-sub">Bilgileri doldurup yapay zekayı çalıştır.</div>
+                            <div className="o-title">{t("emptyOutputTitle")}</div>
+                            <div className="o-sub">{t("emptyOutputDesc")}</div>
                         </div>
                     ) : isLoading ? (
                         <div className="output-empty">
                             <Loader2 className="w-[38px] h-[38px] animate-spin" style={{ color: 'var(--dashboard-cyan)' }} />
-                            <div className="o-title">AI mektubunuzu yazıyor...</div>
-                            <div className="o-sub">Bu işlem 5-15 saniye sürebilir</div>
+                            <div className="o-title">{t("aiWorkingTitle")}</div>
+                            <div className="o-sub">{t("aiWorkingDesc")}</div>
                         </div>
                     ) : (
                         <div>
@@ -366,12 +369,12 @@ export default function NewCoverLetterPage() {
                                 onChange={(e) => setGeneratedLetter(e.target.value)}
                             />
                             <div className="output-actions">
-                                <button className="btn-outline" onClick={handleCopy}><Copy className="w-[14px] h-[14px] mr-1"/> Kopyala</button>
+                                <button className="btn-outline" onClick={handleCopy}><Copy className="w-[14px] h-[14px] mr-1"/> {t("copy")}</button>
                                 <button className="btn-outline" onClick={handleSave} disabled={isSaving}>
                                     {isSaving ? <Loader2 className="w-[14px] h-[14px] mr-1 animate-spin" /> : <Save className="w-[14px] h-[14px] mr-1"/>}
                                     Kaydet
                                 </button>
-                                <button className="btn-stamp" onClick={handleDownloadPDF}><Download className="w-[14px] h-[14px] mr-1"/> PDF İndir</button>
+                                <button className="btn-stamp" onClick={handleDownloadPDF}><Download className="w-[14px] h-[14px] mr-1"/> {t("downloadPDF")}</button>
                             </div>
                         </div>
                     )}

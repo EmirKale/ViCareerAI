@@ -78,7 +78,7 @@ export default function JobTrackerPage() {
     const handleManualSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!manualForm.position || !manualForm.company) {
-            toast.error("Şirket adı ve Pozisyon alanları zorunludur.");
+            toast.error(t("toastErrManual"));
             return;
         }
 
@@ -98,7 +98,7 @@ export default function JobTrackerPage() {
                 throw new Error(errData.error || "İlan kaydedilemedi.");
             }
 
-            toast.success("İş ilanı başarıyla kaydedildi!");
+            toast.success(t("toastSuccessManual"));
             setIsManualModalOpen(false);
             setManualForm({
                 company: "",
@@ -118,7 +118,7 @@ export default function JobTrackerPage() {
     const handleAiSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!aiForm.urlOrText || aiForm.urlOrText.trim().length < 5) {
-            toast.error("Lütfen geçerli bir iş ilanı metni veya URL girin.");
+            toast.error(t("toastErrAi"));
             return;
         }
 
@@ -138,7 +138,7 @@ export default function JobTrackerPage() {
                 throw new Error(errData.error || "AI analizi başarısız oldu.");
             }
 
-            toast.success("İlan AI tarafından başarıyla analiz edildi ve kaydedildi!");
+            toast.success(t("toastSuccessAi"));
             setIsAiModalOpen(false);
             setAiForm({ urlOrText: "" });
             fetchJobs();
@@ -226,13 +226,13 @@ export default function JobTrackerPage() {
 
             <div className="kanban-head">
                 <div className="page-head" style={{ marginBottom: 0 }}>
-                    <div className="peyebrow">BAŞVURU TAKİBİ</div>
-                    <h1>Başvuru Board&apos;u</h1>
-                    <p>Sürükle-bırak ile iş başvuru süreçlerini görsel olarak yönet.</p>
+                    <div className="peyebrow">{t("titleTop")}</div>
+                    <h1>{t("title")}</h1>
+                    <p>{t("desc")}</p>
                 </div>
                 <div className="head-actions">
-                    <button className="btn-ai-solid" onClick={() => setIsAiModalOpen(true)}>✦ AI İlan Ekle</button>
-                    <button className="btn-stamp" onClick={() => setIsManualModalOpen(true)}>+ Manuel Ekle</button>
+                    <button className="btn-ai-solid" onClick={() => setIsAiModalOpen(true)}>{t("addAi")}</button>
+                    <button className="btn-stamp" onClick={() => setIsManualModalOpen(true)}>{t("addManual")}</button>
                 </div>
             </div>
 
@@ -306,41 +306,41 @@ export default function JobTrackerPage() {
                     <div className="modal animate-in zoom-in-95 duration-200">
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <div className="modal-head">
-                            <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 5v14M5 12h14"/></svg>Manuel İlan Ekle</h3>
+                            <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 5v14M5 12h14"/></svg>{t("modalManualTitle")}</h3>
                             <button type="button" className="modal-close" onClick={() => setIsManualModalOpen(false)}>
                                 <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" style={{ width: '16px', height: '16px' }}><path d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        <p className="sub">Başvurmak istediğin veya takip ettiğin iş ilanının detaylarını gir.</p>
+                        <p className="sub">{t("modalManualDesc")}</p>
                         <form onSubmit={handleManualSubmit}>
                             <div className="field-row">
                                 <div className="field">
-                                    <label>Şirket Adı *</label>
-                                    <input type="text" placeholder="Örn: Google" value={manualForm.company} onChange={(e) => setManualForm({ ...manualForm, company: e.target.value })} required />
+                                    <label>{t("companyLabel")}</label>
+                                    <input type="text" placeholder={t("companyPh")} value={manualForm.company} onChange={(e) => setManualForm({ ...manualForm, company: e.target.value })} required />
                                 </div>
                                 <div className="field">
-                                    <label>Pozisyon / Rol *</label>
-                                    <input type="text" placeholder="Örn: Frontend Developer" value={manualForm.position} onChange={(e) => setManualForm({ ...manualForm, position: e.target.value })} required />
+                                    <label>{t("positionLabel")}</label>
+                                    <input type="text" placeholder={t("positionPh")} value={manualForm.position} onChange={(e) => setManualForm({ ...manualForm, position: e.target.value })} required />
                                 </div>
                             </div>
                             <div className="field-row">
                                 <div className="field">
-                                    <label>Lokasyon</label>
-                                    <input type="text" placeholder="Örn: İstanbul / Uzaktan" value={manualForm.location} onChange={(e) => setManualForm({ ...manualForm, location: e.target.value })} />
+                                    <label>{t("locationLabel")}</label>
+                                    <input type="text" placeholder={t("locationPh")} value={manualForm.location} onChange={(e) => setManualForm({ ...manualForm, location: e.target.value })} />
                                 </div>
                                 <div className="field">
-                                    <label>Uygulama Tarihi</label>
+                                    <label>{t("dateLabel")}</label>
                                     <input type="date" value={manualForm.appliedDate} onChange={(e) => setManualForm({ ...manualForm, appliedDate: e.target.value })} />
                                 </div>
                             </div>
                             <div className="field">
-                                <label>Notlar</label>
-                                <textarea rows={3} placeholder="İlan detayları, mülakat notları veya önemli detaylar..." value={manualForm.notes} onChange={(e) => setManualForm({ ...manualForm, notes: e.target.value })}></textarea>
+                                <label>{t("notesLabel")}</label>
+                                <textarea rows={3} placeholder={t("notesPh")} value={manualForm.notes} onChange={(e) => setManualForm({ ...manualForm, notes: e.target.value })}></textarea>
                             </div>
                             <div className="modal-actions">
-                                <button type="button" className="btn-outline" onClick={() => setIsManualModalOpen(false)}>İptal</button>
+                                <button type="button" className="btn-outline" onClick={() => setIsManualModalOpen(false)}>{t("cancel")}</button>
                                 <button type="submit" className="btn-stamp" disabled={isSubmitting}>
-                                    {isSubmitting ? <><Loader2 className="w-[14px] h-[14px] animate-spin" /> KAYDEDİLİYOR...</> : "+ İlanı Kaydet"}
+                                    {isSubmitting ? <><Loader2 className="w-[14px] h-[14px] animate-spin" /> {t("saving")}</> : t("saveBtn")}
                                 </button>
                             </div>
                         </form>
@@ -354,21 +354,21 @@ export default function JobTrackerPage() {
                     <div className="modal ai animate-in zoom-in-95 duration-200">
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <div className="modal-head">
-                            <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>AI ile İlan Ekle</h3>
+                            <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>{t("modalAiTitle")}</h3>
                             <button type="button" className="modal-close" onClick={() => setIsAiModalOpen(false)}>
                                 <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" style={{ width: '16px', height: '16px' }}><path d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        <p className="sub">İş ilanının URL bağlantısını veya ilan detay metnini yapıştır. Yapay zeka şirket, pozisyon ve konum bilgilerini otomatik çıkarıp panonuza ekleyecek.</p>
+                        <p className="sub">{t("modalAiDesc")}</p>
                         <form onSubmit={handleAiSubmit}>
                             <div className="field">
-                                <label>İlan URL veya Detay Metni</label>
-                                <textarea rows={4} placeholder="Örn: linkedin.com/jobs/view/... veya ilan açıklaması..." value={aiForm.urlOrText} onChange={(e) => setAiForm({ ...aiForm, urlOrText: e.target.value })} required></textarea>
+                                <label>{t("urlLabel")}</label>
+                                <textarea rows={4} placeholder={t("urlPh")} value={aiForm.urlOrText} onChange={(e) => setAiForm({ ...aiForm, urlOrText: e.target.value })} required></textarea>
                             </div>
                             <div className="modal-actions">
-                                <button type="button" className="btn-outline" onClick={() => setIsAiModalOpen(false)}>İptal</button>
+                                <button type="button" className="btn-outline" onClick={() => setIsAiModalOpen(false)}>{t("cancel")}</button>
                                 <button type="submit" className="btn-ai-solid" disabled={isSubmitting}>
-                                    {isSubmitting ? <><Loader2 className="w-[14px] h-[14px] animate-spin" /> ANALİZ EDİLİYOR...</> : "✦ AI ile Analiz Et & Ekle"}
+                                    {isSubmitting ? <><Loader2 className="w-[14px] h-[14px] animate-spin" /> {t("analyzing")}</> : t("analyzeBtn")}
                                 </button>
                             </div>
                         </form>

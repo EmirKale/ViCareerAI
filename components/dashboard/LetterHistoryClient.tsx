@@ -30,25 +30,25 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
     }, []);
 
     const handleDelete = async (id: string) => {
-        if (!confirm(t("confirmDeleteLetter") || "Bu mektubu silmek istediğinize emin misiniz?")) return;
+        if (!confirm(t("confirmDeleteLetter") )) return;
 
         try {
             const res = await fetch(`/api/cover-letter/${id}`, { method: "DELETE" });
             if (res.ok) {
                 setLetters(prev => prev.filter(l => l.id !== id));
-                toast.success(t("deleteSuccess") || "Mektup silindi");
+                toast.success(t("deleteSuccess") );
             } else {
                 throw new Error();
             }
         } catch {
-            toast.error(t("deleteError") || "Silme işlemi başarısız");
+            toast.error(t("deleteError") );
         }
     };
 
     const handleDownloadPDF = async (letter: CoverLetter) => {
         setDownloadingId(letter.id);
         try {
-            toast.info(t("preparingPdf") || "PDF hazırlanıyor...");
+            toast.info(t("preparingPdf") );
             const blob = await pdf(<CoverLetterPDF content={letter.content} />).toBlob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -56,9 +56,9 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
             a.download = `Motivasyon_Mektubu_${letter.company || "CareerAI"}.pdf`;
             a.click();
             URL.revokeObjectURL(url);
-            toast.success(t("pdfDownloaded") || "PDF indirildi!");
+            toast.success(t("pdfDownloaded") );
         } catch {
-            toast.error(t("pdfError") || "PDF oluşturulamadı.");
+            toast.error(t("pdfError") );
         } finally {
             setDownloadingId(null);
         }
@@ -67,11 +67,11 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
     function relativeTime(dateStr: string): string {
         const diff = Date.now() - new Date(dateStr).getTime();
         const mins = Math.floor(diff / 60000);
-        if (mins < 60) return `${mins} dakika önce`;
+        if (mins < 60) return `${mins} ${t("minsAgo")}`;
         const hours = Math.floor(mins / 60);
-        if (hours < 24) return `${hours} saat önce`;
+        if (hours < 24) return `${hours} ${t("hoursAgo")}`;
         const days = Math.floor(hours / 24);
-        return `${days} gün önce`;
+        return `${days} ${t("daysAgo")}`;
     }
 
     return (
@@ -104,7 +104,7 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
                     <h1>{t("letterTitle")}</h1>
                     <p>{t("letterDesc")}</p>
                 </div>
-                <Link className="btn-stamp" href="/cover-letter/new">+ {t("newLetter") || "YENİ MEKTUP YAZ"}</Link>
+                <Link className="btn-stamp" href="/cover-letter/new">+ {t("newLetter") }</Link>
             </div>
 
             {letters.length === 0 ? (
@@ -127,7 +127,7 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
                                     </button>
                                 </div>
                             </div>
-                            <div className="item-title">{letter.title || "İsimsiz Mektup"}</div>
+                            <div className="item-title">{letter.title || t("unnamedLetter")}</div>
                             <div className="item-date">
                                 <svg className="icon" viewBox="0 0 24 24" style={{ width: '13px', height: '13px' }}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
                                 {mounted ? relativeTime(letter.updated_at) : ""}
