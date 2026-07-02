@@ -20,6 +20,7 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
     const [showUpload, setShowUpload] = useState(!analysisData);
     const [targetRole, setTargetRole] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
     const handleAnalyzeFromCV = async (cvId: string) => {
         setIsAnalyzing(true);
@@ -214,6 +215,49 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
     const redFlags = scores?.red_flags || [];
     const actionPlan = scores?.action_plan || [];
     const cvCorrections = scores?.cv_corrections || [];
+    const competencyReasoning = scores?.competency_reasoning || {};
+
+    // Parse insights: support both new array format (JSON string) and legacy single string
+    let insightsArray: { type: string; title: string; description: string }[] = [];
+    try {
+        if (typeof insight === 'string' && insight.startsWith('[')) {
+            insightsArray = JSON.parse(insight);
+        } else if (typeof insight === 'string' && insight.length > 0) {
+            insightsArray = [{ type: 'strength', title: t('aiInsights'), description: insight }];
+        }
+    } catch {
+        if (insight) insightsArray = [{ type: 'strength', title: t('aiInsights'), description: String(insight) }];
+    }
+
+    const insightColor = (type: string) => {
+        switch (type) {
+            case 'strength': return { border: 'rgba(52,211,153,.35)', bg: 'rgba(52,211,153,.06)', text: '#34d399' };
+            case 'weakness': return { border: 'rgba(251,191,36,.35)', bg: 'rgba(251,191,36,.06)', text: '#fbbf24' };
+            case 'opportunity': return { border: 'rgba(96,165,250,.35)', bg: 'rgba(96,165,250,.06)', text: '#60a5fa' };
+            case 'critical': return { border: 'rgba(248,113,113,.35)', bg: 'rgba(248,113,113,.06)', text: '#f87171' };
+            default: return { border: 'var(--dashboard-paper-border)', bg: 'rgba(255,255,255,.015)', text: 'var(--dashboard-text-dim)' };
+        }
+    };
+
+    const insightLabel = (type: string) => {
+        if (locale === 'tr') {
+            switch (type) {
+                case 'strength': return 'Güçlü Yön';
+                case 'weakness': return 'Zayıf Yön';
+                case 'opportunity': return 'Fırsat';
+                case 'critical': return 'Kritik';
+                default: return type;
+            }
+        }
+        switch (type) {
+            case 'strength': return 'Strength';
+            case 'weakness': return 'Weakness';
+            case 'opportunity': return 'Opportunity';
+            case 'critical': return 'Critical';
+            default: return type;
+        }
+    };
+
 
     return (
         <>
@@ -228,13 +272,28 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                 .insight-card svg.corners path{stroke-width:1.3;fill:none;}
                 .insight-card.std{background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);}
                 .insight-card.std svg.corners path{stroke:var(--dashboard-cyan);}
-                .insight-card.power{background:rgba(232,84,60,.06);border:1px solid var(--dashboard-stamp-dim);}
-                .insight-card.power svg.corners path{stroke:var(--dashboard-stamp);}
+                .insight-card.power{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.35);}
+                .insight-card.power svg.corners path{stroke:#34d399;}
                 .insight-card h3{font-size:14px;display:flex;align-items:center;gap:9px;margin-bottom:14px;}
                 .insight-card h3 svg{width:16px;height:16px;}
-                .insight-card.power h3{color:var(--dashboard-stamp);}
+                .insight-card.power h3{color:#34d399;}
                 .insight-card p{font-size:14px;line-height:1.65;color:var(--dashboard-text-dim);}
                 .insight-card.power p{color:var(--dashboard-text);}
+
+                .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+                .insight-mini{padding:16px;border-radius:var(--dashboard-radius);}
+                .insight-mini .im-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.06em;padding:3px 8px;border-radius:var(--dashboard-radius);display:inline-block;margin-bottom:10px;}
+                .insight-mini .im-title{font-size:13.5px;font-weight:600;margin-bottom:6px;}
+                .insight-mini .im-desc{font-size:12.5px;color:var(--dashboard-text-dim);line-height:1.55;}
+
+                .radar-reasons{margin-top:16px;width:100%;}
+                .rr-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:var(--dashboard-radius);margin-bottom:4px;font-size:12px;color:var(--dashboard-text-dim);line-height:1.5;cursor:default;transition:background .15s;}
+                .rr-item:hover{background:rgba(111,214,232,.06);}
+                .rr-item .rr-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:var(--dashboard-cyan);white-space:nowrap;min-width:50px;padding-top:1px;}
+
+                .action-detail{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;}
+                .action-desc{font-size:12px;color:var(--dashboard-text-dim);line-height:1.5;width:100%;}
+                .action-res{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.03em;padding:3px 9px;border-radius:var(--dashboard-radius);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);color:var(--dashboard-purple, #A78BFA);}
 
                 .score-row{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;margin-bottom:16px;}
                 .score-stack{display:flex;flex-direction:column;gap:16px;}
@@ -286,20 +345,32 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                 </button>
             </div>
 
-            <div className="insight-row">
-                <div className="insight-card std">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                    <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-cyan)" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>{t("aiInsights")}</h3>
-                    <p>{insight}</p>
-                </div>
-                {superpower && (
-                    <div className="insight-card power">
+            {/* Superpower Card - top prominent card */}
+            {superpower && (
+                <div className="insight-row" style={{ marginBottom: '16px' }}>
+                    <div className="insight-card power" style={{ gridColumn: '1 / -1' }}>
                         <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
-                        <h3><svg viewBox="0 0 24 24" stroke="var(--dashboard-stamp)" strokeWidth="1.6" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>{t("superpower")}</h3>
-                        <p>{superpower}</p>
+                        <h3><svg viewBox="0 0 24 24" stroke="#34d399" strokeWidth="1.6" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>{t("superpower")}</h3>
+                        <p>{typeof superpower === 'string' ? superpower : superpower.description || superpower.title}</p>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
+
+            {/* AI Insights - multiple typed cards */}
+            {insightsArray.length > 0 && (
+                <div className="insights-grid">
+                    {insightsArray.map((ins, idx) => {
+                        const colors = insightColor(ins.type);
+                        return (
+                            <div key={idx} className="insight-mini" style={{ background: colors.bg, border: `1px solid ${colors.border}` }}>
+                                <span className="im-tag" style={{ color: colors.text, border: `1px solid ${colors.border}`, background: 'transparent' }}>{insightLabel(ins.type).toUpperCase()}</span>
+                                <div className="im-title" style={{ color: colors.text }}>{ins.title}</div>
+                                <div className="im-desc">{ins.description}</div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
 
             <div className="score-row">
                 <div className="score-stack">
@@ -350,32 +421,62 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                             return `${140 + r * Math.cos(a)},${140 + r * Math.sin(a)}`;
                         };
                         
-                        const p1 = getPoint(scores?.teknik, 0);
-                        const p2 = getPoint(scores?.iletisim, 60);
-                        const p3 = getPoint(scores?.uyumluluk, 120);
-                        const p4 = getPoint(scores?.problemCozme, 180);
-                        const p5 = getPoint(scores?.isbirligi, 240);
-                        const p6 = getPoint(scores?.liderlik, 300);
+                        const ts = scores?.technical_skills || scores?.teknik || 0;
+                        const cm = scores?.communication || scores?.iletisim || 0;
+                        const ad = scores?.adaptability || scores?.uyumluluk || 0;
+                        const ps = scores?.problem_solving || scores?.problemCozme || 0;
+                        const co = scores?.collaboration || scores?.isbirligi || 0;
+                        const ld = scores?.leadership || scores?.liderlik || 0;
+                        
+                        const p1 = getPoint(ts, 0);
+                        const p2 = getPoint(cm, 60);
+                        const p3 = getPoint(ad, 120);
+                        const p4 = getPoint(ps, 180);
+                        const p5 = getPoint(co, 240);
+                        const p6 = getPoint(ld, 300);
                         
                         const points = `${p1} ${p2} ${p3} ${p4} ${p5} ${p6}`;
+
+                        const categories = [
+                            { key: 'technical_skills', label: t('techSkills'), score: ts },
+                            { key: 'communication', label: t('communication'), score: cm },
+                            { key: 'adaptability', label: t('adaptability'), score: ad },
+                            { key: 'problem_solving', label: t('problemSolving'), score: ps },
+                            { key: 'collaboration', label: t('collaboration'), score: co },
+                            { key: 'leadership', label: t('leadership'), score: ld },
+                        ];
                         
                         return (
-                            <svg width="280" height="280" viewBox="0 0 280 280">
-                                <g stroke="var(--dashboard-paper-border)" strokeWidth="1" fill="none">
-                                    <polygon points="140,30 220,85 220,195 140,250 60,195 60,85"/>
-                                    <polygon points="140,58 192,93 192,187 140,222 88,187 88,93"/>
-                                    <polygon points="140,86 164,101 164,179 140,194 116,179 116,101"/>
-                                </g>
-                                <polygon points={points} fill="rgba(111,214,232,.18)" stroke="var(--dashboard-cyan)" strokeWidth="2"/>
-                                <g fontFamily="JetBrains Mono, monospace" fontSize="9" fill="var(--dashboard-mono-label)" textAnchor="middle">
-                                    <text x="140" y="18">{t("techSkills").toUpperCase()} ({scores?.teknik || 0})</text>
-                                    <text x="245" y="89">{t("communication").toUpperCase()} ({scores?.iletisim || 0})</text>
-                                    <text x="245" y="199">{t("adaptability").toUpperCase()} ({scores?.uyumluluk || 0})</text>
-                                    <text x="140" y="266">{t("problemSolving").toUpperCase()} ({scores?.problemCozme || 0})</text>
-                                    <text x="35" y="199">{t("collaboration").toUpperCase()} ({scores?.isbirligi || 0})</text>
-                                    <text x="35" y="89">{t("leadership").toUpperCase()} ({scores?.liderlik || 0})</text>
-                                </g>
-                            </svg>
+                            <>
+                                <svg width="280" height="280" viewBox="0 0 280 280">
+                                    <g stroke="var(--dashboard-paper-border)" strokeWidth="1" fill="none">
+                                        <polygon points="140,30 220,85 220,195 140,250 60,195 60,85"/>
+                                        <polygon points="140,58 192,93 192,187 140,222 88,187 88,93"/>
+                                        <polygon points="140,86 164,101 164,179 140,194 116,179 116,101"/>
+                                    </g>
+                                    <polygon points={points} fill="rgba(111,214,232,.18)" stroke="var(--dashboard-cyan)" strokeWidth="2"/>
+                                    <g fontFamily="JetBrains Mono, monospace" fontSize="9" fill="var(--dashboard-mono-label)" textAnchor="middle">
+                                        <text x="140" y="18">{t("techSkills").toUpperCase()} ({ts})</text>
+                                        <text x="245" y="89">{t("communication").toUpperCase()} ({cm})</text>
+                                        <text x="245" y="199">{t("adaptability").toUpperCase()} ({ad})</text>
+                                        <text x="140" y="266">{t("problemSolving").toUpperCase()} ({ps})</text>
+                                        <text x="35" y="199">{t("collaboration").toUpperCase()} ({co})</text>
+                                        <text x="35" y="89">{t("leadership").toUpperCase()} ({ld})</text>
+                                    </g>
+                                </svg>
+                                {Object.keys(competencyReasoning).length > 0 && (
+                                    <div className="radar-reasons">
+                                        {categories.map(cat => (
+                                            competencyReasoning[cat.key] && (
+                                                <div key={cat.key} className="rr-item" onMouseEnter={() => setHoveredCategory(cat.key)} onMouseLeave={() => setHoveredCategory(null)} style={hoveredCategory === cat.key ? { background: 'rgba(111,214,232,.08)' } : {}}>
+                                                    <span className="rr-label">{cat.score}</span>
+                                                    <span><strong style={{ color: 'var(--dashboard-text)' }}>{cat.label}:</strong> {competencyReasoning[cat.key]}</span>
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                )}
+                            </>
                         );
                     })()}
                 </div>
@@ -386,9 +487,26 @@ export default function SkillsClient({ analysisData, cvs }: { analysisData: any,
                     <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                     <div className="action-head"><svg viewBox="0 0 24 24" stroke="var(--dashboard-green)" strokeWidth="1.8" fill="none"><path d="M20 6L9 17l-5-5"/></svg><h3>{t("actionPlanTitle")}</h3></div>
                     <div className="action-sub">{t("actionPlanDesc")}</div>
-                    {actionPlan.map((plan: string, i: number) => (
-                        <div key={i} className="action-step"><span className="anum">{i+1}</span>{plan}</div>
-                    ))}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {actionPlan.map((plan: any, i: number) => {
+                        const title = typeof plan === 'string' ? plan : plan.title;
+                        const desc = typeof plan === 'string' ? null : plan.description;
+                        const resource = typeof plan === 'string' ? null : plan.resource;
+                        return (
+                            <div key={i} className="action-step" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                    <span className="anum">{i+1}</span>
+                                    <span style={{ fontWeight: 500, fontSize: '14px' }}>{title}</span>
+                                </div>
+                                {(desc || resource) && (
+                                    <div className="action-detail">
+                                        {desc && <div className="action-desc">{desc}</div>}
+                                        {resource && <span className="action-res">{resource}</span>}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
             

@@ -64,10 +64,15 @@ export async function POST(request: NextRequest) {
         textToAnalyze = textToAnalyze.slice(0, 15000);
 
         const isTr = locale === 'tr';
+
+        const turkishEnforcement = isTr
+            ? `ÖNEMLİ: Bu yanıtın TAMAMINI (tüm başlıklar, açıklamalar, kategori isimleri, içgörüler, kırmızı bayraklar, aksiyon planları, CV düzeltmeleri) SADECE TÜRKÇE olarak yaz. Tek bir İngilizce kelime bile kullanma. İngilizce teknoloji isimleri (React, Python, AWS, Docker gibi) hariç her şey Türkçe olsun.\n\n`
+            : '';
+
         const languageOutput = isTr ? 'TURKISH' : 'ENGLISH';
 
-        const prompt = `You are an expert Career Advisor.
-CRITICAL REQUIREMENT: You MUST generate all human-readable text in the final JSON (insight, superpower descriptions, red_flags, corrections, recommendations, action_plan) in ${languageOutput}.
+        const prompt = `${turkishEnforcement}You are an expert Career Advisor and CV Analyst.
+CRITICAL REQUIREMENT: You MUST generate all human-readable text in the final JSON in ${languageOutput}.
 DO NOT output in any other language.
 
 User's CV:
@@ -75,30 +80,62 @@ ${textToAnalyze}
 
 Target Role/Position: ${targetRole || "Not specified, guess from CV"}
 
-Evaluate the user's CV based on their suitability for the target position.
-Return ONLY in this JSON format, exactly matching these keys (values should be translated to ${languageOutput}):
+Evaluate the user's CV thoroughly. Provide a comprehensive, deeply specific analysis.
+
+IMPORTANT DISTINCTIONS:
+- "ats_feedback": ONLY ATS-specific technical issues (missing keywords, formatting problems, lack of quantified metrics, section naming issues)
+- "red_flags": ONLY career/content concerns (experience gaps, project depth issues, role progression, missing certifications, weak positioning)
+These two lists must NOT overlap or repeat similar points.
+
+- "insights": Provide 3-4 SEPARATE insight objects. Each focuses on a DIFFERENT finding from the CV. Include at least 1 "strength", 1 "weakness", and 1 "opportunity". Reference SPECIFIC details from the CV.
+
+- "competency_reasoning": For each of the 6 radar chart categories, provide a 1-sentence explanation of WHY that score was given, referencing specific CV content.
+
+- "action_plan": Each item must have a title, a description explaining WHY this step is a priority (tied to a specific CV gap), and a concrete resource recommendation.
+
+Return ONLY in this JSON format:
 {
   "scores": {
-    "technical_skills": 85, "communication": 70, "adaptability": 75, "problem_solving": 90, "leadership": 60
+    "technical_skills": 85,
+    "communication": 70,
+    "adaptability": 75,
+    "problem_solving": 90,
+    "collaboration": 65,
+    "leadership": 60
+  },
+  "competency_reasoning": {
+    "technical_skills": "${isTr ? 'Neden bu puan...' : 'Why this score...'}",
+    "communication": "...",
+    "adaptability": "...",
+    "problem_solving": "...",
+    "collaboration": "...",
+    "leadership": "..."
   },
   "overall_score": 78,
-  "insight": "...",
+  "insights": [
+    {"type": "strength", "title": "...", "description": "..."},
+    {"type": "weakness", "title": "...", "description": "..."},
+    {"type": "opportunity", "title": "...", "description": "..."},
+    {"type": "critical", "title": "...", "description": "..."}
+  ],
   "superpower": {"title": "...", "description": "..."},
-  "ats_score": 85,
-  "action_plan": ["...", "...", "..."],
+  "ats_score": 65,
+  "ats_feedback": ["...", "...", "..."],
+  "red_flags": ["...", "...", "..."],
+  "action_plan": [
+    {"title": "...", "description": "...", "resource": "..."},
+    {"title": "...", "description": "...", "resource": "..."},
+    {"title": "...", "description": "...", "resource": "..."}
+  ],
   "cv_corrections": [
-    {
-      "original": "...",
-      "improved": "...",
-      "reason": "..."
-    }
+    {"original": "...", "improved": "...", "reason": "..."}
   ],
   "recommendations": [
     {"title": "...", "description": "...", "category": "..."}
   ]
 }
 
-REMEMBER: All human-readable text content (inside the placeholders "...") MUST be in ${languageOutput}.
+REMEMBER: All text content MUST be in ${languageOutput}. Be deeply specific — reference actual CV content, not generic advice.
 `;
 
         const completion = await openai.chat.completions.create({
@@ -106,6 +143,7 @@ REMEMBER: All human-readable text content (inside the placeholders "...") MUST b
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.5,
+            max_tokens: 3000,
         });
 
         const resultContent = completion.choices[0]?.message?.content || "{}";
@@ -119,18 +157,23 @@ REMEMBER: All human-readable text content (inside the placeholders "...") MUST b
             ats_feedback: parsedData.ats_feedback || [],
             red_flags: parsedData.red_flags || [],
             action_plan: parsedData.action_plan || [],
-            cv_corrections: parsedData.cv_corrections || []
+            cv_corrections: parsedData.cv_corrections || [],
+            competency_reasoning: parsedData.competency_reasoning || {}
         };
+
+        // Support both new array format and legacy single string for insight
+        const insightValue = Array.isArray(parsedData.insights) 
+            ? JSON.stringify(parsedData.insights)
+            : parsedData.insight || parsedData.insights || '';
 
         // Save to skills_analysis
         const { data: analysisResult, error: insertError } = await supabase.from("skills_analysis").insert({
             user_id: user.id,
             scores: extendedScores,
-            overall_score: parsedData.overallScore,
-            insight: parsedData.insight,
+            overall_score: parsedData.overall_score,
+            insight: insightValue,
             recommendations: parsedData.recommendations,
             source: source
-            // language: locale || 'tr'
         }).select().single();
 
         if (insertError) {
