@@ -115,7 +115,7 @@ export default function CVPreview({ data, template = 'classic' }: CVPreviewProps
                                         scale={scale}
                                         devicePixelRatio={HD_RATIO}
                                         renderAnnotationLayer={false}
-                                        renderTextLayer={true} // Textleri vektörel olarak canvas'ın üzerine bindirir (En iyi kalite)
+                                        renderTextLayer={false}
                                         className="max-w-full"
                                     />
                                 </div>
