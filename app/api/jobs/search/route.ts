@@ -167,6 +167,9 @@ export async function POST(req: NextRequest) {
         const { query, location, page, locale } = parseResult.data;
         const rapidApiKey = process.env.RAPIDAPI_KEY;
 
+        console.log('[JOB SEARCH] Route çağrıldı, query:', query, 'location:', location);
+        console.log('[JOB SEARCH] RAPIDAPI_KEY mevcut mu:', !!rapidApiKey, 'uzunluk:', rapidApiKey?.length);
+
         const mockJobListings = getMockJobs(locale);
 
         // If no API key, use mock data
@@ -283,14 +286,14 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (error: unknown) {
-        console.error("[JSearch] Error:", error);
+        console.error("[JOB SEARCH] HATA:", error);
         
         const mockJobListings = getMockJobs("tr"); // Safe fallback
         // Fallback to mock data on any error
         return NextResponse.json({ 
             jobs: mockJobListings,
             source: "mock_fallback",
-            error: "Arama sırasında bir hata oluştu, örnek ilanlar gösteriliyor."
+            error: "Beklenmeyen bir hata oluştu, örnek ilanlar gösteriliyor."
         });
     }
 }

@@ -74,6 +74,7 @@ export default function JobDiscoverPage() {
         setHasSearched(true);
         try {
             const currentWorkType = workTypeOverride || searchWorkType;
+            console.log("[Jobs] Frontend sending search request:", { query: searchQuery || "developer", location: searchLocation, workType: currentWorkType });
             const res = await fetch(`/api/jobs/search?workType=${currentWorkType}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -84,7 +85,9 @@ export default function JobDiscoverPage() {
                     locale
                 }),
             });
+            console.log("[Jobs] Frontend received response status:", res.status);
             const data = await res.json();
+            console.log("[Jobs] Frontend parsed data:", { source: data.source, total: data.total, error: data.error, jobsCount: data.jobs?.length });
             setJobs(data.jobs || []);
             setApiSource(data.source || "unknown");
             
