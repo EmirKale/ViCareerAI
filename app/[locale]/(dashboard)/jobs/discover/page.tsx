@@ -171,7 +171,6 @@ export default function JobDiscoverPage() {
                     />
                     <select value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)}>
                         <option value="Turkey">📍 {t('locationTurkey')}</option>
-                        <option value="Remote">🌐 {t('locationRemote')}</option>
                         <option value="United States">🇺🇸 {t('locationUS')}</option>
                         <option value="United Kingdom">🇬🇧 {t('locationUK')}</option>
                         <option value="Germany">🇩🇪 {t('locationGermany')}</option>
