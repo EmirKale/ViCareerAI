@@ -170,7 +170,7 @@ export default function JobDiscoverPage() {
                         onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
                     />
                     <select value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)}>
-                        <option value="Turkey">📍 {t('locationTurkey')}</option>
+                        <option value="Turkey">TR {t('locationTurkey')}</option>
                         <option value="United States">🇺🇸 {t('locationUS')}</option>
                         <option value="United Kingdom">🇬🇧 {t('locationUK')}</option>
                         <option value="Germany">🇩🇪 {t('locationGermany')}</option>
