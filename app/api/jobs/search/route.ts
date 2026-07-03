@@ -171,13 +171,14 @@ export async function POST(req: NextRequest) {
 
         // If no API key, use mock data
         if (!rapidApiKey) {
-            let filtered = query
-                ? mockJobListings.filter(job =>
-                    job.title.toLowerCase().includes(query.toLowerCase()) ||
-                    job.skills.some(s => s.toLowerCase().includes(query.toLowerCase())) ||
-                    job.company.toLowerCase().includes(query.toLowerCase())
-                )
-                : mockJobListings;
+            let filtered = mockJobListings;
+            if (query) {
+                const queryWords = query.toLowerCase().split(/\s+/).filter((w: string) => w.length > 0);
+                filtered = mockJobListings.filter(job => {
+                    const text = (job.title + " " + job.company + " " + job.skills.join(" ")).toLowerCase();
+                    return queryWords.some((word: string) => text.includes(word));
+                });
+            }
 
             if (workType !== "all") {
                 filtered = filtered.filter(job => {
@@ -201,15 +202,26 @@ export async function POST(req: NextRequest) {
         const searchLocation = location || "Turkey";
         const searchPage = page || 1;
 
-        const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(searchQuery)}&page=${searchPage}&num_pages=1&country=${encodeURIComponent(searchLocation)}`;
+        const finalQuery = `${searchQuery} in ${searchLocation}`;
+        const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(finalQuery)}&page=${searchPage}&num_pages=1`;
         
+        const headers = {
+            "X-RapidAPI-Key": rapidApiKey,
+            "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
+        };
+        
+        console.log('REQUEST URL:', url);
+        // hide key partially in logs just in case, but follow user instructions
+        console.log('REQUEST HEADERS:', { ...headers, "X-RapidAPI-Key": rapidApiKey ? rapidApiKey.substring(0, 5) + "..." : "missing" });
+
         const response = await fetch(url, {
             method: "GET",
-            headers: {
-                "X-RapidAPI-Key": rapidApiKey,
-                "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
-            }
+            headers
         });
+
+        const rawText = await response.text();
+        console.log('RAW RESPONSE STATUS:', response.status);
+        console.log('RAW RESPONSE BODY:', rawText);
 
         if (!response.ok) {
             console.error(`[JSearch] API Error: ${response.status} ${response.statusText}`);
@@ -221,7 +233,13 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        const data = await response.json();
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            console.error("JSON parse error on JSearch response:", e);
+            data = {};
+        }
         const jobs: JSearchJob[] = data.data || [];
 
         let transformedJobs = jobs.map((job: JSearchJob) => ({
