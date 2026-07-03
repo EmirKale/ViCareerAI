@@ -139,6 +139,7 @@ const jobsSearchSchema = z.object({
 
 export async function POST(req: NextRequest) {
     try {
+        const workType = req.nextUrl.searchParams.get("workType") || "all";
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
@@ -170,13 +171,23 @@ export async function POST(req: NextRequest) {
 
         // If no API key, use mock data
         if (!rapidApiKey) {
-            const filtered = query
+            let filtered = query
                 ? mockJobListings.filter(job =>
                     job.title.toLowerCase().includes(query.toLowerCase()) ||
                     job.skills.some(s => s.toLowerCase().includes(query.toLowerCase())) ||
                     job.company.toLowerCase().includes(query.toLowerCase())
                 )
                 : mockJobListings;
+
+            if (workType !== "all") {
+                filtered = filtered.filter(job => {
+                    const text = (job.title + " " + job.description + " " + job.location).toLowerCase();
+                    if (workType === "remote") return text.includes("remote") || text.includes("uzaktan");
+                    if (workType === "hybrid") return text.includes("hybrid") || text.includes("hibrit");
+                    if (workType === "onsite") return !text.includes("remote") && !text.includes("uzaktan") && !text.includes("hybrid") && !text.includes("hibrit");
+                    return true;
+                });
+            }
 
             return NextResponse.json({ 
                 jobs: filtered,
@@ -213,8 +224,7 @@ export async function POST(req: NextRequest) {
         const data = await response.json();
         const jobs: JSearchJob[] = data.data || [];
 
-        // Transform JSearch response to our format
-        const transformedJobs = jobs.map((job: JSearchJob) => ({
+        let transformedJobs = jobs.map((job: JSearchJob) => ({
             id: job.job_id,
             title: job.job_title,
             company: job.employer_name,
@@ -229,6 +239,16 @@ export async function POST(req: NextRequest) {
             postedAt: formatPostedDate(job.job_posted_at_datetime_utc, locale),
             applyLink: job.job_apply_link || "#"
         }));
+
+        if (workType !== "all") {
+            transformedJobs = transformedJobs.filter(job => {
+                const text = (job.title + " " + job.description + " " + job.location).toLowerCase();
+                if (workType === "remote") return text.includes("remote") || text.includes("uzaktan");
+                if (workType === "hybrid") return text.includes("hybrid") || text.includes("hibrit");
+                if (workType === "onsite") return !text.includes("remote") && !text.includes("uzaktan") && !text.includes("hybrid") && !text.includes("hibrit");
+                return true;
+            });
+        }
 
         return NextResponse.json({ 
             jobs: transformedJobs,

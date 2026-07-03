@@ -40,6 +40,7 @@ export default function JobDiscoverPage() {
     const [jobs, setJobs] = useState<JobListing[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchLocation, setSearchLocation] = useState("Turkey");
+    const [searchWorkType, setSearchWorkType] = useState("all");
     const [hasSearched, setHasSearched] = useState(false);
     const [apiSource, setApiSource] = useState<string>("");
 
@@ -68,11 +69,12 @@ export default function JobDiscoverPage() {
         }, 2000);
     };
 
-    const handleJobSearch = async () => {
+    const handleJobSearch = async (workTypeOverride?: string) => {
         setIsSearching(true);
         setHasSearched(true);
         try {
-            const res = await fetch("/api/jobs/search", {
+            const currentWorkType = workTypeOverride || searchWorkType;
+            const res = await fetch(`/api/jobs/search?workType=${currentWorkType}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
@@ -115,6 +117,10 @@ export default function JobDiscoverPage() {
                 .search-bar input:focus, .search-bar select:focus{outline:none;border-color:var(--dashboard-cyan);}
                 .search-bar button{height:50px;padding:0 24px;background:var(--dashboard-cyan);color:var(--dashboard-bg);border:none;border-radius:var(--dashboard-radius);font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;}
                 .search-bar button:disabled{opacity:0.7;}
+                .work-type-pills{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+                .pill{height:50px;padding:0 20px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text-dim);font-family:'JetBrains Mono',monospace;font-size:12.5px;cursor:pointer;transition:all 0.2s ease;display:flex;align-items:center;justify-content:center;}
+                .pill:hover{background:rgba(255,255,255,0.05);color:var(--dashboard-text);}
+                .pill.active{background:rgba(111,214,232,0.1);border-color:var(--dashboard-cyan);color:var(--dashboard-cyan);}
 
                 .divider-label{display:flex;align-items:center;gap:16px;margin:48px 0 20px;}
                 .divider-label .dline{flex:1;height:1px;background:var(--dashboard-paper-border);}
@@ -155,22 +161,30 @@ export default function JobDiscoverPage() {
             </div>
 
             <div className="search-bar">
-                <input 
-                    type="text" 
-                    placeholder={t('searchPlaceholder')} 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
-                />
-                <select value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)}>
-                    <option value="Turkey">📍 {t('locationTurkey')}</option>
-                    <option value="Remote">🌐 {t('locationRemote')}</option>
-                    <option value="United States">🇺🇸 {t('locationUS')}</option>
-                    <option value="United Kingdom">🇬🇧 {t('locationUK')}</option>
-                    <option value="Germany">🇩🇪 {t('locationGermany')}</option>
-                    <option value="Netherlands">🇳🇱 {t('locationNetherlands')}</option>
-                </select>
-                <button onClick={handleJobSearch} disabled={isSearching}>
+                <div style={{ display: 'flex', gap: '10px', flex: 1, flexWrap: 'wrap' }}>
+                    <input 
+                        type="text" 
+                        placeholder={t('searchPlaceholder')} 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleJobSearch()}
+                    />
+                    <select value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)}>
+                        <option value="Turkey">📍 {t('locationTurkey')}</option>
+                        <option value="Remote">🌐 {t('locationRemote')}</option>
+                        <option value="United States">🇺🇸 {t('locationUS')}</option>
+                        <option value="United Kingdom">🇬🇧 {t('locationUK')}</option>
+                        <option value="Germany">🇩🇪 {t('locationGermany')}</option>
+                        <option value="Netherlands">🇳🇱 {t('locationNetherlands')}</option>
+                    </select>
+                </div>
+                <div className="work-type-pills">
+                    <button className={`pill ${searchWorkType === 'all' ? 'active' : ''}`} onClick={() => { setSearchWorkType('all'); handleJobSearch('all'); }}>{t('workTypeAll')}</button>
+                    <button className={`pill ${searchWorkType === 'remote' ? 'active' : ''}`} onClick={() => { setSearchWorkType('remote'); handleJobSearch('remote'); }}>{t('workTypeRemote')}</button>
+                    <button className={`pill ${searchWorkType === 'hybrid' ? 'active' : ''}`} onClick={() => { setSearchWorkType('hybrid'); handleJobSearch('hybrid'); }}>{t('workTypeHybrid')}</button>
+                    <button className={`pill ${searchWorkType === 'onsite' ? 'active' : ''}`} onClick={() => { setSearchWorkType('onsite'); handleJobSearch('onsite'); }}>{t('workTypeOnsite')}</button>
+                </div>
+                <button onClick={() => handleJobSearch()} disabled={isSearching}>
                     {isSearching ? t('searching') : t('searchButton')}
                 </button>
             </div>
@@ -185,7 +199,7 @@ export default function JobDiscoverPage() {
                     ) : jobs.length === 0 ? (
                         <div className="result-empty" style={{ minHeight: '160px', border: '1px dashed var(--dashboard-paper-border)', borderRadius: 'var(--dashboard-radius)' }}>
                             <Search className="w-[38px] h-[38px]" style={{ color: 'var(--dashboard-text-dim)', opacity: 0.5 }} />
-                            <div style={{ color: 'var(--dashboard-text)' }}>{t('noResults')}</div>
+                            <div style={{ color: 'var(--dashboard-text)' }}>{searchWorkType !== 'all' ? t('noResultsWorkType') : t('noResults')}</div>
                         </div>
                     ) : (
                         <div>
