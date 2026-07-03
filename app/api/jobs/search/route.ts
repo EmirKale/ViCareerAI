@@ -202,8 +202,16 @@ export async function POST(req: NextRequest) {
         const searchLocation = location || "Turkey";
         const searchPage = page || 1;
 
-        const finalQuery = `${searchQuery} in ${searchLocation}`;
-        const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(finalQuery)}&page=${searchPage}&num_pages=1`;
+        const countryCodeMap: Record<string, string> = {
+            'Turkey': 'tr',
+            'United States': 'us',
+            'United Kingdom': 'gb',
+            'Germany': 'de',
+            'Netherlands': 'nl'
+        };
+        const countryCode = countryCodeMap[searchLocation] || 'us';
+
+        const url = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(searchQuery)}&page=${searchPage}&num_pages=1&country=${countryCode}`;
         
         const headers = {
             "X-RapidAPI-Key": rapidApiKey,
