@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         color: '#6B7280',
     },
     section: {
-        marginBottom: 20,
+        marginBottom: 18,
     },
     sectionTitle: {
         fontSize: 10,
@@ -48,10 +48,10 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 10,
         color: '#4B5563',
-        lineHeight: 1.6,
+        lineHeight: 1.5,
     },
     itemBlock: {
-        marginBottom: 14,
+        marginBottom: 12,
     },
     itemHeader: {
         flexDirection: 'row',
