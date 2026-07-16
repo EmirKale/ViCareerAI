@@ -178,7 +178,7 @@ export const MinimalTemplate = ({ data }: { data: CVData }) => (
                     <View style={styles.skillsRow}>
                         {(data.skills || []).map((skill) => (
                             <Text key={skill.id} style={styles.skillItem}>
-                                {skill.name || ''}
+                                <Text>{skill.name || ''}</Text>
                             </Text>
                         ))}
                     </View>

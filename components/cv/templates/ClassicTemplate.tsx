@@ -16,6 +16,19 @@ export const breakLongWords = (text: string | null | undefined, maxLength = 25):
     return text.replace(regex, '$1 ');
 };
 
+export const truncateUrl = (url: string | undefined, maxLen = 30): string => {
+    if (!url) return '';
+    if (!url.startsWith('http') && !url.includes('://')) return url;
+    try {
+        const u = new URL(url.startsWith('http') ? url : `https://${url}`);
+        const domain = u.hostname.replace(/^www\./, '');
+        if (url.length <= maxLen) return url;
+        return domain;
+    } catch {
+        return url.length > maxLen ? url.substring(0, maxLen) + '...' : url;
+    }
+};
+
 export const getSummaryText = (summary: string | Record<string, unknown> | undefined): string => {
     if (!summary) return '';
     let text = '';

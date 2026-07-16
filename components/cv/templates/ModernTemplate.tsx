@@ -9,64 +9,64 @@ const styles = StyleSheet.create({
     },
     headerBar: {
         backgroundColor: '#1E3A5F',
-        padding: 40,
-        paddingBottom: 30,
+        padding: 30,
+        paddingBottom: 20,
         color: '#ffffff',
     },
     name: {
-        fontSize: 28,
+        fontSize: 24,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        marginBottom: 6,
+        marginBottom: 4,
         color: '#ffffff',
     },
     title: {
-        fontSize: 14,
+        fontSize: 12,
         color: '#60A5FA',
-        marginBottom: 16,
+        marginBottom: 10,
     },
     contactRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 15,
+        gap: 12,
     },
     contactItem: {
-        fontSize: 10,
+        fontSize: 9,
         color: '#E5E7EB',
     },
     body: {
-        padding: 40,
-        paddingTop: 30,
+        padding: 30,
+        paddingTop: 20,
     },
     section: {
-        marginBottom: 22,
+        marginBottom: 14,
     },
     sectionTitle: {
-        fontSize: 14,
+        fontSize: 12,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: '#1E3A5F',
         textTransform: 'uppercase',
-        marginBottom: 12,
-        paddingBottom: 4,
+        marginBottom: 8,
+        paddingBottom: 3,
         borderBottom: '2pt solid #60A5FA',
     },
     text: {
         fontSize: 10,
         color: '#374151',
-        lineHeight: 1.5,
+        lineHeight: 1.4,
     },
     itemBlock: {
-        marginBottom: 14,
+        marginBottom: 10,
     },
     itemHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 4,
+        marginBottom: 2,
     },
     itemTitle: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: '#111827',
@@ -77,21 +77,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     itemSub: {
-        fontSize: 11,
+        fontSize: 10,
         color: '#4B5563',
-        marginBottom: 6,
+        marginBottom: 4,
     },
     skillsRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 6,
+        gap: 5,
     },
     skillItem: {
-        fontSize: 10,
+        fontSize: 9,
         color: '#1E3A5F',
         border: '1pt solid #1E3A5F',
-        padding: '4px 8px',
-        borderRadius: 4,
+        padding: '3px 7px',
+        borderRadius: 3,
     }
 });
 
@@ -103,9 +103,9 @@ export const ModernTemplate = ({ data }: { data: CVData }) => (
                 {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
                 <View style={styles.contactRow}>
                     {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
-                    {data.personal?.phone ? <Text style={styles.contactItem}>• {data.personal.phone}</Text> : null}
-                    {data.personal?.location ? <Text style={styles.contactItem}>• {data.personal.location}</Text> : null}
-                    {data.personal?.linkedin ? <Text style={styles.contactItem}>• {data.personal.linkedin}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.contactItem}><Text>{'• '}</Text><Text>{data.personal.phone}</Text></Text> : null}
+                    {data.personal?.location ? <Text style={styles.contactItem}><Text>{'• '}</Text><Text>{data.personal.location}</Text></Text> : null}
+                    {data.personal?.linkedin ? <Text style={styles.contactItem}><Text>{'• '}</Text><Text>{data.personal.linkedin}</Text></Text> : null}
                 </View>
             </View>
 
@@ -185,7 +185,7 @@ export const ModernTemplate = ({ data }: { data: CVData }) => (
                         <View style={styles.skillsRow}>
                             {(data.skills || []).map((skill) => (
                                 <Text key={skill.id} style={styles.skillItem}>
-                                    {skill.name || ''}
+                                    <Text>{skill.name || ''}</Text>
                                 </Text>
                             ))}
                         </View>
@@ -195,4 +195,3 @@ export const ModernTemplate = ({ data }: { data: CVData }) => (
         </Page>
     </Document>
 );
-

@@ -9,22 +9,22 @@ const styles = StyleSheet.create({
     },
     header: {
         backgroundColor: '#111827',
-        padding: 30,
+        padding: 24,
         alignItems: 'center',
         color: '#ffffff',
     },
     name: {
-        fontSize: 26,
+        fontSize: 22,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginBottom: 4,
         letterSpacing: 1,
         textTransform: 'uppercase',
     },
     title: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#9CA3AF',
-        marginBottom: 16,
+        marginBottom: 10,
         letterSpacing: 2,
         textTransform: 'uppercase',
     },
@@ -32,48 +32,48 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 12,
+        gap: 10,
     },
     contactItem: {
         fontSize: 9,
         color: '#D1D5DB',
     },
     body: {
-        padding: 40,
+        padding: 30,
     },
     section: {
-        marginBottom: 20,
+        marginBottom: 14,
     },
     sectionTitle: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: '#111827',
         textTransform: 'uppercase',
         letterSpacing: 1.5,
         textAlign: 'center',
-        marginBottom: 12,
+        marginBottom: 8,
     },
     separator: {
         borderBottom: '0.5pt solid #D1D5DB',
         width: 50,
         alignSelf: 'center',
-        marginBottom: 16,
+        marginBottom: 10,
     },
     text: {
         fontSize: 10,
         color: '#374151',
-        lineHeight: 1.5,
+        lineHeight: 1.4,
         textAlign: 'center',
     },
     itemBlock: {
-        marginBottom: 16,
+        marginBottom: 10,
     },
     itemHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 4,
+        marginBottom: 2,
     },
     itemTitle: {
         fontSize: 11,
@@ -88,18 +88,18 @@ const styles = StyleSheet.create({
     itemSub: {
         fontSize: 10,
         color: '#111827',
-        marginBottom: 6,
+        marginBottom: 4,
     },
     itemDesc: {
         fontSize: 10,
         color: '#374151',
-        lineHeight: 1.4,
+        lineHeight: 1.3,
     },
     skillsRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 8,
+        gap: 6,
     },
     skillItem: {
         fontSize: 10,
@@ -115,9 +115,9 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                 {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
                 <View style={styles.contactRow}>
                     {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
-                    {data.personal?.phone ? <Text style={styles.contactItem}>| {data.personal.phone}</Text> : null}
-                    {data.personal?.location ? <Text style={styles.contactItem}>| {data.personal.location}</Text> : null}
-                    {data.personal?.linkedin ? <Text style={styles.contactItem}>| {data.personal.linkedin}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.contactItem}><Text>{'| '}</Text><Text>{data.personal.phone}</Text></Text> : null}
+                    {data.personal?.location ? <Text style={styles.contactItem}><Text>{'| '}</Text><Text>{data.personal.location}</Text></Text> : null}
+                    {data.personal?.linkedin ? <Text style={styles.contactItem}><Text>{'| '}</Text><Text>{data.personal.linkedin}</Text></Text> : null}
                 </View>
             </View>
 
@@ -204,7 +204,7 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                             {(data.skills || []).map((skill, index) => (
                                 <Text key={skill.id} style={styles.skillItem}>
                                     <Text>{skill.name || ''}</Text>
-                                    {index < data.skills.length - 1 ? <Text>  •  </Text> : null}
+                                    {index < data.skills.length - 1 ? <Text>{'  •  '}</Text> : null}
                                 </Text>
                             ))}
                         </View>
@@ -214,4 +214,3 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
         </Page>
     </Document>
 );
-

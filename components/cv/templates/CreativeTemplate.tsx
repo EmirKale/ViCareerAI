@@ -1,26 +1,26 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { CVData, getSummaryText, breakLongWords } from './ClassicTemplate';
+import { CVData, getSummaryText, breakLongWords, truncateUrl } from './ClassicTemplate';
 
 const styles = StyleSheet.create({
     page: {
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         backgroundColor: '#ffffff',
         fontFamily: 'Roboto',
     },
     sidebar: {
-        width: '35%',
+        width: '38%',
         backgroundColor: '#6B21A8',
-        padding: 25,
+        padding: 22,
         color: '#ffffff',
         height: '100%',
     },
     main: {
-        width: '65%',
-        padding: 30,
+        width: '62%',
+        padding: 28,
         backgroundColor: '#ffffff',
     },
     name: {
-        fontSize: 24,
+        fontSize: 20,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         marginBottom: 6,
@@ -28,63 +28,63 @@ const styles = StyleSheet.create({
         lineHeight: 1.2,
     },
     title: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#D8B4FE',
-        marginBottom: 20,
+        marginBottom: 18,
     },
     sidebarSection: {
-        marginBottom: 20,
+        marginBottom: 16,
     },
     sidebarTitle: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: '#ffffff',
         textTransform: 'uppercase',
         borderBottom: '1pt solid #9333EA',
-        paddingBottom: 4,
-        marginBottom: 10,
+        paddingBottom: 3,
+        marginBottom: 8,
         letterSpacing: 1,
     },
     contactItem: {
-        fontSize: 10,
+        fontSize: 9,
         color: '#E9D5FF',
-        marginBottom: 6,
+        marginBottom: 5,
     },
     skillItem: {
-        fontSize: 10,
+        fontSize: 9,
         color: '#E9D5FF',
-        marginBottom: 4,
+        marginBottom: 3,
     },
     mainSection: {
-        marginBottom: 20,
+        marginBottom: 16,
     },
     mainTitle: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: '#6B21A8',
         textTransform: 'uppercase',
         borderBottom: '2pt solid #D8B4FE',
-        paddingBottom: 4,
-        marginBottom: 12,
+        paddingBottom: 3,
+        marginBottom: 10,
     },
     text: {
         fontSize: 10,
         color: '#374151',
-        lineHeight: 1.5,
+        lineHeight: 1.4,
     },
     itemBlock: {
-        marginBottom: 14,
+        marginBottom: 12,
     },
     itemHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 4,
+        marginBottom: 3,
     },
     itemTitle: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: '#111827',
@@ -97,40 +97,14 @@ const styles = StyleSheet.create({
     itemSub: {
         fontSize: 10,
         color: '#4B5563',
-        marginBottom: 6,
+        marginBottom: 4,
     }
 });
 
 export const CreativeTemplate = ({ data }: { data: CVData }) => (
     <Document title={`${data.personal?.fullName || 'CV'} - Creative CV`}>
         <Page size="A4" style={styles.page}>
-            {/* LEFT SIDEBAR */}
-            <View style={styles.sidebar}>
-                <Text style={styles.name}>{data.personal?.fullName || 'Ad Soyad'}</Text>
-                {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
-
-                <View style={styles.sidebarSection}>
-                    <Text style={styles.sidebarTitle}>İLETİŞİM</Text>
-                    {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
-                    {data.personal?.phone ? <Text style={styles.contactItem}>{data.personal.phone}</Text> : null}
-                    {data.personal?.location ? <Text style={styles.contactItem}>{data.personal.location}</Text> : null}
-                    {data.personal?.linkedin ? <Text style={styles.contactItem}>{data.personal.linkedin}</Text> : null}
-                </View>
-
-                {((data.skills || []).filter(x => x.name?.trim()).length) > 0 ? (
-                    <View style={styles.sidebarSection}>
-                        <Text style={styles.sidebarTitle}>BECERİLER</Text>
-                        {(data.skills || []).map((skill) => (
-                            <Text key={skill.id} style={styles.skillItem}>
-                                <Text>• </Text>
-                                <Text>{skill.name || ''}</Text>
-                            </Text>
-                        ))}
-                    </View>
-                ) : null}
-            </View>
-
-            {/* RIGHT MAIN CONTENT */}
+            {/* MAIN CONTENT — rendered first in DOM for ATS text order */}
             <View style={styles.main}>
                 {getSummaryText(data.summary) ? (
                     <View style={styles.mainSection}>
@@ -200,7 +174,33 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     </View>
                 ) : null}
             </View>
+
+            {/* LEFT SIDEBAR — rendered second in DOM but visually on left via row-reverse */}
+            <View style={styles.sidebar}>
+                <Text style={styles.name}>{data.personal?.fullName || 'Ad Soyad'}</Text>
+                {data.personal?.jobTitle ? <Text style={styles.title}>{data.personal.jobTitle}</Text> : null}
+
+                <View style={styles.sidebarSection}>
+                    <Text style={styles.sidebarTitle}>İLETİŞİM</Text>
+                    {data.personal?.email ? <Text style={styles.contactItem}>{data.personal.email}</Text> : null}
+                    {data.personal?.phone ? <Text style={styles.contactItem}>{data.personal.phone}</Text> : null}
+                    {data.personal?.location ? <Text style={styles.contactItem}>{data.personal.location}</Text> : null}
+                    {data.personal?.linkedin ? <Text style={styles.contactItem}>{truncateUrl(data.personal.linkedin)}</Text> : null}
+                    {data.personal?.website ? <Text style={styles.contactItem}>{truncateUrl(data.personal.website)}</Text> : null}
+                </View>
+
+                {((data.skills || []).filter(x => x.name?.trim()).length) > 0 ? (
+                    <View style={styles.sidebarSection}>
+                        <Text style={styles.sidebarTitle}>BECERİLER</Text>
+                        {(data.skills || []).map((skill) => (
+                            <Text key={skill.id} style={styles.skillItem}>
+                                <Text>{'• '}</Text>
+                                <Text>{skill.name || ''}</Text>
+                            </Text>
+                        ))}
+                    </View>
+                ) : null}
+            </View>
         </Page>
     </Document>
 );
-
