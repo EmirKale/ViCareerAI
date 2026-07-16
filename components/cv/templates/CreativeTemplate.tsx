@@ -121,7 +121,10 @@ export const CreativeTemplate = ({ data }: { data: CVData }) => (
                     <View style={styles.sidebarSection}>
                         <Text style={styles.sidebarTitle}>BECERİLER</Text>
                         {(data.skills || []).map((skill) => (
-                            <Text key={skill.id} style={styles.skillItem}>• {skill.name || ''}</Text>
+                            <Text key={skill.id} style={styles.skillItem}>
+                                <Text>• </Text>
+                                <Text>{skill.name || ''}</Text>
+                            </Text>
                         ))}
                     </View>
                 ) : null}

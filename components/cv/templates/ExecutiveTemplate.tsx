@@ -203,7 +203,8 @@ export const ExecutiveTemplate = ({ data }: { data: CVData }) => (
                         <View style={styles.skillsRow}>
                             {(data.skills || []).map((skill, index) => (
                                 <Text key={skill.id} style={styles.skillItem}>
-                                    {skill.name || ''}{index < data.skills.length - 1 ? '  •  ' : ''}
+                                    <Text>{skill.name || ''}</Text>
+                                    {index < data.skills.length - 1 ? <Text>  •  </Text> : null}
                                 </Text>
                             ))}
                         </View>

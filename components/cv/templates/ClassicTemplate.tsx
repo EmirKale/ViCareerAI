@@ -257,7 +257,8 @@ export const ClassicTemplate = ({ data }: { data: CVData }) => (
                     <View style={styles.skillsRow}>
                         {(data.skills || []).map((skill, index) => (
                             <Text key={skill.id} style={styles.skillText}>
-                                {skill.name || ''}{index < data.skills.length - 1 ? ' • ' : ''}
+                                <Text>{skill.name || ''}</Text>
+                                {index < data.skills.length - 1 ? <Text> • </Text> : null}
                             </Text>
                         ))}
                     </View>

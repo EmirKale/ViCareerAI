@@ -122,7 +122,10 @@ export const ProfessionalTemplate = ({ data }: { data: CVData }) => (
                     <View style={styles.sidebarSection}>
                         <Text style={styles.sidebarTitle}>UZMANLIK ALANLARI</Text>
                         {(data.skills || []).map((skill) => (
-                            <Text key={skill.id} style={styles.skillItem}>• {skill.name || ''}</Text>
+                            <Text key={skill.id} style={styles.skillItem}>
+                                <Text>• </Text>
+                                <Text>{skill.name || ''}</Text>
+                            </Text>
                         ))}
                     </View>
                 ) : null}
