@@ -14,7 +14,6 @@ export default function Home() {
 
   const gridFieldRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
 
   const revealRefs = useRef<(HTMLElement | SVGElement | null)[]>([]);
@@ -33,8 +32,6 @@ export default function Home() {
     if (!reduceMotion && gridFieldRef.current) {
       gridFieldRef.current.style.transform = `translateY(${h.scrollTop * -0.06}px)`;
     }
-
-    setScrolled(h.scrollTop > 40);
   }, [reduceMotion]);
 
   useEffect(() => {
@@ -131,32 +128,7 @@ export default function Home() {
     if (el && !sectionRefs.current.includes(el)) sectionRefs.current.push(el);
   };
 
-  // Split hero title into chars for animation
-  const heroTitleText = t("heroTitle");
-  const heroChars = heroTitleText.split("").map((ch, i) => (
-    <span
-      key={i}
-      className={styles.char}
-      style={{
-        transitionDelay: `${i * 28}ms`,
-        transition: 'opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1)',
-      }}
-    >
-      {ch === " " ? "\u00A0" : ch}
-    </span>
-  ));
 
-  // Trigger char animation on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const chars = document.querySelectorAll(`.${styles.hero} h1 .${styles.char}`);
-      chars.forEach((c) => {
-        (c as HTMLElement).style.opacity = "1";
-        (c as HTMLElement).style.transform = "translateY(0)";
-      });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -165,7 +137,7 @@ export default function Home() {
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     description:
-      'GPT-4o destekli AI ile ATS onaylı CV, motivasyon mektubu, skill gap analizi ve kariyer yol haritası oluşturan platform.',
+      'ATS uyumlu CV oluşturma, motivasyon mektubu hazırlama ve iş ilanı eksik beceri analizi sunan kariyer platformu.',
     url: 'https://vi-career-ai.vercel.app',
     offers: [
       {
@@ -221,7 +193,7 @@ export default function Home() {
       <section className={`${styles.section} ${styles.hero}`} id="hero" ref={setSectionRef}>
         <div className={styles.heroInner}>
           <div className={styles.eyebrow}>{t("heroEyebrow")}</div>
-          <h1>{heroChars}</h1>
+          <h1>{t("heroTitle")}</h1>
           <p className={styles.lede}>{t("heroLede")}</p>
           <div className={styles.heroActions}>
             <Link className={styles.stampBtn} href="/register">{t("heroCta")}</Link>
@@ -268,10 +240,10 @@ export default function Home() {
         </div>
         <div className={styles.statsGrid}>
           {[
-            { target: "85", suffix: "%", label: t("s1Label") },
-            { target: "2", suffix: " dk", label: t("s2Label") },
-            { target: "6", suffix: "", label: t("s3Label") },
-            { target: "100", suffix: "%", label: t("s4Label") },
+            { target: "6", suffix: "", label: t("s1Label") },
+            { target: "2", suffix: "", label: t("s2Label") },
+            { target: "4", suffix: "", label: t("s3Label") },
+            { target: "3", suffix: "", label: t("s4Label") },
           ].map((stat, i) => (
             <div key={i} className={`${styles.statBlock} ${styles.fadeUp}`} ref={setRevealRef}>
               <div className={styles.dimLine}><span className={styles.cap}></span><span className={styles.bar}></span></div>
@@ -421,6 +393,10 @@ export default function Home() {
             <h4>{t("footerLegal")}</h4>
             <Link href="/privacy">{t("footerPrivacy")}</Link>
             <Link href="/terms">{t("footerTerms")}</Link>
+          </div>
+          <div className={styles.footerCol}>
+            <h4>{t("footerContact") || "Contact"}</h4>
+            <a href="mailto:emirkale03@gmail.com">emirkale03@gmail.com</a>
           </div>
         </div>
         <div className={styles.footerBottom}>{t("footerRights")}</div>

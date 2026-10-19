@@ -283,44 +283,33 @@
 /* ===== Production SaaS Utility Classes ===== */
 
 .gradient-brand {
-  background: linear-gradient(135deg, var(--brand-navy) 0%, #1E40AF 50%, var(--brand-blue) 100%);
+  background: #1849A9;
 }
 
 .gradient-brand-text {
-  background: linear-gradient(135deg, #3B82F6 0%, #818CF8 50%, #C084FC 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1849A9;
 }
 
 .gradient-hero-bg {
-  background: radial-gradient(ellipse 100% 100% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 80% 40%, rgba(99, 102, 241, 0.08) 0%, transparent 60%);
+  display: none;
 }
 
 .dark .gradient-hero-bg {
-  background: radial-gradient(ellipse 100% 100% at 50% -20%, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
-              radial-gradient(ellipse 60% 60% at 80% 40%, rgba(129, 140, 248, 0.05) 0%, transparent 60%);
+  display: none;
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+  background: #FFFFFF;
+  border: 1px solid #D3CDC2;
 }
 
 .dark .glass-card {
-  background: rgba(15, 23, 42, 0.3);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #18181B;
+  border: 1px solid #27272A;
 }
 
 .grid-pattern {
-  background-image: radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.1) 1px, transparent 0);
-  background-size: 32px 32px;
+  display: none;
 }
 
 .dark .grid-pattern {
@@ -341,9 +330,9 @@
   @apply bg-zinc-300 dark:bg-zinc-700;
 }
 
-/* SaaS Hover Interactions */
+/* Simple Hover State */
 .hover-lift {
-  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10;
+  @apply transition-colors duration-150;
 }
 
 .glow-on-hover:hover {

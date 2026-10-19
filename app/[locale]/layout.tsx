@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Archivo_Narrow, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -9,17 +9,17 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
+const archivoNarrow = Archivo_Narrow({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700"],
   display: "swap",
 });
 
-const inter = Inter({
+const sourceSerif4 = Source_Serif_4({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "600"],
   display: "swap",
 });
 
@@ -38,13 +38,13 @@ export async function generateMetadata(props: {
 
   const metadata = {
     tr: {
-      title: "ViCareerAI — Kariyerini Yeniden Çiz | AI Destekli CV ve Kariyer Platformu",
-      description: "ViCareerAI, özgeçmişini GPT-4o ile saniyeler içinde ATS onaylı bir belgeye dönüştürür. AI destekli CV oluşturma, motivasyon mektubu, skill gap analizi ve kariyer yol haritası — ücretsiz başla.",
+      title: "ViCareerAI: Kariyerini Yeniden Çiz | AI Destekli CV ve Kariyer Platformu",
+      description: "ViCareerAI, özgeçmişini saniyeler içinde ATS uyumlu bir belgeye dönüştürür. 6 şablon, motivasyon mektubu ve eksik beceri analizi ile başvurularını hazırla.",
       keywords: "ATS uyumlu CV, yapay zeka CV oluşturucu, AI özgeçmiş, kariyer platformu, motivasyon mektubu AI",
     },
     en: {
-      title: "ViCareerAI - Build Your CV with AI",
-      description: "Create ATS-friendly CVs with GPT-4o, write cover letters, analyze job postings. The smartest AI career platform.",
+      title: "ViCareerAI: Build ATS-Ready Resumes with AI",
+      description: "Build ATS-ready resumes in English and Turkish, generate role-specific cover letters, and analyze job postings for missing skills.",
       keywords: "ai cv builder, ats resume, cover letter, job application, career platform, resume builder, ai resume",
     },
   };
@@ -133,7 +133,7 @@ export default async function RootLayout(props: Readonly<{
   return (
     <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-200`}
+        className={`${archivoNarrow.variable} ${sourceSerif4.variable} ${jetbrainsMono.variable} antialiased bg-[#F4F1EA] text-[#111111] transition-colors duration-200`}
       >
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
