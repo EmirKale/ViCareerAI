@@ -96,20 +96,20 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
     }));
 
     const pipelineStats = [
-        { label: t("pipelineApplied"), value: jobsData.filter(j => j.status === 'Applied').length || 0, color: "var(--dashboard-cyan)" },
-        { label: t("pipelineInterviews"), value: jobsData.filter(j => j.status === 'Interviewing').length || 0, color: "#E8B85E" },
-        { label: t("pipelineOffers"), value: jobsData.filter(j => j.status === 'Offer').length || 0, color: "var(--dashboard-green)" },
+        { label: t("pipelineApplied"), value: jobsData.filter(j => j.status === 'Applied').length || 0, color: "#1849A9" },
+        { label: t("pipelineInterviews"), value: jobsData.filter(j => j.status === 'Interviewing').length || 0, color: "#B45309" },
+        { label: t("pipelineOffers"), value: jobsData.filter(j => j.status === 'Offer').length || 0, color: "#15803D" },
     ];
 
     const displayUserName = profileData?.full_name || profileData?.email?.split("@")[0] || userName;
 
     return (
-        <div className="w-full text-[#EAF3F7]">
+        <div className="w-full text-[#111111]">
             {/* ---------- DASHBOARD HEADER ---------- */}
             <div className="flex justify-between items-start flex-wrap gap-5 mb-8">
                 <div>
-                    <h1 className="text-[clamp(24px,3vw,30px)] font-['Space_Grotesk'] font-semibold tracking-tight mb-1.5">{t("welcome", { name: displayUserName.split(' ')[0] })}</h1>
-                    <p className="text-[#EAF3F7]/60 text-[14.5px]">{t("todayGoal")}</p>
+                    <h1 className="text-[clamp(26px,3vw,34px)] font-['Archivo_Narrow'] font-bold uppercase tracking-tight mb-1">{t("welcome", { name: displayUserName.split(' ')[0] })}</h1>
+                    <p className="text-[#4A4742] text-[15px]">{t("todayGoal")}</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                     <Link href="/cv/new" className="btn-stamp">
@@ -124,24 +124,18 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
             {/* ---------- STAT CARDS ---------- */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {stats.map((stat, i) => (
-                    <div key={i} className="bp-card" style={stat.isPro ? { borderColor: "var(--dashboard-stamp-dim)" } : {}}>
-                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <path d="M6,15 L6,6 L15,6" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
-                            <path d="M85,6 L94,6 L94,15" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
-                            <path d="M94,85 L94,94 L85,94" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
-                            <path d="M15,94 L6,94 L6,85" stroke={stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan)"}/>
-                        </svg>
-                        <div className="relative z-10 px-2">
-                            <div className="flex justify-between items-start mb-[18px]">
-                                <span className="text-[13px] text-[#EAF3F7]/60">{stat.title}</span>
-                                <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24" style={{ color: stat.isPro ? "var(--dashboard-stamp)" : "var(--dashboard-cyan-dim)" }}>
+                    <div key={i} className="bp-card bg-white border-[1.5px] border-[#111111] p-5 shadow-[2px_2px_0px_#D3CDC2]">
+                        <div className="relative z-10">
+                            <div className="flex justify-between items-start mb-4">
+                                <span className="font-['JetBrains_Mono'] text-[11px] font-bold uppercase tracking-wider text-[#757169]">{stat.title}</span>
+                                <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.8px] text-[#1849A9]" viewBox="0 0 24 24">
                                     {stat.icon}
                                 </svg>
                             </div>
-                            <div className="font-['Space_Grotesk'] font-bold text-[28px] mb-1 leading-none" style={{ color: stat.isPro ? "var(--dashboard-stamp)" : "inherit" }}>
-                                {stat.value}<span className="text-[#EAF3F7]/60 text-[18px]">{stat.max}</span>
+                            <div className="font-['Archivo_Narrow'] font-bold text-[32px] mb-1.5 leading-none text-[#111111]">
+                                {stat.value}<span className="text-[#757169] text-[18px] font-normal">{stat.max}</span>
                             </div>
-                            <div className="font-['JetBrains_Mono'] text-[10.5px] tracking-[0.06em] text-[#8FB9CC]">
+                            <div className="font-['JetBrains_Mono'] text-[11px] tracking-[0.04em] text-[#757169]">
                                 {stat.desc}
                             </div>
                         </div>
@@ -151,56 +145,50 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
 
             {/* ---------- MID ROW ---------- */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="bp-card md:col-span-2">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
-                    </svg>
-                    <div className="relative z-10 px-2 sm:px-4">
-                        <div className="flex justify-between items-center mb-[18px]">
-                            <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("recentWork")}</h3>
-                            <Link className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] flex items-center gap-1 hover:opacity-80" href="/cv/history">
+                <div className="bp-card md:col-span-2 bg-white border-[1.5px] border-[#111111] p-6 shadow-[2px_2px_0px_#D3CDC2]">
+                    <div className="relative z-10">
+                        <div className="flex justify-between items-center mb-5 pb-3 border-b border-[#D3CDC2]">
+                            <h3 className="font-['Archivo_Narrow'] font-bold uppercase tracking-tight text-[18px] text-[#111111]">{t("recentWork")}</h3>
+                            <Link className="font-['JetBrains_Mono'] text-[11px] font-bold text-[#1849A9] flex items-center gap-1 hover:underline" href="/cv/history">
                                 {t("viewAll")} →
                             </Link>
                         </div>
                         
                         <div className="flex flex-col gap-3">
                             {recentDocuments.length > 0 ? recentDocuments.map((doc) => (
-                                <Link key={doc.id} href={`/cv/${doc.id}/edit`} className="flex items-center gap-[14px] p-4 border border-[#6FD6E8]/14 rounded-[2px] bg-white/[0.015] hover:bg-[#6FD6E8]/5 transition-colors">
-                                    <div className="w-9 h-9 rounded-[2px] bg-[#6FD6E8]/10 flex items-center justify-center text-[#6FD6E8] shrink-0">
-                                        <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                <Link key={doc.id} href={`/cv/${doc.id}/edit`} className="flex items-center gap-3.5 p-3.5 border border-[#D3CDC2] bg-[#FAF8F5] hover:bg-white hover:border-[#111111] transition-colors">
+                                    <div className="w-9 h-9 border border-[#1849A9] bg-[#1849A9]/10 flex items-center justify-center text-[#1849A9] shrink-0">
+                                        <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.8px]" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
                                     </div>
                                     <div>
-                                        <div className="font-['JetBrains_Mono'] text-[11px] text-[#8FB9CC] mb-1">{mounted ? doc.date : ""}</div>
-                                        <div className="text-[14.5px] font-medium text-[#EAF3F7]">{doc.title}</div>
+                                        <div className="font-['JetBrains_Mono'] text-[11px] text-[#757169] mb-0.5">{mounted ? doc.date : ""}</div>
+                                        <div className="text-[15px] font-semibold text-[#111111]">{doc.title}</div>
                                     </div>
                                 </Link>
                             )) : (
-                                <div className="text-center py-6 text-[#EAF3F7]/60 border border-dashed border-[#6FD6E8]/14 rounded-[2px]">
-                                    <p className="text-[14.5px] mb-2">{t("noCvYet")}</p>
-                                    <Link href="/cv/new" className="text-[#6FD6E8] font-['JetBrains_Mono'] text-[11px] hover:underline">{t("createNow")} →</Link>
+                                <div className="text-center py-8 text-[#4A4742] border border-dashed border-[#D3CDC2]">
+                                    <p className="text-[14px] mb-2">{t("noCvYet")}</p>
+                                    <Link href="/cv/new" className="text-[#1849A9] font-['JetBrains_Mono'] text-[11px] font-bold hover:underline">{t("createNow")} →</Link>
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
 
-                <div className="bp-card flex flex-col items-center text-center">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
-                    </svg>
-                    <div className="relative z-10 px-2 w-full flex flex-col items-center">
-                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px] mb-[18px] self-start">{t("profileStrength")}</h3>
-                        <div className="relative w-[140px] h-[140px] mb-[18px]">
+                <div className="bp-card flex flex-col items-center text-center bg-white border-[1.5px] border-[#111111] p-6 shadow-[2px_2px_0px_#D3CDC2]">
+                    <div className="relative z-10 w-full flex flex-col items-center">
+                        <h3 className="font-['Archivo_Narrow'] font-bold uppercase tracking-tight text-[18px] mb-5 self-start text-[#111111]">{t("profileStrength")}</h3>
+                        <div className="relative w-[140px] h-[140px] mb-5">
                             <svg width="140" height="140" viewBox="0 0 140 140" className="transform -rotate-90">
-                                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--dashboard-paper-border)" strokeWidth="8"/>
-                                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--dashboard-cyan)" strokeWidth="8"
-                                  strokeDasharray="377" strokeDashoffset={377 - (377 * profileStrength) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out"/>
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="#EAE6DC" strokeWidth="10"/>
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="#1849A9" strokeWidth="10"
+                                  strokeDasharray="377" strokeDashoffset={377 - (377 * profileStrength) / 100} strokeLinecap="square" className="transition-all duration-1000 ease-out"/>
                             </svg>
-                            <div className="absolute inset-0 flex items-center justify-center font-['Space_Grotesk'] font-bold text-[30px]">
+                            <div className="absolute inset-0 flex items-center justify-center font-['Archivo_Narrow'] font-bold text-[32px] text-[#111111]">
                                 {profileStrength}%
                             </div>
                         </div>
-                        <p className="text-[13px] text-[#EAF3F7]/60 mb-[18px] max-w-[220px]">{profileStrength >= 75 ? t("profileStrengthGood") : t("profileStrengthImprove")}</p>
+                        <p className="text-[13.5px] text-[#4A4742] mb-5 max-w-[220px]">{profileStrength >= 75 ? t("profileStrengthGood") : t("profileStrengthImprove")}</p>
                         <Link href="/profile" className="btn-outline w-full justify-center">
                             {t("updateProfile")}
                         </Link>
@@ -210,54 +198,45 @@ export default function DashboardClient({ profileData, quotaData, cvData, jobsDa
 
             {/* ---------- BOTTOM ROW ---------- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1.2fr] gap-4">
-                <div className="bp-card">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
-                    </svg>
-                    <div className="relative z-10 px-2">
-                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("jobStats")}</h3>
-                        <div className="font-['JetBrains_Mono'] text-[11px] text-[#8FB9CC] mt-1 mb-1.5 uppercase">{t("jobStatsDesc")}</div>
+                <div className="bp-card bg-white border-[1.5px] border-[#111111] p-5 shadow-[2px_2px_0px_#D3CDC2]">
+                    <div className="relative z-10">
+                        <h3 className="font-['Archivo_Narrow'] font-bold uppercase tracking-tight text-[17px] text-[#111111]">{t("jobStats")}</h3>
+                        <div className="font-['JetBrains_Mono'] text-[10.5px] text-[#757169] mt-0.5 mb-3 uppercase tracking-wider">{t("jobStatsDesc")}</div>
                         <div className="flex flex-col">
                             {pipelineStats.map((stat, i) => (
-                                <div key={i} className={`flex justify-between items-center py-[11px] text-[14px] ${i !== 0 ? 'border-t border-[#6FD6E8]/14' : ''}`}>
-                                    <span className="flex items-center text-[#EAF3F7]/60">
-                                        <span className="w-[7px] h-[7px] rounded-full inline-block mr-[9px]" style={{ background: stat.color }}></span>
+                                <div key={i} className={`flex justify-between items-center py-2.5 text-[14px] ${i !== 0 ? 'border-t border-[#EAE6DC]' : ''}`}>
+                                    <span className="flex items-center text-[#4A4742]">
+                                        <span className="w-2 h-2 inline-block mr-2" style={{ background: stat.color }}></span>
                                         {stat.label}
                                     </span>
-                                    <span className="font-['JetBrains_Mono']">{stat.value}</span>
+                                    <span className="font-['JetBrains_Mono'] font-bold text-[#111111]">{stat.value}</span>
                                 </div>
                             ))}
                         </div>
-                        <Link className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] flex items-center gap-1 hover:opacity-80 mt-4 block uppercase" href="/jobs/tracker">
+                        <Link className="font-['JetBrains_Mono'] text-[11px] font-bold text-[#1849A9] flex items-center gap-1 hover:underline mt-4 block uppercase tracking-wider" href="/jobs/tracker">
                             {t("detailedAnalysis")} →
                         </Link>
                     </div>
                 </div>
 
-                <div className="bp-card" style={{ borderColor: "var(--dashboard-stamp-dim)" }}>
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M6,15 L6,6 L15,6" stroke="var(--dashboard-stamp)"/><path d="M85,6 L94,6 L94,15" stroke="var(--dashboard-stamp)"/><path d="M94,85 L94,94 L85,94" stroke="var(--dashboard-stamp)"/><path d="M15,94 L6,94 L6,85" stroke="var(--dashboard-stamp)"/>
-                    </svg>
-                    <div className="relative z-10 px-2">
-                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("dailyTip")}</h3>
-                        <p className="border-l-[2px] border-[#E8543C] pl-[14px] text-[13.5px] text-[#EAF3F7]/60 italic leading-[1.6] mt-[14px] mb-[14px]">
+                <div className="bp-card bg-[#FAF8F5] border-[1.5px] border-[#111111] p-5 shadow-[2px_2px_0px_#D3CDC2]">
+                    <div className="relative z-10">
+                        <h3 className="font-['Archivo_Narrow'] font-bold uppercase tracking-tight text-[17px] text-[#111111]">{t("dailyTip")}</h3>
+                        <p className="border-l-3 border-[#1849A9] pl-3.5 text-[13.5px] text-[#4A4742] italic leading-[1.6] my-4">
                             &quot;{t("dailyTipQuote")}&quot;
                         </p>
-                        <span className="font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] uppercase">✦ {t("dailyTipSource")}</span>
+                        <span className="font-['JetBrains_Mono'] text-[11px] text-[#1849A9] font-bold uppercase tracking-wider">✦ {t("dailyTipSource")}</span>
                     </div>
                 </div>
 
-                <div className="bp-card">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M6,15 L6,6 L15,6"/><path d="M85,6 L94,6 L94,15"/><path d="M94,85 L94,94 L85,94"/><path d="M15,94 L6,94 L6,85"/>
-                    </svg>
-                    <div className="relative z-10 px-2">
-                        <h3 className="font-['Space_Grotesk'] font-semibold text-[16px]">{t("quickAccess.title")}</h3>
-                        <p className="text-[13px] text-[#EAF3F7]/60 mt-1 mb-1.5">{t("quickAccess.desc")}</p>
-                        <div className="grid grid-cols-2 gap-[10px] mt-1.5">
+                <div className="bp-card bg-white border-[1.5px] border-[#111111] p-5 shadow-[2px_2px_0px_#D3CDC2]">
+                    <div className="relative z-10">
+                        <h3 className="font-['Archivo_Narrow'] font-bold uppercase tracking-tight text-[17px] text-[#111111]">{t("quickAccess.title")}</h3>
+                        <p className="text-[13px] text-[#4A4742] mt-0.5 mb-3">{t("quickAccess.desc")}</p>
+                        <div className="grid grid-cols-2 gap-2.5">
                             {quickLinks.map((link, i) => (
-                                <Link key={i} className="flex flex-col items-start gap-2 p-[14px] border border-[#6FD6E8]/14 rounded-[2px] text-[#EAF3F7] text-[13px] hover:border-[#6FD6E8]/55 hover:bg-[#6FD6E8]/[0.03] transition-colors" href={link.href as React.ComponentProps<typeof Link>["href"]}>
-                                    <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.6px]" viewBox="0 0 24 24">
+                                <Link key={i} className="flex flex-col items-start gap-2 p-3 border border-[#D3CDC2] bg-[#FAF8F5] text-[#111111] text-[13px] font-medium hover:border-[#111111] hover:bg-white transition-colors" href={link.href as React.ComponentProps<typeof Link>["href"]}>
+                                    <svg className="w-[18px] h-[18px] shrink-0 fill-none stroke-current stroke-[1.8px] text-[#1849A9]" viewBox="0 0 24 24">
                                         {link.icon}
                                     </svg>
                                     {link.label}

@@ -183,44 +183,46 @@ export default function JobTrackerPage() {
         <>
             <style dangerouslySetInnerHTML={{__html: `
                 .kanban-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:32px;}
+                .page-head h1{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:clamp(26px,3vw,32px);text-transform:uppercase;color:#111111;margin-bottom:6px;letter-spacing:-0.01em;}
+                .page-head p{font-size:14.5px;color:#4A4742;}
+                .peyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#757169;margin-bottom:6px;}
                 .head-actions{display:flex;gap:12px;flex-wrap:wrap;}
-                .btn-ai-solid{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--dashboard-purple);color:#0A1628;padding:11px 18px;border-radius:var(--dashboard-radius);border:none;}
+                .btn-ai-solid{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#1849A9;color:#FFFFFF;padding:11px 18px;border-radius:0px;border:1.5px solid #111111;cursor:pointer;}
+                .btn-ai-solid:hover{background:#123782;}
 
                 .kanban-board{display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;}
-                .kcol{flex:0 0 280px;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:16px;min-height:420px;display:flex;flex-direction:column;}
-                .kcol-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
-                .kcol-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;padding:4px 9px;border-radius:var(--dashboard-radius);}
-                .kcol-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-mono-label);}
+                .kcol{flex:0 0 280px;background:#EAE6DC;border:1.5px solid #111111;box-shadow:2px 2px 0px #D3CDC2;border-radius:0px;padding:16px;min-height:440px;display:flex;flex-direction:column;}
+                .kcol-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:10px;border-b:1px solid #D3CDC2;}
+                .kcol-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 9px;border-radius:0px;border:1px solid #111111;background:#FFFFFF;}
+                .kcol-count{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#757169;}
                 .kcard{
-                    position:relative;background:var(--dashboard-bg-2);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);
-                    padding:14px;margin-bottom:10px;
+                    position:relative;background:#FFFFFF;border:1.5px solid #111111;box-shadow:2px 2px 0px #D3CDC2;border-radius:0px;
+                    padding:14px;margin-bottom:12px;cursor:grab;transition:all .15s ease;
                 }
-                .kcard .kgrip{position:absolute;top:12px;left:10px;color:var(--dashboard-mono-label);}
-                .kcard-title{font-size:14px;font-weight:500;margin-bottom:6px;padding-left:14px;}
-                .kcard-co{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--dashboard-text-dim);margin-bottom:12px;padding-left:14px;}
+                .kcard:hover{box-shadow:3px 3px 0px #111111;}
+                .kcard .kgrip{position:absolute;top:12px;left:10px;color:#757169;}
+                .kcard-title{font-family:'Archivo Narrow',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;color:#111111;margin-bottom:4px;padding-left:14px;}
+                .kcard-co{display:flex;align-items:center;gap:6px;font-size:13px;color:#4A4742;margin-bottom:12px;padding-left:14px;}
                 .kcard-foot{display:flex;justify-content:space-between;align-items:center;padding-left:14px;}
-                .kcard-date{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dashboard-mono-label);display:flex;align-items:center;gap:5px;}
-                .kcard-match{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dashboard-green);background:rgba(111,232,168,.1);padding:3px 7px;border-radius:var(--dashboard-radius);}
+                .kcard-date{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#757169;display:flex;align-items:center;gap:5px;}
+                .kcard-match{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#1849A9;background:rgba(24,73,169,.08);border:1px solid #1849A9;padding:2px 6px;border-radius:0px;}
 
-                .modal-overlay{position:fixed;inset:0;background:rgba(6,12,22,.7);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
-                .modal{position:relative;background:var(--dashboard-bg-2);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:30px;max-width:440px;width:100%;}
-                .modal svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
-                .modal svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
-                .modal.ai svg.corners path{stroke:var(--dashboard-purple);}
+                .modal-overlay{position:fixed;inset:0;background:rgba(17,17,17,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
+                .modal{position:relative;background:#FFFFFF;border:2px solid #111111;box-shadow:4px 4px 0px #111111;border-radius:0px;padding:30px;max-width:460px;width:100%;color:#111111;}
+                .modal svg.corners{display:none;}
                 .modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-                .modal-head h3{font-size:17px;display:flex;align-items:center;gap:9px;}
-                .modal-head h3 svg{width:18px;height:18px;color:var(--dashboard-cyan);}
-                .modal.ai .modal-head h3 svg{color:var(--dashboard-purple);}
-                .modal-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--dashboard-paper-border);background:transparent;color:var(--dashboard-text-dim);display:flex;align-items:center;justify-content:center;}
-                .modal p.sub{font-size:13px;color:var(--dashboard-text-dim);margin-bottom:22px;line-height:1.55;}
+                .modal-head h3{font-family:'Archivo Narrow',sans-serif;font-size:19px;font-weight:700;text-transform:uppercase;color:#111111;display:flex;align-items:center;gap:9px;}
+                .modal-head h3 svg{width:18px;height:18px;color:#1849A9;}
+                .modal-close{width:28px;height:28px;border-radius:0px;border:1px solid #111111;background:transparent;color:#111111;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+                .modal p.sub{font-size:13.5px;color:#4A4742;margin-bottom:22px;line-height:1.55;}
                 .field{margin-bottom:18px;}
-                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-mono-label);margin-bottom:9px;}
-                .field input, .field textarea{width:100%;height:46px;padding:0 13px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;}
+                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#757169;margin-bottom:8px;}
+                .field input, .field textarea{width:100%;height:46px;padding:0 13px;background:#FFFFFF;border:1.5px solid #111111;border-radius:0px;color:#111111;font-size:14.5px;}
                 .field textarea{height:auto;padding:11px 13px;resize:vertical;}
-                .field input:focus, .field textarea:focus{outline:none;border-color:var(--dashboard-cyan);}
-                .field input::placeholder, .field textarea::placeholder{color:rgba(234,243,247,0.25);}
+                .field input:focus, .field textarea:focus{outline:none;border-color:#1849A9;box-shadow:0 0 0 2px rgba(24,73,169,0.2);}
+                .field input::placeholder, .field textarea::placeholder{color:#757169;}
                 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-                .modal-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px;}
+                .modal-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:12px;}
                 @media(max-width:760px){.field-row{grid-template-columns:1fr;}}
             `}} />
 
@@ -304,7 +306,6 @@ export default function JobTrackerPage() {
             {isManualModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal animate-in zoom-in-95 duration-200">
-                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <div className="modal-head">
                             <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 5v14M5 12h14"/></svg>{t("modalManualTitle")}</h3>
                             <button type="button" className="modal-close" onClick={() => setIsManualModalOpen(false)}>
@@ -352,7 +353,6 @@ export default function JobTrackerPage() {
             {isAiModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal ai animate-in zoom-in-95 duration-200">
-                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                         <div className="modal-head">
                             <h3><svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" fill="none"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>{t("modalAiTitle")}</h3>
                             <button type="button" className="modal-close" onClick={() => setIsAiModalOpen(false)}>

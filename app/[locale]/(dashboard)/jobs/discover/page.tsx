@@ -105,53 +105,56 @@ export default function JobDiscoverPage() {
     return (
         <>
             <style dangerouslySetInnerHTML={{__html: `
+                .page-head h1{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:clamp(26px,3vw,32px);text-transform:uppercase;color:#111111;margin-bottom:6px;letter-spacing:-0.01em;}
+                .page-head p{font-size:14.5px;color:#4A4742;}
+                .peyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#757169;margin-bottom:6px;}
                 .search-bar{display:flex;gap:10px;margin-bottom:48px;flex-wrap:wrap;}
                 .search-bar input{
-                    flex:1;min-width:240px;height:50px;padding:0 16px;background:rgba(255,255,255,0.02);
-                    border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;
+                    flex:1;min-width:240px;height:48px;padding:0 16px;background:#FFFFFF;
+                    border:1.5px solid #111111;border-radius:0px;color:#111111;font-size:14.5px;
                 }
                 .search-bar select{
-                    height:50px;padding:0 34px 0 14px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
-                    border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-family:'JetBrains Mono',monospace;font-size:12.5px;
-                    appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236FD6E8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+                    height:48px;padding:0 34px 0 14px;background:#FFFFFF;border:1.5px solid #111111;
+                    border-radius:0px;color:#111111;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+                    appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23111111%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
                     background-repeat:no-repeat;background-position:right 13px top 50%;background-size:10px auto;
                 }
-                .search-bar select option{background:var(--dashboard-bg-2);color:var(--dashboard-text);}
-                .search-bar input:focus, .search-bar select:focus{outline:none;border-color:var(--dashboard-cyan);}
-                .search-bar button{height:50px;padding:0 24px;background:var(--dashboard-cyan);color:var(--dashboard-bg);border:none;border-radius:var(--dashboard-radius);font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;}
+                .search-bar select option{background:#FFFFFF;color:#111111;}
+                .search-bar input:focus, .search-bar select:focus{outline:none;border-color:#1849A9;box-shadow:0 0 0 2px rgba(24,73,169,0.2);}
+                .search-bar button{height:48px;padding:0 24px;background:#1849A9;color:#FFFFFF;border:1.5px solid #111111;border-radius:0px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;text-transform:uppercase;cursor:pointer;}
+                .search-bar button:hover{background:#123782;}
                 .search-bar button:disabled{opacity:0.7;}
                 .work-type-pills{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-                .pill{height:50px;padding:0 20px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text-dim);font-family:'JetBrains Mono',monospace;font-size:12.5px;cursor:pointer;transition:all 0.2s ease;display:flex;align-items:center;justify-content:center;}
-                .pill:hover{background:rgba(255,255,255,0.05);color:var(--dashboard-text);}
-                .pill.active{background:rgba(111,214,232,0.1);border-color:var(--dashboard-cyan);color:var(--dashboard-cyan);}
+                .pill{height:48px;padding:0 18px;background:#FFFFFF;border:1.5px solid #111111;border-radius:0px;color:#4A4742;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all 0.15s ease;display:flex;align-items:center;justify-content:center;}
+                .pill:hover{background:#EAE6DC;color:#111111;}
+                .pill.active{background:#1849A9;border-color:#111111;color:#FFFFFF;}
 
                 .divider-label{display:flex;align-items:center;gap:16px;margin:48px 0 20px;}
-                .divider-label .dline{flex:1;height:1px;background:var(--dashboard-paper-border);}
-                .divider-label h2{font-size:18px;white-space:nowrap;margin:0;}
+                .divider-label .dline{flex:1;height:1px;background:#D3CDC2;}
+                .divider-label h2{font-family:'Archivo Narrow',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;color:#111111;white-space:nowrap;margin:0;}
 
                 .analyze-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
                 .field{margin-bottom:18px;}
-                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-mono-label);margin-bottom:9px;}
-                .field input, .field textarea{width:100%;padding:0 13px;height:46px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;}
+                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#757169;margin-bottom:8px;}
+                .field input, .field textarea{width:100%;padding:0 13px;height:46px;background:#FFFFFF;border:1.5px solid #111111;border-radius:0px;color:#111111;font-size:14.5px;}
                 .field textarea{height:auto;padding:11px 13px;resize:vertical;}
-                .field input:focus, .field textarea:focus{outline:none;border-color:var(--dashboard-cyan);}
-                .field input::placeholder, .field textarea::placeholder{color:rgba(234,243,247,0.25);}
+                .field input:focus, .field textarea:focus{outline:none;border-color:#1849A9;box-shadow:0 0 0 2px rgba(24,73,169,0.2);}
+                .field input::placeholder, .field textarea::placeholder{color:#757169;}
                 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-                .result-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:320px;color:var(--dashboard-text-dim);gap:14px;}
-                .result-empty svg{width:38px;height:38px;color:var(--dashboard-cyan-dim);}
+                .result-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:320px;color:#4A4742;gap:14px;}
+                .result-empty svg{width:38px;height:38px;color:#757169;}
                 
-                .job-item{position:relative;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:22px;margin-bottom:16px;}
-                .job-item svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
-                .job-item svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
-                .job-title{font-size:16px;font-weight:600;color:var(--dashboard-text);margin-bottom:4px;}
-                .job-meta{display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dashboard-mono-label);margin-bottom:12px;flex-wrap:wrap;}
+                .job-item{position:relative;background:#FFFFFF;border:1.5px solid #111111;box-shadow:2px 2px 0px #D3CDC2;border-radius:0px;padding:22px;margin-bottom:16px;}
+                .job-item svg.corners{display:none;}
+                .job-title{font-family:'Archivo Narrow',sans-serif;font-size:17px;font-weight:700;text-transform:uppercase;color:#111111;margin-bottom:4px;}
+                .job-meta{display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#757169;margin-bottom:12px;flex-wrap:wrap;}
                 .job-meta span{display:flex;align-items:center;gap:4px;}
-                .job-desc{font-size:13px;color:var(--dashboard-text-dim);margin-bottom:16px;line-height:1.5;}
+                .job-desc{font-size:13.5px;color:#4A4742;margin-bottom:16px;line-height:1.5;}
                 .job-skills{display:flex;gap:6px;flex-wrap:wrap;}
-                .job-skill{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 8px;border-radius:var(--dashboard-radius);background:rgba(111,214,232,0.1);color:var(--dashboard-cyan);}
-                .job-score{display:flex;flex-direction:column;align-items:center;background:rgba(111,232,168,0.1);border:1px solid rgba(111,232,168,0.2);padding:10px 14px;border-radius:var(--dashboard-radius);margin-left:auto;}
-                .job-score-val{font-size:18px;font-weight:700;color:var(--dashboard-green);line-height:1;}
-                .job-score-lbl{font-size:9px;color:var(--dashboard-green);opacity:0.8;margin-top:4px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+                .job-skill{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:0px;background:rgba(24,73,169,0.06);border:1px solid #1849A9;color:#1849A9;}
+                .job-score{display:flex;flex-direction:column;align-items:center;background:rgba(21,128,61,0.08);border:1.5px solid #15803D;padding:8px 12px;border-radius:0px;margin-left:auto;}
+                .job-score-val{font-size:18px;font-weight:700;color:#15803D;line-height:1;}
+                .job-score-lbl{font-size:9px;color:#15803D;margin-top:3px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;font-weight:700;}
                 .job-top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
                 
                 @media(max-width:900px){.analyze-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}}
@@ -211,7 +214,6 @@ export default function JobDiscoverPage() {
                             <div>
                                 {jobs.map(job => (
                                     <div key={job.id} className="job-item">
-                                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                                         <div className="job-top-row">
                                             <div>
                                                 <div className="job-title">{job.title} <span style={{ fontSize: '10px', color: 'var(--dashboard-text-dim)', border: '1px solid var(--dashboard-paper-border)', padding: '2px 6px', borderRadius: 'var(--dashboard-radius)', marginLeft: '8px', verticalAlign: 'middle', fontWeight: 'normal' }}>{job.type}</span></div>

@@ -660,7 +660,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 </button>
                 <input type="file" multiple accept=".csv" ref={fileInputRef} className="hidden" onChange={handleLinkedInImport} />
                 <button 
-                    className="import-btn w-full flex items-center justify-center gap-2 font-['JetBrains_Mono'] text-[11.5px] tracking-[0.02em] bg-[rgba(111,214,232,0.08)] text-[var(--dashboard-cyan)] border border-[var(--dashboard-cyan-dim)] p-[11px] rounded-[var(--dashboard-radius)] mb-6 hover:bg-[rgba(111,214,232,0.15)] transition-colors"
+                    className="import-btn w-full flex items-center justify-center gap-2 font-['JetBrains_Mono'] text-[11.5px] tracking-[0.02em] bg-[rgba(111,214,232,0.08)] text-[var(--dashboard-cyan)] border border-[var(--dashboard-cyan-dim)] p-[11px] rounded-none mb-6 hover:bg-[rgba(111,214,232,0.15)] transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isImporting}
                 >
@@ -679,10 +679,10 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             <div
                                 key={tabId}
                                 onClick={() => { setActiveTab(tabId); setMobileTab("edit"); }}
-                                className={`step relative flex items-center gap-[14px] py-[11px] pl-[30px] pr-0 text-[14px] cursor-pointer transition-colors before:content-[''] before:absolute before:left-[4px] before:top-1/2 before:-translate-y-1/2 before:w-[9px] before:h-[9px] before:rounded-full before:border-[1.5px] ${
+                                className={`step relative flex items-center gap-[14px] py-[11px] pl-[30px] pr-0 text-[14px] cursor-pointer transition-colors before:content-[''] before:absolute before:left-[4px] before:top-1/2 before:-translate-y-1/2 before:w-[9px] before:h-[9px] before:rounded-none before:border-[1.5px] ${
                                     isActive 
                                     ? 'active text-[var(--dashboard-text)] font-medium before:bg-[var(--dashboard-stamp)] before:border-[var(--dashboard-stamp)]' 
-                                    : 'text-[var(--dashboard-text-dim)] before:bg-[var(--dashboard-bg)] before:border-[var(--dashboard-paper-border)] hover:text-[#EAF3F7]'
+                                    : 'text-[var(--dashboard-text-dim)] before:bg-[var(--dashboard-bg)] before:border-[var(--dashboard-paper-border)] hover:text-[#111111]'
                                 }`}
                             >
                                 {tab}
@@ -699,7 +699,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                     <div className="feyebrow font-['JetBrains_Mono'] text-[11px] tracking-[0.12em] text-[var(--dashboard-mono-label)] mb-2 uppercase">
                         ADIM 0{['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certificates'].indexOf(activeTab) + 1} / 07
                     </div>
-                    <h1 className="text-[clamp(22px,3vw,28px)] font-['Space_Grotesk'] font-semibold tracking-tight mb-2">
+                    <h1 className="text-[clamp(22px,3vw,28px)] font-['Archivo_Narrow'] font-bold font-semibold tracking-tight mb-2">
                         {activeTab === 'personal' && 'Kişisel Bilgiler'}
                         {activeTab === 'summary' && 'Profesyonel Özet'}
                         {activeTab === 'experience' && 'İş Deneyimi'}
@@ -722,32 +722,32 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                 {/* Tab Contents */}
                 {activeTab === "personal" && (
                     <div className="bp-card">
-                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        
                         <div className="relative z-10 px-2 sm:px-3">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div className="field m-0">
                                     <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Ad Soyad</label>
-                                    <input type="text" id="fullName" value={cvData.personal.fullName} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Emir Kale" />
+                                    <input type="text" id="fullName" value={cvData.personal.fullName} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: Emir Kale" />
                                 </div>
                                 <div className="field m-0">
                                     <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Hedef Pozisyon</label>
-                                    <input type="text" id="jobTitle" value={cvData.personal.jobTitle} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Software Developer" />
+                                    <input type="text" id="jobTitle" value={cvData.personal.jobTitle} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: Software Developer" />
                                 </div>
                                 <div className="field m-0">
                                     <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">E-posta</label>
-                                    <input type="email" id="email" value={cvData.personal.email} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="emirkale@..." />
+                                    <input type="email" id="email" value={cvData.personal.email} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="emirkale@..." />
                                 </div>
                                 <div className="field m-0">
                                     <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Telefon Numarası</label>
-                                    <input type="text" id="phone" value={cvData.personal.phone} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="+90..." />
+                                    <input type="text" id="phone" value={cvData.personal.phone} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="+90..." />
                                 </div>
                                 <div className="field m-0">
                                     <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">LinkedIn URL</label>
-                                    <input type="text" id="linkedin" value={cvData.personal.linkedin} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="linkedin.com/in/..." />
+                                    <input type="text" id="linkedin" value={cvData.personal.linkedin} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="linkedin.com/in/..." />
                                 </div>
                                 <div className="field m-0">
                                     <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Kişisel Web Sitesi</label>
-                                    <input type="text" id="website" value={cvData.personal.website} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="vicareer.vercel.app" />
+                                    <input type="text" id="website" value={cvData.personal.website} onChange={handlePersonalChange} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="vicareer.vercel.app" />
                                 </div>
                             </div>
                         </div>
@@ -756,7 +756,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
                 {activeTab === "summary" && (
                     <div className="bp-card">
-                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        
                         <div className="relative z-10 px-2 sm:px-3">
                             <div className="flex justify-between items-center mb-5 mt-2">
                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] m-0">Özet Bölümü</label>
@@ -767,14 +767,14 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                         sectionType: "Profesyonel Özet",
                                         onApply: (text) => setCvData({ ...cvData, summary: text })
                                     })}
-                                    className="flex items-center gap-[7px] font-['JetBrains_Mono'] text-[11.5px] text-[var(--dashboard-purple)] border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.06)] px-[13px] py-[7px] rounded-[var(--dashboard-radius)] hover:bg-[rgba(167,139,250,0.12)] transition-colors">
+                                    className="flex items-center gap-[7px] font-['JetBrains_Mono'] text-[11.5px] text-[var(--dashboard-purple)] border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.06)] px-[13px] py-[7px] rounded-none hover:bg-[rgba(167,139,250,0.12)] transition-colors">
                                     ✦ AI ile Yaz
                                 </button>
                             </div>
                             <div className="field m-0">
                                 <textarea 
                                     rows={6} 
-                                    className="w-full py-[11px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all resize-y leading-[1.5]"
+                                    className="w-full py-[11px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all resize-y leading-[1.5]"
                                     value={typeof cvData.summary === 'string' ? cvData.summary : String((cvData.summary as Record<string, unknown>)?.['Profesyonel Özet'] || (cvData.summary as Record<string, unknown>)?.profesyonel_ozet || (cvData.summary as Record<string, unknown>)?.summary || '')}
                                     onChange={(e) => setCvData({ ...cvData, summary: e.target.value })}
                                     placeholder="Kariyer geçmişini ve hedeflerini özetleyen kısa bir yazı..."
@@ -792,13 +792,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             </button>
                         </div>
                         {cvData.experience.length === 0 ? (
-                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text-dim)]">
                                 Henüz deneyim eklenmedi.
                             </div>
                         ) : (
                             cvData.experience.map((exp) => (
                                 <div key={exp.id} className="bp-card">
-                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    
                                     <div className="relative z-10 px-2 sm:px-3">
                                         <div className="flex justify-between items-start mb-5">
                                             <div className="flex-1"></div>
@@ -809,19 +809,19 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Pozisyon</label>
-                                                <input type="text" value={exp.title} onChange={(e) => handleUpdateExperience(exp.id, 'title', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Yazılım Geliştirici" />
+                                                <input type="text" value={exp.title} onChange={(e) => handleUpdateExperience(exp.id, 'title', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: Yazılım Geliştirici" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Şirket</label>
-                                                <input type="text" value={exp.company} onChange={(e) => handleUpdateExperience(exp.id, 'company', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Tech A.Ş." />
+                                                <input type="text" value={exp.company} onChange={(e) => handleUpdateExperience(exp.id, 'company', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: Tech A.Ş." />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Başlangıç</label>
-                                                <input type="text" value={exp.startDate} onChange={(e) => handleUpdateExperience(exp.id, 'startDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2020" />
+                                                <input type="text" value={exp.startDate} onChange={(e) => handleUpdateExperience(exp.id, 'startDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: 2020" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Bitiş</label>
-                                                <input type="text" value={exp.endDate} onChange={(e) => handleUpdateExperience(exp.id, 'endDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2023 veya Devam Ediyor" />
+                                                <input type="text" value={exp.endDate} onChange={(e) => handleUpdateExperience(exp.id, 'endDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: 2023 veya Devam Ediyor" />
                                             </div>
                                         </div>
                                         <div className="flex justify-between items-center mb-3.5">
@@ -840,7 +840,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                         <div className="field m-0">
                                             <textarea 
                                                 rows={3} 
-                                                className="w-full py-[11px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all resize-y leading-[1.5]"
+                                                className="w-full py-[11px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all resize-y leading-[1.5]"
                                                 value={exp.description}
                                                 onChange={(e) => handleUpdateExperience(exp.id, 'description', e.target.value)}
                                                 placeholder="Neler yaptınız?"
@@ -861,13 +861,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             </button>
                         </div>
                         {cvData.education.length === 0 ? (
-                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text-dim)]">
                                 Henüz eğitim eklenmedi.
                             </div>
                         ) : (
                             cvData.education.map((edu) => (
                                 <div key={edu.id} className="bp-card">
-                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    
                                     <div className="relative z-10 px-2 sm:px-3">
                                         <div className="flex justify-between items-start mb-5">
                                             <div className="flex-1"></div>
@@ -878,19 +878,19 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Derece / Bölüm</label>
-                                                <input type="text" value={edu.degree} onChange={(e) => handleUpdateEducation(edu.id, 'degree', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Bilgisayar Mühendisliği" />
+                                                <input type="text" value={edu.degree} onChange={(e) => handleUpdateEducation(edu.id, 'degree', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: Bilgisayar Mühendisliği" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Okul</label>
-                                                <input type="text" value={edu.school} onChange={(e) => handleUpdateEducation(edu.id, 'school', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: İTÜ" />
+                                                <input type="text" value={edu.school} onChange={(e) => handleUpdateEducation(edu.id, 'school', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: İTÜ" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Başlangıç</label>
-                                                <input type="text" value={edu.startDate} onChange={(e) => handleUpdateEducation(edu.id, 'startDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2018" />
+                                                <input type="text" value={edu.startDate} onChange={(e) => handleUpdateEducation(edu.id, 'startDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: 2018" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Bitiş</label>
-                                                <input type="text" value={edu.endDate} onChange={(e) => handleUpdateEducation(edu.id, 'endDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2022" />
+                                                <input type="text" value={edu.endDate} onChange={(e) => handleUpdateEducation(edu.id, 'endDate', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: 2022" />
                                             </div>
                                         </div>
                                     </div>
@@ -902,7 +902,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
 
                 {activeTab === "skills" && (
                     <div className="bp-card">
-                        <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                        
                         <div className="relative z-10 px-2 sm:px-3">
                             <SkillsTechInput 
                                 skills={cvData.skills} 
@@ -924,13 +924,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             </button>
                         </div>
                         {(!cvData.projects || cvData.projects.length === 0) ? (
-                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text-dim)]">
                                 Henüz proje eklenmedi.
                             </div>
                         ) : (
                             cvData.projects.map((proj) => (
                                 <div key={proj.id} className="bp-card">
-                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    
                                     <div className="relative z-10 px-2 sm:px-3">
                                         <div className="flex justify-between items-start mb-5">
                                             <div className="flex-1"></div>
@@ -941,7 +941,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                         <div className="flex flex-col gap-5 mt-2">
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Proje Adı</label>
-                                                <input type="text" value={proj.name} onChange={(e) => handleUpdateProject(proj.id, 'name', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: E-Ticaret Uygulaması" />
+                                                <input type="text" value={proj.name} onChange={(e) => handleUpdateProject(proj.id, 'name', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: E-Ticaret Uygulaması" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Kullanılan Teknolojiler</label>
@@ -949,13 +949,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Proje URL</label>
-                                                <input type="text" value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: github.com/..." />
+                                                <input type="text" value={proj.url || ""} onChange={(e) => handleUpdateProject(proj.id, 'url', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: github.com/..." />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Açıklama</label>
                                                 <textarea 
                                                     rows={3} 
-                                                    className="w-full py-[11px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all resize-y leading-[1.5]"
+                                                    className="w-full py-[11px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all resize-y leading-[1.5]"
                                                     value={proj.description}
                                                     onChange={(e) => handleUpdateProject(proj.id, 'description', e.target.value)}
                                                     placeholder="Projede neler yaptınız?"
@@ -981,13 +981,13 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                             </button>
                         </div>
                         {(!cvData.certificates || cvData.certificates.length === 0) ? (
-                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text-dim)]">
+                            <div className="text-center py-10 border border-dashed border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text-dim)]">
                                 Henüz sertifika eklenmedi.
                             </div>
                         ) : (
                             cvData.certificates.map((cert) => (
                                 <div key={cert.id} className="bp-card">
-                                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                                    
                                     <div className="relative z-10 px-2 sm:px-3">
                                         <div className="flex justify-between items-start mb-5">
                                             <div className="flex-1"></div>
@@ -998,19 +998,19 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-2">
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Sertifika Adı</label>
-                                                <input type="text" value={cert.name} onChange={(e) => handleUpdateCertificate(cert.id, 'name', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: AWS Certified..." />
+                                                <input type="text" value={cert.name} onChange={(e) => handleUpdateCertificate(cert.id, 'name', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: AWS Certified..." />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Veren Kurum</label>
-                                                <input type="text" value={cert.issuer} onChange={(e) => handleUpdateCertificate(cert.id, 'issuer', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: Amazon Web Services" />
+                                                <input type="text" value={cert.issuer} onChange={(e) => handleUpdateCertificate(cert.id, 'issuer', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: Amazon Web Services" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Tarih</label>
-                                                <input type="text" value={cert.date} onChange={(e) => handleUpdateCertificate(cert.id, 'date', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: 2023" />
+                                                <input type="text" value={cert.date} onChange={(e) => handleUpdateCertificate(cert.id, 'date', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: 2023" />
                                             </div>
                                             <div className="field m-0">
                                                 <label className="block font-['JetBrains_Mono'] text-[10.5px] tracking-[0.08em] uppercase text-[var(--dashboard-mono-label)] mb-2">Sertifika URL</label>
-                                                <input type="text" value={cert.url || ""} onChange={(e) => handleUpdateCertificate(cert.id, 'url', e.target.value)} className="w-full h-[46px] px-[13px] bg-white/[0.02] border border-[var(--dashboard-paper-border)] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-[rgba(111,214,232,0.04)] placeholder-white/25 transition-all" placeholder="Örn: credly.com/..." />
+                                                <input type="text" value={cert.url || ""} onChange={(e) => handleUpdateCertificate(cert.id, 'url', e.target.value)} className="w-full h-[46px] px-[13px] bg-white border border-[var(--dashboard-paper-border)] rounded-none text-[var(--dashboard-text)] font-['Inter'] text-[14.5px] focus:outline-none focus:border-[var(--dashboard-cyan)] focus:bg-white placeholder-[#757169] transition-all" placeholder="Örn: credly.com/..." />
                                             </div>
                                         </div>
                                     </div>
@@ -1033,7 +1033,7 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
             <aside className={`preview-panel hidden xl:block bg-[var(--dashboard-bg-2)] border-l border-[var(--dashboard-paper-border)] p-6 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto ${mobileTab === 'preview' ? '!block !static !w-full' : ''}`}>
                 <div className="preview-controls flex justify-between items-center mb-[18px] gap-[10px]">
                     <select 
-                        className="tmpl-select font-['JetBrains_Mono'] text-[11.5px] bg-transparent border border-[var(--dashboard-paper-border)] text-[var(--dashboard-text)] px-[10px] py-[8px] rounded-[var(--dashboard-radius)] focus:outline-none focus:border-[var(--dashboard-cyan)]"
+                        className="tmpl-select font-['JetBrains_Mono'] text-[11.5px] bg-transparent border border-[var(--dashboard-paper-border)] text-[var(--dashboard-text)] px-[10px] py-[8px] rounded-none focus:outline-none focus:border-[var(--dashboard-cyan)]"
                         value={template} 
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         onChange={(e) => setTemplate(e.target.value as any)}
@@ -1045,18 +1045,18 @@ export default function CVEditorPage({ params }: { params: Promise<{ id: string 
                         <option value="creative" className="text-black">Creative</option>
                         <option value="professional" className="text-black">Professional</option>
                     </select>
-                    <button className="pdf-btn flex items-center gap-[6px] font-['JetBrains_Mono'] text-[11.5px] border border-[var(--dashboard-paper-border)] px-[12px] py-[8px] rounded-[var(--dashboard-radius)] text-[var(--dashboard-text)] hover:border-[var(--dashboard-cyan-dim)] hover:text-[var(--dashboard-cyan)] transition-colors" onClick={handleDownloadPDF}>
+                    <button className="pdf-btn flex items-center gap-[6px] font-['JetBrains_Mono'] text-[11.5px] border border-[var(--dashboard-paper-border)] px-[12px] py-[8px] rounded-none text-[var(--dashboard-text)] hover:border-[var(--dashboard-cyan-dim)] hover:text-[var(--dashboard-cyan)] transition-colors" onClick={handleDownloadPDF}>
                         <svg className="icon w-[14px] h-[14px] stroke-current fill-none stroke-[1.6px]" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
                         PDF İndir
                     </button>
                 </div>
                 
-                <div className="ats-readout flex justify-between items-center font-['JetBrains_Mono'] text-[11px] tracking-[0.06em] py-[9px] px-[12px] border border-dashed border-[var(--dashboard-cyan-dim)] rounded-[var(--dashboard-radius)] mb-[16px] text-[var(--dashboard-mono-label)]">
+                <div className="ats-readout flex justify-between items-center font-['JetBrains_Mono'] text-[11px] tracking-[0.06em] py-[9px] px-[12px] border border-[#111111] bg-[#FFFFFF] rounded-none mb-[16px] text-[var(--dashboard-mono-label)]">
                     <span>ATS SKORU</span>
                     <span className="val text-[var(--dashboard-cyan)] text-[14px] font-semibold">85</span>
                 </div>
 
-                <div className="sheet bg-[#0e1626] border border-[var(--dashboard-paper-border)] rounded-[2px] p-0 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+                <div className="sheet bg-[#FFFFFF] border border-[#111111] rounded-none p-0 overflow-hidden shadow-[4px_4px_0_#111111]">
                     {/* Render actual React PDF viewer */}
                     <div className="w-full h-[600px] overflow-y-auto custom-scrollbar bg-white">
                         <CVPreview data={cvData} template={template} />

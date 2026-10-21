@@ -49,20 +49,20 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <div className="dashboard-theme">
       {/* ---------- TOPBAR ---------- */}
-      <header className="topbar flex items-center justify-between px-6 h-16 sticky top-0 z-50 bg-[#0A1628]/90 backdrop-blur-md border-b border-[#6FD6E8]/10 text-[#EAF3F7]">
-        <div className="logo flex items-center gap-2.5 font-['Space_Grotesk'] font-semibold text-base">
-          <span className="logo-mark w-7 h-7 border-[1.5px] border-[#6FD6E8] rounded-full flex items-center justify-center font-['JetBrains_Mono'] text-[11px] text-[#6FD6E8] shrink-0">
+      <header className="topbar flex items-center justify-between px-6 h-16 sticky top-0 z-50 bg-[#F4F1EA] border-b-2 border-[#111111] text-[#111111]">
+        <div className="logo flex items-center gap-2.5 font-['Archivo_Narrow'] font-bold text-lg uppercase tracking-tight">
+          <span className="logo-mark w-7 h-7 border-2 border-[#111111] bg-white flex items-center justify-center font-['JetBrains_Mono'] text-[11px] font-bold text-[#111111] shrink-0">
             Vi
           </span>
           ViCareerAI
-          <span className="pro-badge font-['JetBrains_Mono'] text-[10px] tracking-widest text-[#E8543C] border border-[#E8543C]/20 px-1.5 py-0.5 rounded-[2px] ml-1">
+          <span className="pro-badge font-['JetBrains_Mono'] text-[10px] tracking-wider text-[#1849A9] border border-[#1849A9] bg-[#1849A9]/10 px-1.5 py-0.5 rounded-[0px] font-bold ml-1.5">
             PRO
           </span>
         </div>
 
         {/* Mobile menu toggle */}
         <button
-          className="md:hidden text-[#8FB9CC] hover:text-[#6FD6E8]"
+          className="md:hidden text-[#4A4742] hover:text-[#111111]"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -71,7 +71,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         <div className="topbar-right hidden md:flex items-center gap-3.5">
           <LanguageSwitcher />
           <ThemeToggle />
-          <Link className="panel-btn flex items-center gap-2 font-['JetBrains_Mono'] text-xs tracking-wider bg-[#6FD6E8] text-[#0A1628] px-4 py-2 rounded-[2px] hover:opacity-90 transition-opacity" href="/dashboard">
+          <Link className="panel-btn flex items-center gap-2 font-['JetBrains_Mono'] text-xs font-bold tracking-wider bg-[#1849A9] text-white px-4 py-2 rounded-[0px] border border-[#111111] hover:bg-[#123782] transition-colors" href="/dashboard">
             <LayoutDashboard className="w-4 h-4" />
             Panelim
           </Link>
@@ -79,30 +79,30 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* ---------- SHELL ---------- */}
-      <div className="shell-body flex relative z-[1] min-h-[calc(100vh-64px)]">
+      <div className="shell-body flex relative z-[1] min-h-[calc(100vh-64px)] bg-[#F4F1EA]">
         
         {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
           <div
-            className="fixed inset-0 z-40 bg-[#0A1628]/80 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-[#111111]/50 md:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
 
         <aside
-          className={`sidebar fixed inset-y-0 left-0 z-50 w-[248px] shrink-0 bg-[#0E2038] border-r border-[#6FD6E8]/10 p-6 pt-6 flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+          className={`sidebar fixed inset-y-0 left-0 z-50 w-[248px] shrink-0 bg-[#EAE6DC] border-r border-[#D3CDC2] p-4 pt-6 flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           } md:flex`}
         >
           {isMobileMenuOpen && (
             <div className="flex justify-end mb-4 md:hidden">
-              <button className="text-[#8FB9CC]" onClick={() => setIsMobileMenuOpen(false)}>
+              <button className="text-[#4A4742]" onClick={() => setIsMobileMenuOpen(false)}>
                 <X className="h-5 w-5" />
               </button>
             </div>
           )}
           
-          <div className="sidebar-eyebrow font-['JetBrains_Mono'] text-[11px] tracking-[0.14em] text-[#8FB9CC] px-3 mb-3.5">
+          <div className="sidebar-eyebrow font-['JetBrains_Mono'] text-[11px] font-bold tracking-[0.14em] text-[#757169] uppercase px-3 mb-3.5">
             MENÜ
           </div>
           
@@ -113,22 +113,22 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.name}
                   href={item.href as React.ComponentProps<typeof Link>["href"]}
-                  className={`nav-item flex items-center gap-3 px-3 py-2.5 rounded-[2px] text-sm relative border-l-2 transition-colors ${
+                  className={`nav-item flex items-center gap-3 px-3 py-2.5 rounded-[0px] text-sm relative border-l-4 transition-colors ${
                     isActive
-                      ? "text-[#EAF3F7] bg-[#6FD6E8]/5 border-[#E8543C] font-medium"
-                      : "text-[#EAF3F7]/60 border-transparent hover:text-[#EAF3F7] hover:bg-white/5"
-                  } ${item.isSoon ? "opacity-45 cursor-default pointer-events-none" : ""}`}
+                      ? "text-[#111111] bg-white border-[#1849A9] font-bold shadow-sm"
+                      : "text-[#4A4742] border-transparent hover:text-[#111111] hover:bg-white/60"
+                  } ${item.isSoon ? "opacity-50 cursor-default pointer-events-none" : ""}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <item.icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.6} />
+                  <item.icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.75} />
                   {item.name}
                   {item.isSoon && (
-                    <span className="nav-badge soon font-['JetBrains_Mono'] text-[9.5px] tracking-wider py-0.5 px-1.5 rounded-[2px] ml-auto text-[#E8543C] border border-[#E8543C]/20">
+                    <span className="nav-badge soon font-['JetBrains_Mono'] text-[9.5px] tracking-wider py-0.5 px-1.5 rounded-[0px] ml-auto text-[#757169] border border-[#D3CDC2] bg-white/70">
                       YAKINDA
                     </span>
                   )}
                   {item.isNew && (
-                    <span className="nav-badge new font-['JetBrains_Mono'] text-[9.5px] tracking-wider py-0.5 px-1.5 rounded-[2px] ml-auto text-[#6FD6E8] border border-[#6FD6E8]/50">
+                    <span className="nav-badge new font-['JetBrains_Mono'] text-[9.5px] tracking-wider py-0.5 px-1.5 rounded-[0px] ml-auto text-[#1849A9] border border-[#1849A9] bg-[#1849A9]/10 font-bold">
                       YENİ
                     </span>
                   )}
@@ -137,31 +137,31 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          <div className="sidebar-foot border-t border-[#6FD6E8]/10 pt-3.5 mt-2.5">
+          <div className="sidebar-foot border-t border-[#D3CDC2] pt-3.5 mt-2.5">
             <Link
               href="/profile"
-              className={`nav-item flex items-center gap-3 px-3 py-2.5 rounded-[2px] text-sm relative border-l-2 transition-colors ${
+              className={`nav-item flex items-center gap-3 px-3 py-2.5 rounded-[0px] text-sm relative border-l-4 transition-colors ${
                 pathname.startsWith('/profile')
-                  ? "text-[#EAF3F7] bg-[#6FD6E8]/5 border-[#E8543C] font-medium"
-                  : "text-[#EAF3F7]/60 border-transparent hover:text-[#EAF3F7] hover:bg-white/5"
+                  ? "text-[#111111] bg-white border-[#1849A9] font-bold shadow-sm"
+                  : "text-[#4A4742] border-transparent hover:text-[#111111] hover:bg-white/60"
               }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <Settings className="w-[18px] h-[18px] shrink-0" strokeWidth={1.6} />
+              <Settings className="w-[18px] h-[18px] shrink-0" strokeWidth={1.75} />
               {t("settings")}
             </Link>
             <button
               onClick={handleLogout}
-              className="logout flex w-full items-center gap-3 px-3 py-2.5 text-sm text-[#E8543C] transition-colors hover:bg-white/5 rounded-[2px]"
+              className="logout flex w-full items-center gap-3 px-3 py-2.5 text-sm text-[#A32020] hover:bg-[#A32020]/10 rounded-[0px] font-medium transition-colors"
             >
-              <LogOut className="w-[18px] h-[18px] shrink-0" strokeWidth={1.6} />
+              <LogOut className="w-[18px] h-[18px] shrink-0" strokeWidth={1.75} />
               {t("logout")}
             </button>
           </div>
         </aside>
 
         {/* Main Content Area */}
-        <main className={`main flex-1 w-full ${isEditorPage ? 'p-0 max-w-none' : 'py-9 px-5 md:px-11 pb-16 max-w-[1320px]'}`}>
+        <main className={`main flex-1 w-full bg-[#F4F1EA] text-[#111111] ${isEditorPage ? 'p-0 max-w-none' : 'py-8 px-5 md:px-10 pb-16 max-w-[1320px]'}`}>
           {children}
         </main>
       </div>

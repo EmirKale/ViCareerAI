@@ -78,24 +78,26 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
         <>
             <style dangerouslySetInnerHTML={{__html: `
                 .list-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:32px;}
-                .item-card{position:relative;background:var(--dashboard-paper);border:1px solid var(--dashboard-paper-border);border-radius:var(--dashboard-radius);padding:22px;max-width:420px;width:100%;}
-                .item-card svg.corners{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
-                .item-card svg.corners path{stroke:var(--dashboard-cyan);stroke-width:1.3;fill:none;}
+                .page-head h1{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:clamp(26px,3vw,32px);text-transform:uppercase;color:#111111;margin-bottom:6px;letter-spacing:-0.01em;}
+                .page-head p{font-size:14.5px;color:#4A4742;}
+                .peyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#757169;margin-bottom:6px;}
+                .item-card{position:relative;background:#FFFFFF;border:1.5px solid #111111;box-shadow:2px 2px 0px #D3CDC2;border-radius:0px;padding:22px;max-width:420px;width:100%;}
+                .item-card svg.corners{display:none;}
                 .item-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
-                .item-icon{width:38px;height:38px;border-radius:var(--dashboard-radius);background:rgba(111,214,232,.08);display:flex;align-items:center;justify-content:center;color:var(--dashboard-cyan);flex-shrink:0;}
+                .item-icon{width:38px;height:38px;border-radius:0px;border:1px solid #1849A9;background:rgba(24,73,169,.08);display:flex;align-items:center;justify-content:center;color:#1849A9;flex-shrink:0;}
                 .item-actions{display:flex;gap:6px;}
-                .item-actions button{width:30px;height:30px;border-radius:var(--dashboard-radius);border:1px solid var(--dashboard-paper-border);background:transparent;color:var(--dashboard-text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-                .item-actions button:hover{border-color:var(--dashboard-cyan-dim);color:var(--dashboard-cyan);}
-                .item-actions button.danger:hover{border-color:var(--dashboard-stamp);color:var(--dashboard-stamp);}
-                .item-title{font-size:15.5px;font-weight:500;margin-bottom:8px;}
-                .item-date{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dashboard-mono-label);}
+                .item-actions button{width:30px;height:30px;border-radius:0px;border:1px solid #D3CDC2;background:#FFFFFF;color:#4A4742;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+                .item-actions button:hover{border-color:#111111;color:#111111;}
+                .item-actions button.danger:hover{border-color:#A32020;color:#A32020;background:rgba(163,32,32,0.06);}
+                .item-title{font-family:'Archivo Narrow',sans-serif;font-size:17px;font-weight:700;color:#111111;margin-bottom:6px;text-transform:uppercase;letter-spacing:-0.01em;}
+                .item-date{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#757169;}
                 .item-edit-btn{
                     width:100%;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;
-                    font-family:'JetBrains Mono',monospace;font-size:12px;border:1px solid var(--dashboard-paper-border);
-                    padding:11px;border-radius:var(--dashboard-radius);color:var(--dashboard-text);cursor:pointer;
+                    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;text-transform:uppercase;border:1.5px solid #111111;
+                    padding:11px;border-radius:0px;background:#FFFFFF;color:#111111;cursor:pointer;text-decoration:none;transition:background .15s ease;
                 }
-                .item-edit-btn:hover{border-color:var(--dashboard-cyan-dim);}
-                .empty-hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dashboard-mono-label);margin-top:40px;text-align:center;}
+                .item-edit-btn:hover{background:#EAE6DC;}
+                .empty-hint{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#757169;margin-top:40px;text-align:center;}
             `}} />
 
             <div className="list-head">
@@ -113,27 +115,26 @@ export default function LetterHistoryClient({ initialLetters }: { initialLetters
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                     {letters.map((letter) => (
                         <div className="item-card" key={letter.id}>
-                            <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
                             <div className="item-top">
                                 <div className="item-icon">
-                                    <svg className="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 7l8 6 8-6"/></svg>
+                                    <svg className="icon" viewBox="0 0 24 24" style={{ width: '18px', height: '18px', stroke: 'currentColor', fill: 'none', strokeWidth: 1.8 }}><path d="M4 4h16v16H4z"/><path d="M4 7l8 6 8-6"/></svg>
                                 </div>
                                 <div className="item-actions">
                                     <button title={t("actions.download")} onClick={() => handleDownloadPDF(letter)} disabled={downloadingId === letter.id}>
-                                        {downloadingId === letter.id ? <Loader2 className="w-[15px] h-[15px] animate-spin" /> : <svg className="icon" viewBox="0 0 24 24" style={{ width: '15px', height: '15px' }}><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>}
+                                        {downloadingId === letter.id ? <Loader2 className="w-[15px] h-[15px] animate-spin" /> : <svg className="icon" viewBox="0 0 24 24" style={{ width: '15px', height: '15px', stroke: 'currentColor', fill: 'none', strokeWidth: 1.8 }}><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>}
                                     </button>
                                     <button className="danger" title={t("actions.delete")} onClick={() => handleDelete(letter.id)}>
-                                        <svg className="icon" viewBox="0 0 24 24" style={{ width: '15px', height: '15px' }}><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m2 0l-1 14a2 2 0 01-2 2H9a2 2 0 01-2-2L6 6"/></svg>
+                                        <svg className="icon" viewBox="0 0 24 24" style={{ width: '15px', height: '15px', stroke: 'currentColor', fill: 'none', strokeWidth: 1.8 }}><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m2 0l-1 14a2 2 0 01-2 2H9a2 2 0 01-2-2L6 6"/></svg>
                                     </button>
                                 </div>
                             </div>
                             <div className="item-title">{letter.title || t("unnamedLetter")}</div>
                             <div className="item-date">
-                                <svg className="icon" viewBox="0 0 24 24" style={{ width: '13px', height: '13px' }}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                                <svg className="icon" viewBox="0 0 24 24" style={{ width: '13px', height: '13px', stroke: 'currentColor', fill: 'none', strokeWidth: 1.8 }}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
                                 {mounted ? relativeTime(letter.updated_at) : ""}
                             </div>
                             <Link className="item-edit-btn" href={`/cover-letter/new?id=${letter.id}`}>
-                                <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px' }}><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg>
+                                <svg className="icon" viewBox="0 0 24 24" style={{ width: '14px', height: '14px', stroke: 'currentColor', fill: 'none', strokeWidth: 1.8 }}><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg>
                                 {t("actions.edit")}
                             </Link>
                         </div>

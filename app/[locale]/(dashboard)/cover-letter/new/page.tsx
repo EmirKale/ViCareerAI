@@ -201,40 +201,40 @@ export default function NewCoverLetterPage() {
                 .list-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:32px;}
                 .letter-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
                 .quota-pill{
-                    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--dashboard-mono-label);
-                    border:1px dashed var(--dashboard-cyan-dim);border-radius:var(--dashboard-radius);padding:9px 14px;display:inline-flex;
+                    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--dashboard-meta);
+                    border:1px solid #111111;background:#FFFFFF;border-radius:0px;padding:8px 14px;display:inline-flex;
                     align-items:center;gap:10px;
                 }
-                .quota-pill .val{color:var(--dashboard-cyan);font-size:15px;font-weight:600;}
-                .field{margin-bottom:20px;}
-                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-mono-label);margin-bottom:9px;}
+                .quota-pill .val{color:var(--dashboard-accent);font-size:14px;font-weight:700;}
+                .field{margin-bottom:18px;}
+                .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dashboard-meta);margin-bottom:7px;font-weight:600;}
                 .field input, .field textarea, .field select{
-                    width:100%;height:46px;padding:0 13px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
-                    border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;
+                    width:100%;height:44px;padding:0 12px;background:#FFFFFF;border:1px solid #111111;
+                    border-radius:0px;color:var(--dashboard-text);font-size:14px;
                 }
                 .field select{
-                    appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236FD6E8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+                    appearance:none;background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23111111%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
                     background-repeat:no-repeat;background-position:right 13px top 50%;background-size:10px auto;
                 }
-                .field select option{background:var(--dashboard-bg-2);color:var(--dashboard-text);}
-                .field textarea{height:auto;padding:11px 13px;resize:vertical;line-height:1.5;}
-                .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--dashboard-cyan);background:rgba(111,214,232,0.04);}
-                .field input::placeholder, .field textarea::placeholder{color:rgba(234,243,247,0.25);}
+                .field select option{background:#FFFFFF;color:#111111;}
+                .field textarea{height:auto;padding:11px 12px;resize:vertical;line-height:1.5;}
+                .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--dashboard-accent);background:#FFFFFF;box-shadow:2px 2px 0 #111111;}
+                .field input::placeholder, .field textarea::placeholder{color:var(--dashboard-meta);opacity:0.6;}
                 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
                 .output-empty{
                     display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-                    min-height:340px;color:var(--dashboard-text-dim);gap:14px;
+                    min-height:340px;color:var(--dashboard-meta);gap:14px;border:1px dashed #D3CDC2;background:#FAF8F5;padding:24px;
                 }
-                .output-empty svg{width:38px;height:38px;color:var(--dashboard-cyan-dim);}
-                .output-empty .o-title{color:var(--dashboard-text);font-size:15px;font-weight:500;}
-                .output-empty .o-sub{font-size:13px;max-width:240px;}
+                .output-empty svg{width:36px;height:36px;color:var(--dashboard-meta);}
+                .output-empty .o-title{color:var(--dashboard-text);font-size:15px;font-weight:600;font-family:'Archivo Narrow',sans-serif;}
+                .output-empty .o-sub{font-size:13px;max-width:260px;}
                 .output-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
                 .output-actions button{flex:1;justify-content:center;}
                 .generated-textarea{
-                    width:100%;height:340px;padding:16px;background:rgba(255,255,255,0.02);border:1px solid var(--dashboard-paper-border);
-                    border-radius:var(--dashboard-radius);color:var(--dashboard-text);font-size:14.5px;resize:vertical;line-height:1.6;
+                    width:100%;height:340px;padding:16px;background:#FFFFFF;border:1px solid #111111;
+                    border-radius:0px;color:var(--dashboard-text);font-size:14.5px;resize:vertical;line-height:1.6;font-family:inherit;
                 }
-                .generated-textarea:focus{outline:none;border-color:var(--dashboard-cyan);background:rgba(111,214,232,0.04);}
+                .generated-textarea:focus{outline:none;border-color:var(--dashboard-accent);box-shadow:2px 2px 0 #111111;}
                 @media(max-width:900px){.letter-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}}
             `}} />
 
@@ -259,7 +259,7 @@ export default function NewCoverLetterPage() {
             <div className="letter-grid">
                 {/* Left: Form */}
                 <div className="bp-card">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    
                     <h3 style={{ marginBottom: '22px' }}>{t('letterInfo')}</h3>
                     
                     <div className="field">
@@ -339,7 +339,7 @@ export default function NewCoverLetterPage() {
 
                 {/* Right: Generated Letter */}
                 <div className="bp-card">
-                    <svg className="corners" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M2,12 L2,2 L12,2"/><path d="M88,2 L98,2 L98,12"/><path d="M98,88 L98,98 L88,98"/><path d="M12,98 L2,98 L2,88"/></svg>
+                    
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px' }}>
                         <h3 style={{ margin: 0 }}>{t("outputTitle")}</h3>
                         {generatedLetter && (

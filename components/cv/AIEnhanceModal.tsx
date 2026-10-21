@@ -75,7 +75,6 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
     const handleApply = (text: string) => {
         onApply(text);
         onClose();
-        // Reset state for next open
         setTimeout(() => {
             setSuggestion("");
             setHasRequested(false);
@@ -89,50 +88,50 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                 onClose();
             }
         }}>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[600px] bg-[#FFFFFF] border-2 border-[#111111] rounded-none shadow-[6px_6px_0_#111111] p-6 text-[#111111]">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
-                        <Sparkles className="h-5 w-5" />
-                        AI ile Profesyonelleştir
+                    <DialogTitle className="flex items-center gap-2 text-[#111111] font-['Archivo_Narrow'] text-xl font-bold tracking-tight">
+                        <Sparkles className="h-5 w-5 text-[#1849A9]" />
+                        Metni İyileştir
                     </DialogTitle>
-                    <DialogDescription>
-                        Yazdığınız ham metni yapay zeka ile daha kurumsal ve dikkat çekici hale getirin.
+                    <DialogDescription className="text-[#4A4742] text-sm">
+                        Yazdığınız ham metni daha açık, net ve kurumsal bir dille revize edin.
                         {targetPosition && ` Hedef Pozisyon: "${targetPosition}"`}
                     </DialogDescription>
                 </DialogHeader>
 
                 {!hasRequested ? (
                     <div className="py-6 flex flex-col items-center justify-center space-y-4">
-                        <div className="bg-muted p-4 rounded-lg w-full text-sm italic border text-muted-foreground whitespace-pre-wrap">
+                        <div className="bg-[#FAF8F5] p-4 rounded-none w-full text-sm italic border border-[#D3CDC2] text-[#4A4742] whitespace-pre-wrap font-serif">
                             &quot;{initialText || 'Metin girilmemiş.'}&quot;
                         </div>
                         <Button
                             onClick={handleGenerate}
-                            className="bg-purple-600 hover:bg-purple-700 text-white w-full"
+                            className="bg-[#1849A9] hover:bg-[#123782] text-white rounded-none w-full font-['JetBrains_Mono'] text-xs font-semibold uppercase tracking-wider h-11"
                         >
                             <Sparkles className="mr-2 h-4 w-4" />
-                            İyileştirilmiş Versiyonlar Üret
+                            İyileştirilmiş Versiyon Üret
                         </Button>
                     </div>
                 ) : isLoading ? (
                     <div className="py-12 flex flex-col items-center justify-center space-y-4">
-                        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-                        <p className="text-sm text-muted-foreground">En iyi ifadeler aranıyor...</p>
+                        <Loader2 className="h-8 w-8 animate-spin text-[#1849A9]" />
+                        <p className="text-sm font-['JetBrains_Mono'] text-[#757169]">İfadeler düzenleniyor...</p>
                     </div>
                 ) : (
                     <div className="py-4 space-y-4">
-                        <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                            Önerilen Metin (Düzenleyebilirsiniz):
+                        <label className="text-xs font-['JetBrains_Mono'] uppercase tracking-wider font-semibold text-[#111111]">
+                            Önerilen Metin:
                         </label>
                         <Textarea
                             value={editableText}
                             onChange={(e) => setEditableText(e.target.value)}
                             rows={8}
-                            className="resize-none w-full"
+                            className="resize-none w-full bg-[#FFFFFF] border border-[#111111] text-[#111111] rounded-none focus-visible:ring-1 focus-visible:ring-[#1849A9] text-sm leading-relaxed"
                         />
                         <div className="flex justify-end gap-2">
                             <Button
-                                className="bg-purple-600 hover:bg-purple-700 text-white"
+                                className="bg-[#1849A9] hover:bg-[#123782] text-white rounded-none font-['JetBrains_Mono'] text-xs uppercase tracking-wider"
                                 onClick={() => handleApply(editableText)}
                             >
                                 <Check className="mr-2 h-4 w-4" /> Seç ve Uygula
@@ -142,9 +141,9 @@ export default function AIEnhanceModal({ isOpen, onClose, initialText, sectionTy
                 )}
 
                 {hasRequested && !isLoading && (
-                    <DialogFooter>
-                        <Button variant="outline" onClick={handleGenerate}>Yeniden Üret</Button>
-                        <Button variant="ghost" onClick={onClose}>İptal</Button>
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button variant="outline" className="border border-[#111111] rounded-none font-['JetBrains_Mono'] text-xs uppercase" onClick={handleGenerate}>Yeniden Üret</Button>
+                        <Button variant="ghost" className="rounded-none font-['JetBrains_Mono'] text-xs uppercase" onClick={onClose}>İptal</Button>
                     </DialogFooter>
                 )}
             </DialogContent>
